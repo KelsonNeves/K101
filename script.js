@@ -15,11 +15,15 @@ const notificacao = document.getElementById('notificacao');
 const carrinhoCount = document.getElementById('carrinho-count');
 
 // Inicialização
+
+// Efeito da logo centralizada
 document.addEventListener('DOMContentLoaded', () => {
+    // Aguarda um pequeno tempo para garantir que tudo carregou
     carregarProdutos();
     atualizarContadorCarrinho();
     configurarEventListeners();
 });
+
 
 // Carregar produtos do JSON
 async function carregarProdutos() {
@@ -64,7 +68,6 @@ function renderizarColecoes() {
 }
 
 // Renderizar produtos com filtros
-// Renderizar produtos com filtros (versão com texto "Adicionar")
 function renderizarProdutos() {
     let produtosFiltrados = produtos;
     
@@ -97,9 +100,7 @@ function renderizarProdutos() {
                     <h3 class="produto-nome">${produto.nome}</h3>
                     <p class="produto-colecao">${produto.colecao || 'Sem coleção'}</p>
                     <p class="produto-preco">R$ ${produto.preco.toFixed(2)}</p>
-                    <button class="btn-add-carrinho" onclick="abrirModalDoBotao(event, ${produto.id})">
-                        <i class="fas fa-cart-plus"></i> Adicionar
-                    </button>
+                    <!-- Botão removido -->
                 </div>
             </div>
         `;
@@ -110,18 +111,10 @@ function renderizarProdutos() {
     // Adicionar evento de clique nos cards para abrir modal
     document.querySelectorAll('.produto-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('btn-add-carrinho') && !e.target.closest('.btn-add-carrinho')) {
-                const produtoId = parseInt(card.dataset.id);
-                abrirModalProduto(produtoId);
-            }
+            const produtoId = parseInt(card.dataset.id);
+            abrirModalProduto(produtoId);
         });
     });
-}
-
-// Nova função para abrir o modal pelo botão
-function abrirModalDoBotao(event, produtoId) {
-    event.stopPropagation(); // Impede que o clique no botão ative o clique do card
-    abrirModalProduto(produtoId);
 }
 
 // Abrir modal com detalhes do produto

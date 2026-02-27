@@ -51,7 +51,7 @@ body {
     object-fit: contain;
     background: white;
     border-radius: 50%;
-    padding: 5px;
+    padding: 1px;
 }
 
 .logo-container h1 {
@@ -154,15 +154,15 @@ body {
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0px 10px rgba(0,0,0,0.15);
     cursor: pointer;
     position: relative;
 }
 
 .produto-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 0px 15px rgba(0,0,0,0.15);
 }
 
 .produto-imagem {
@@ -177,23 +177,24 @@ body {
 }
 
 .produto-nome {
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     margin-bottom: 0.5rem;
     color: var(--text-color);
 }
 
 .produto-colecao {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #666;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     font-style: italic;
 }
 
 .produto-preco {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: bold;
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center
 }
 
 .btn-add-carrinho {
@@ -484,3 +485,4 @@ body {
         font-size: 1.3rem;
     }
 }
+
