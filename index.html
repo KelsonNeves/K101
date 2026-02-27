@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Loja de Adesivos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- HEADER COM LOGO -->
+    <header class="header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="imagens/logo.png" alt="Minha Logo" class="logo" id="logo-img">
+                <h1>Adesivos em Recorte</h1>
+            </div>
+            
+            <!-- ÍCONE DO CARRINHO -->
+            <div class="carrinho-icon">
+                <a href="carrinho.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="carrinho-count" id="carrinho-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE PESQUISA E FILTROS -->
+    <main class="main-container">
+        <div class="pesquisa-container">
+            <input type="text" id="pesquisa" placeholder="Pesquisar adesivos..." class="pesquisa-input">
+            <i class="fas fa-search pesquisa-icon"></i>
+        </div>
+
+        <!-- FILTRO POR COLEÇÕES -->
+        <div class="colecoes-container" id="colecoes-container">
+            <button class="colecao-btn ativa" data-colecao="todos">Todos</button>
+            <!-- As coleções serão carregadas aqui via JavaScript -->
+        </div>
+
+        <!-- GRADE DE PRODUTOS -->
+        <div class="produtos-grid" id="produtos-grid">
+            <!-- Os produtos serão carregados aqui via JavaScript -->
+            <div class="loading">Carregando produtos...</div>
+        </div>
+    </main>
+
+    <!-- MODAL DO PRODUTO -->
+    <div id="produto-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body" id="modal-body">
+                <!-- Conteúdo do modal será carregado aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div id="notificacao" class="notificacao"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
