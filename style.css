@@ -6,8 +6,8 @@
 }
 
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #f5f5f5;
+    --primary-color: #12ac9f;
+    --secondary-color: #007a5c;
     --text-color: #333;
     --border-color: #ddd;
     --success-color: #28a745;
@@ -21,7 +21,7 @@ body {
 
 /* HEADER */
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg , var(--primary-color), var(--secondary-color));
     color: white;
     padding: 1rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -145,7 +145,7 @@ body {
 /* GRADE DE PRODUTOS */
 .produtos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
     padding: 1rem 0;
 }
@@ -169,7 +169,7 @@ body {
     width: 100%;
     height: 250px;
     object-fit: cover;
-    border-bottom: 3px solid var(--primary-color);
+    border-bottom: 1px dashed #ddd;
 }
 
 .produto-info {
@@ -213,7 +213,7 @@ body {
 }
 
 .btn-add-carrinho:hover {
-    background: #357abd;
+    background: var(--secondary-color);
 }
 
 /* MODAL */
@@ -292,12 +292,36 @@ body {
     }
     
     .produtos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, 1fr); /* Força 2 colunas no celular */
         gap: 1rem;
     }
     
     .produto-imagem {
-        height: 200px;
+        height: 180px; /* Altura um pouco menor para caber melhor */
+    }
+    
+    .produto-info {
+        padding: 1rem;
+    }
+    
+    .produto-nome {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .produto-colecao {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .produto-preco {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-add-carrinho {
+        padding: 0.6rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -317,5 +341,146 @@ body {
     
     .pesquisa-input {
         padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+    }
+}
+/* ESTILOS PARA O MODAL COM QUANTIDADE */
+.modal-preco-quantidade {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.modal-preco {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.preco-label {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.preco-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.modal-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantidade-label {
+    font-size: 1rem;
+    color: #666;
+}
+
+.quantidade-controles {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.quantidade-btn-modal {
+    width: 35px;
+    height: 35px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    color: var(--text-color);
+}
+
+.quantidade-btn-modal:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.quantidade-input-modal {
+    width: 60px;
+    height: 35px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 0 5px;
+}
+
+/* Remover as setas do input number */
+.quantidade-input-modal::-webkit-inner-spin-button,
+.quantidade-input-modal::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantidade-input-modal {
+    -moz-appearance: textfield;
+}
+
+.modal-total {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: right;
+    margin: 15px 0;
+    padding: 10px;
+    border-top: 2px dashed var(--border-color);
+}
+
+.btn-add-carrinho-modal {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.3s;
+}
+
+.btn-add-carrinho-modal:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsividade para o modal */
+@media (max-width: 768px) {
+    .modal-preco-quantidade {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .modal-preco {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .modal-quantidade {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .preco-valor {
+        font-size: 1.3rem;
     }
 }

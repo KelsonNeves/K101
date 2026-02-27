@@ -136,7 +136,7 @@ function finalizarCompra() {
     }
     
     // Construir mensagem do pedido
-    let mensagem = '🛍️ *NOVO PEDIDO*\n\n';
+    let mensagem = '*NOVO PEDIDO*\n*--------------------*\n\n';
     mensagem += '*ITENS:*\n';
     
     let total = 0;

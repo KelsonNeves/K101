@@ -64,6 +64,7 @@ function renderizarColecoes() {
 }
 
 // Renderizar produtos com filtros
+// Renderizar produtos com filtros (versão com texto "Adicionar")
 function renderizarProdutos() {
     let produtosFiltrados = produtos;
     
@@ -96,7 +97,7 @@ function renderizarProdutos() {
                     <h3 class="produto-nome">${produto.nome}</h3>
                     <p class="produto-colecao">${produto.colecao || 'Sem coleção'}</p>
                     <p class="produto-preco">R$ ${produto.preco.toFixed(2)}</p>
-                    <button class="btn-add-carrinho" onclick="adicionarAoCarrinho(event, ${produto.id})">
+                    <button class="btn-add-carrinho" onclick="abrirModalDoBotao(event, ${produto.id})">
                         <i class="fas fa-cart-plus"></i> Adicionar
                     </button>
                 </div>
@@ -117,7 +118,14 @@ function renderizarProdutos() {
     });
 }
 
+// Nova função para abrir o modal pelo botão
+function abrirModalDoBotao(event, produtoId) {
+    event.stopPropagation(); // Impede que o clique no botão ative o clique do card
+    abrirModalProduto(produtoId);
+}
+
 // Abrir modal com detalhes do produto
+// Abrir modal com detalhes do produto (versão com seletor de quantidade)
 function abrirModalProduto(produtoId) {
     const produto = produtos.find(p => p.id === produtoId);
     if (!produto) return;
@@ -128,14 +136,102 @@ function abrirModalProduto(produtoId) {
             <h2 style="margin: 20px 0 10px;">${produto.nome}</h2>
             <p style="color: #666; margin-bottom: 15px;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
             <p style="margin-bottom: 20px;">${produto.descricao || 'Sem descrição disponível.'}</p>
-            <p style="font-size: 1.5rem; color: var(--primary-color); font-weight: bold; margin-bottom: 20px;">R$ ${produto.preco.toFixed(2)}</p>
-            <button class="btn-add-carrinho" onclick="adicionarAoCarrinho(event, ${produto.id})">
+            
+            <div class="modal-preco-quantidade">
+                <div class="modal-preco">
+                    <span class="preco-label">Preço:</span>
+                    <span class="preco-valor">R$ ${produto.preco.toFixed(2)}</span>
+                </div>
+                
+                <div class="modal-quantidade">
+                    <span class="quantidade-label">Quantidade:</span>
+                    <div class="quantidade-controles">
+                        <button class="quantidade-btn-modal" onclick="alterarQuantidadeModal(-1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" id="quantidade-modal" class="quantidade-input-modal" value="1" min="1" max="99" onchange="atualizarPrecoTotal()">
+                        <button class="quantidade-btn-modal" onclick="alterarQuantidadeModal(1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-total" id="modal-total">
+                Total: R$ ${produto.preco.toFixed(2)}
+            </div>
+            
+            <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinhoModal(${produto.id})">
                 <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
             </button>
         </div>
     `;
     
     modal.style.display = 'block';
+}
+
+// Alterar quantidade no modal
+function alterarQuantidadeModal(delta) {
+    const inputQuantidade = document.getElementById('quantidade-modal');
+    if (!inputQuantidade) return;
+    
+    let novaQuantidade = parseInt(inputQuantidade.value) + delta;
+    
+    // Garantir que a quantidade seja pelo menos 1 e no máximo 99
+    if (novaQuantidade < 1) novaQuantidade = 1;
+    if (novaQuantidade > 99) novaQuantidade = 99;
+    
+    inputQuantidade.value = novaQuantidade;
+    atualizarPrecoTotal();
+}
+
+// Atualizar preço total no modal
+function atualizarPrecoTotal() {
+    const inputQuantidade = document.getElementById('quantidade-modal');
+    const modalTotal = document.getElementById('modal-total');
+    const precoElement = document.querySelector('.preco-valor');
+    
+    if (!inputQuantidade || !modalTotal || !precoElement) return;
+    
+    const quantidade = parseInt(inputQuantidade.value) || 1;
+    const precoTexto = precoElement.textContent;
+    const preco = parseFloat(precoTexto.replace('R$', '').replace(',', '.').trim());
+    
+    const total = preco * quantidade;
+    modalTotal.textContent = `Total: R$ ${total.toFixed(2)}`;
+}
+
+// Adicionar ao carrinho a partir do modal
+function adicionarAoCarrinhoModal(produtoId) {
+    const produto = produtos.find(p => p.id === produtoId);
+    if (!produto) return;
+    
+    const inputQuantidade = document.getElementById('quantidade-modal');
+    const quantidade = inputQuantidade ? parseInt(inputQuantidade.value) : 1;
+    
+    let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    
+    const itemExistente = carrinho.find(item => item.id === produtoId);
+    
+    if (itemExistente) {
+        itemExistente.quantidade += quantidade;
+    } else {
+        carrinho.push({
+            id: produto.id,
+            nome: produto.nome,
+            preco: produto.preco,
+            imagem: produto.imagem,
+            quantidade: quantidade
+        });
+    }
+    
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    
+    // Fechar o modal
+    modal.style.display = 'none';
+    
+    mostrarNotificacao(`✅ ${quantidade} x ${produto.nome} adicionado ao carrinho!`);
+    atualizarContadorCarrinho();
 }
 
 // Fechar modal
