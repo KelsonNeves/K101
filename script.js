@@ -14,16 +14,17 @@ const closeBtn = document.querySelector('.close');
 const notificacao = document.getElementById('notificacao');
 const carrinhoCount = document.getElementById('carrinho-count');
 
-// Inicialização
+// Variáveis para o banner
+let bannerIndex = 0;
+let bannerSlides = [];
+let bannerInterval;
 
-// Efeito da logo centralizada
+// Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-    // Aguarda um pequeno tempo para garantir que tudo carregou
     carregarProdutos();
     atualizarContadorCarrinho();
     configurarEventListeners();
 });
-
 
 // Carregar produtos do JSON
 async function carregarProdutos() {
@@ -39,11 +40,154 @@ async function carregarProdutos() {
         });
         
         renderizarColecoes();
+        renderizarBanner(); // Agora o banner será renderizado
         renderizarProdutos();
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
         produtosGrid.innerHTML = '<div class="loading">Erro ao carregar produtos. Tente novamente.</div>';
     }
+}
+
+// Função para carregar e renderizar o banner
+// Função para carregar e renderizar o banner (apenas imagens, sem textos)
+function renderizarBanner() {
+    // Obter coleções únicas
+    const colecoesArray = Array.from(colecoes).sort();
+    
+    // Criar slides do banner
+    bannerSlides = [];
+    
+    // Adicionar slide "Todos"
+    bannerSlides.push({
+        colecao: 'todos',
+        imagem: 'imagens/banners/1todos.jpg'
+    });
+    
+    // Adicionar slides para cada coleção - usando o nome EXATO da coleção
+    colecoesArray.forEach(colecao => {
+        bannerSlides.push({
+            colecao: colecao,
+            imagem: `imagens/banners/${colecao}.jpg`
+        });
+    });
+    
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    const bannerIndicators = document.getElementById('banner-indicators');
+    
+    if (!bannerWrapper) return;
+    
+    // Renderizar slides - APENAS A IMAGEM, sem overlay de texto
+    let slidesHTML = '';
+    let indicatorsHTML = '';
+    
+    bannerSlides.forEach((slide, index) => {
+        slidesHTML += `
+            <div class="banner-slide" data-colecao="${slide.colecao}">
+                <img src="${slide.imagem}" alt="Banner ${slide.colecao}" onerror="this.src='imagens/banners/default.jpg'; this.onerror=null;">
+            </div>
+        `;
+        
+        indicatorsHTML += `
+            <div class="indicator ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
+        `;
+    });
+    
+    bannerWrapper.innerHTML = slidesHTML;
+    bannerIndicators.innerHTML = indicatorsHTML;
+    
+    // Adicionar eventos aos slides
+    document.querySelectorAll('.banner-slide').forEach(slide => {
+        slide.addEventListener('click', () => {
+            const colecao = slide.dataset.colecao;
+            filtrarPorColecao(colecao);
+        });
+    });
+    
+    // Adicionar eventos aos indicadores
+    document.querySelectorAll('.indicator').forEach(indicator => {
+        indicator.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const index = parseInt(indicator.dataset.index);
+            irParaSlide(index);
+        });
+    });
+    
+    // Configurar posição inicial
+    irParaSlide(0);
+    
+    // Iniciar autoplay
+    iniciarAutoplay();
+}
+
+// Função para filtrar por coleção ao clicar no banner
+function filtrarPorColecao(colecao) {
+    // Atualizar botão de coleção ativo
+    document.querySelectorAll('.colecao-btn').forEach(btn => {
+        btn.classList.remove('ativa');
+        if (btn.dataset.colecao === colecao) {
+            btn.classList.add('ativa');
+        }
+    });
+    
+    // Atualizar filtro atual e renderizar produtos
+    filtroAtual = colecao;
+    renderizarProdutos();
+    
+    // Rolar suavemente até os produtos
+    document.getElementById('produtos-grid').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'nearest' 
+    });
+}
+
+// Funções de navegação do banner
+function irParaSlide(index) {
+    if (!bannerSlides.length) return;
+    
+    if (index < 0) index = bannerSlides.length - 1;
+    if (index >= bannerSlides.length) index = 0;
+    
+    bannerIndex = index;
+    
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    if (bannerWrapper) {
+        bannerWrapper.style.transform = `translateX(-${bannerIndex * 100}%)`;
+    }
+    
+    // Atualizar indicadores
+    document.querySelectorAll('.indicator').forEach((indicator, i) => {
+        if (i === bannerIndex) {
+            indicator.classList.add('active');
+        } else {
+            indicator.classList.remove('active');
+        }
+    });
+}
+
+function proximoSlide() {
+    irParaSlide(bannerIndex + 1);
+    reiniciarAutoplay();
+}
+
+function slideAnterior() {
+    irParaSlide(bannerIndex - 1);
+    reiniciarAutoplay();
+}
+
+function iniciarAutoplay() {
+    pararAutoplay();
+    bannerInterval = setInterval(proximoSlide, 5000);
+}
+
+function pararAutoplay() {
+    if (bannerInterval) {
+        clearInterval(bannerInterval);
+    }
+}
+
+function reiniciarAutoplay() {
+    pararAutoplay();
+    iniciarAutoplay();
 }
 
 // Renderizar botões de coleção
@@ -95,12 +239,11 @@ function renderizarProdutos() {
     produtosFiltrados.forEach(produto => {
         html += `
             <div class="produto-card" data-id="${produto.id}">
-                <img src="${produto.imagem}" alt="${produto.nome}" class="produto-imagem">
+                <img src="${produto.imagem}" alt="${produto.nome}" class="produto-imagem" onerror="this.src='imagens/produtos/default.jpg'">
                 <div class="produto-info">
                     <h3 class="produto-nome">${produto.nome}</h3>
                     <p class="produto-colecao">${produto.colecao || 'Sem coleção'}</p>
                     <p class="produto-preco">R$ ${produto.preco.toFixed(2)}</p>
-                    <!-- Botão removido -->
                 </div>
             </div>
         `;
@@ -118,14 +261,13 @@ function renderizarProdutos() {
 }
 
 // Abrir modal com detalhes do produto
-// Abrir modal com detalhes do produto (versão com seletor de quantidade)
 function abrirModalProduto(produtoId) {
     const produto = produtos.find(p => p.id === produtoId);
     if (!produto) return;
     
     modalBody.innerHTML = `
         <div class="modal-produto">
-            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px;">
+            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px;" onerror="this.src='imagens/produtos/default.jpg'">
             <h2 style="margin: 20px 0 10px;">${produto.nome}</h2>
             <p style="color: #666; margin-bottom: 15px;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
             <p style="margin-bottom: 20px;">${produto.descricao || 'Sem descrição disponível.'}</p>
@@ -170,7 +312,6 @@ function alterarQuantidadeModal(delta) {
     
     let novaQuantidade = parseInt(inputQuantidade.value) + delta;
     
-    // Garantir que a quantidade seja pelo menos 1 e no máximo 99
     if (novaQuantidade < 1) novaQuantidade = 1;
     if (novaQuantidade > 99) novaQuantidade = 99;
     
@@ -220,7 +361,6 @@ function adicionarAoCarrinhoModal(produtoId) {
     
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     
-    // Fechar o modal
     modal.style.display = 'none';
     
     mostrarNotificacao(`✅ ${quantidade} x ${produto.nome} adicionado ao carrinho!`);
@@ -295,4 +435,29 @@ function configurarEventListeners() {
             renderizarProdutos();
         }, 300);
     });
+    
+    // Eventos do banner
+    const btnPrev = document.getElementById('banner-prev');
+    const btnNext = document.getElementById('banner-next');
+    
+    if (btnPrev) {
+        btnPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            slideAnterior();
+        });
+    }
+    
+    if (btnNext) {
+        btnNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            proximoSlide();
+        });
+    }
+    
+    // Pausar autoplay quando o mouse estiver sobre o banner
+    const bannerContainer = document.getElementById('banner-container');
+    if (bannerContainer) {
+        bannerContainer.addEventListener('mouseenter', pararAutoplay);
+        bannerContainer.addEventListener('mouseleave', iniciarAutoplay);
+    }
 }

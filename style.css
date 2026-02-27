@@ -145,8 +145,9 @@ body {
 /* GRADE DE PRODUTOS */
 .produtos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+    /* O segredo aqui é o minmax(220px, 1fr) para permitir que caibam mais em telas grandes */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+    gap: 1rem;
     padding: 1rem 0;
 }
 
@@ -173,13 +174,23 @@ body {
 }
 
 .produto-info {
-    padding: 1.5rem;
+    padding: 1.5-rem; /* Use o padding que preferir */
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem;
+    flex-grow: 1; /* Faz este container ocupar todo o espaço restante do card */
 }
 
 .produto-nome {
-    font-size: 1.0rem;
+    font-size: 0.8rem;
     margin-bottom: 0.5rem;
     color: var(--text-color);
+    
+    /* EFEITO DE CORTE EM UMA LINHA */
+    white-space: nowrap;      /* Impede que o texto quebre para a linha de baixo */
+    overflow: hidden;         /* Esconde o que passar da largura do card */
+    text-overflow: ellipsis;  /* Adiciona os "..." no final */
+    display: block;           /* Garante que o elemento se comporte como bloco para o corte funcionar */
 }
 
 .produto-colecao {
@@ -193,8 +204,11 @@ body {
     font-size: 1.1rem;
     font-weight: bold;
     color: var(--primary-color);
+    text-align: center;
+
+    margin-top: auto; 
+    padding-top: 10px; /* Um respiro para não colar no texto */
     margin-bottom: 0.5rem;
-    text-align: center
 }
 
 .btn-add-carrinho {
@@ -206,7 +220,6 @@ body {
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -286,64 +299,152 @@ body {
     grid-column: 1 / -1;
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-    .logo-container h1 {
-        font-size: 1.2rem;
-    }
-    
+/* BANNER DE COLEÇÕES */
+.banner-container {
+    width: 100%;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    position: relative;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.banner-wrapper {
+    display: flex;
+    transition: transform 0.5s ease;
+    height: 200px;
+}
+
+.banner-slide {
+    flex: 0 0 100%;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.banner-slide:hover img {
+    transform: scale(1.05);
+}
+
+/* Botões de navegação */
+.banner-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.banner-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    transition: all 0.3s;
+    pointer-events: auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.banner-btn:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+/* Indicadores */
+.banner-indicators {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.indicator.active {
+    background: white;
+    transform: scale(1.2);
+    border-color: var(--primary-color);
+}
+
+/* --- RESPONSIVIDADE CORRIGIDA --- */
+
+/* Tablets (Telas médias entre 481px e 1024px) */
+@media (max-width: 1024px) {
     .produtos-grid {
-        grid-template-columns: repeat(2, 1fr); /* Força 2 colunas no celular */
+        /* Garante 3 colunas em tablets */
+        grid-template-columns: repeat(3, 1fr); 
         gap: 1rem;
-    }
-    
-    .produto-imagem {
-        height: 180px; /* Altura um pouco menor para caber melhor */
-    }
-    
-    .produto-info {
-        padding: 1rem;
-    }
-    
-    .produto-nome {
-        font-size: 1rem;
-        margin-bottom: 0.3rem;
-    }
-    
-    .produto-colecao {
-        font-size: 0.8rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .produto-preco {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .btn-add-carrinho {
-        padding: 0.6rem;
-        font-size: 0.9rem;
     }
 }
 
-@media (max-width: 480px) {
-    .logo-container {
-        gap: 10px;
+/* Celulares (Até 600px) */
+@media (max-width: 700px) {
+    .produtos-grid {
+        /* Força 2 colunas em quase todos os celulares */
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.8rem;
     }
     
-    .logo {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .logo-container h1 {
-        font-size: 1rem;
-    }
-    
-    .pesquisa-input {
-        padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+    .produto-imagem {
+        height: 180px; /* Ajuste para não ficar esticado */
     }
 }
+
+/* Celulares Muito Pequenos (Até 480px) */
+@media (max-width: 480px) {
+    .produtos-grid {
+        /* Mantém as 2 colunas, mas diminui o espaço */
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem;
+    }
+
+    .logo-container h1 {
+        font-size: 0.9rem;
+    }
+
+    .produto-imagem {
+        height: 140px;
+    }
+    
+    .produto-info {
+        padding: 0.7rem;
+    }
+    
+    .produto-nome {
+        font-size: 0.85rem;
+    }
+    
+}
+
 /* ESTILOS PARA O MODAL COM QUANTIDADE */
 .modal-preco-quantidade {
     display: flex;
@@ -461,28 +562,5 @@ body {
 
 .btn-add-carrinho-modal:hover {
     transform: translateY(-2px);
-}
-
-/* Responsividade para o modal */
-@media (max-width: 768px) {
-    .modal-preco-quantidade {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-    
-    .modal-preco {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .modal-quantidade {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .preco-valor {
-        font-size: 1.3rem;
-    }
 }
 
