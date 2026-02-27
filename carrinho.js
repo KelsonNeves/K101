@@ -136,7 +136,7 @@ function finalizarCompra() {
     }
     
     // Construir mensagem do pedido
-    let mensagem = '*NOVO PEDIDO*\n*--------------------*\n\n';
+    let mensagem = '🧾*NOVO PEDIDO*\n*--------------------*\n\n';
     mensagem += '*ITENS:*\n';
     
     let total = 0;
@@ -149,7 +149,7 @@ function finalizarCompra() {
         mensagem += `  Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
     });
     
-    mensagem += `*TOTAL DO PEDIDO: R$ ${total.toFixed(2)}*\n\n`;
+    mensagem += `✔️*TOTAL DO PEDIDO: R$ ${total.toFixed(2)}*\n\n`;
     mensagem += 'Por favor, confirme o pedido e informe o prazo de entrega. 🙏';
     
     // Codificar mensagem para URL
@@ -166,4 +166,5 @@ function finalizarCompra() {
         localStorage.removeItem('carrinho');
         renderizarCarrinho();
     }
+
 }
