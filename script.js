@@ -22,6 +22,10 @@ const carrinhoCount = document.getElementById('carrinho-count');
 let bannerIndex = 0;
 let bannerSlides = [];
 let bannerInterval;
+let isDragging = false;
+let startX = 0;
+let currentX = 0;
+let dragStartTime = 0;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -77,6 +81,8 @@ function renderizarBanner() {
     
     const bannerWrapper = document.getElementById('banner-wrapper');
     const bannerIndicators = document.getElementById('banner-indicators');
+    const bannerPrev = document.getElementById('banner-prev');
+    const bannerNext = document.getElementById('banner-next');
     
     if (!bannerWrapper) return;
     
@@ -87,7 +93,7 @@ function renderizarBanner() {
     bannerSlides.forEach((slide, index) => {
         slidesHTML += `
             <div class="banner-slide" data-colecao="${slide.colecao}">
-                <img src="${slide.imagem}" alt="Banner ${slide.colecao}" onerror="this.src='imagens/banners/default.jpg'; this.onerror=null;">
+                <img src="${slide.imagem}" alt="Banner ${slide.colecao}" onerror="this.src='imagens/banners/default.jpg'; this.onerror=null;" draggable="false">
             </div>
         `;
         
@@ -99,28 +105,209 @@ function renderizarBanner() {
     bannerWrapper.innerHTML = slidesHTML;
     bannerIndicators.innerHTML = indicatorsHTML;
     
+    // Configurar botões (agora apenas com ícones)
+    if (bannerPrev) {
+        bannerPrev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    }
+    if (bannerNext) {
+        bannerNext.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    }
+    
     // Adicionar eventos aos slides
     document.querySelectorAll('.banner-slide').forEach(slide => {
-        slide.addEventListener('click', () => {
-            const colecao = slide.dataset.colecao;
-            filtrarPorColecao(colecao);
+        // Evento de clique para mouse
+        slide.addEventListener('click', (e) => {
+            // Só considera clique se não foi um arrasto
+            if (!isDragging && Math.abs(currentX - startX) < 10) {
+                const colecao = slide.dataset.colecao;
+                filtrarPorColecao(colecao);
+            }
         });
+        
+        // Evento de toque para dispositivos móveis
+        slide.addEventListener('touchstart', (e) => {
+            // Não faz nada aqui, apenas permite que o evento de arrasto funcione
+        }, { passive: true });
     });
     
     // Adicionar eventos aos indicadores
     document.querySelectorAll('.indicator').forEach(indicator => {
         indicator.addEventListener('click', (e) => {
             e.stopPropagation();
-            const index = parseInt(indicator.dataset.index);
-            irParaSlide(index);
+            if (!isDragging) {
+                const index = parseInt(indicator.dataset.index);
+                irParaSlide(index);
+            }
         });
     });
+    
+    // ===== NOVO: Eventos de arrasto =====
+    // Eventos de mouse
+    bannerWrapper.addEventListener('mousedown', iniciarArrasto);
+    bannerWrapper.addEventListener('mousemove', duranteArrasto);
+    bannerWrapper.addEventListener('mouseup', finalizarArrasto);
+    bannerWrapper.addEventListener('mouseleave', cancelarArrasto);
+    
+    // Eventos de touch
+    bannerWrapper.addEventListener('touchstart', iniciarArrastoTouch, { passive: false });
+    bannerWrapper.addEventListener('touchmove', duranteArrastoTouch, { passive: false });
+    bannerWrapper.addEventListener('touchend', finalizarArrastoTouch);
+    bannerWrapper.addEventListener('touchcancel', cancelarArrasto);
     
     // Configurar posição inicial
     irParaSlide(0);
     
     // Iniciar autoplay
     iniciarAutoplay();
+}
+
+// ===== NOVAS FUNÇÕES DE ARRASTO =====
+function iniciarArrasto(e) {
+    e.preventDefault();
+    isDragging = true;
+    startX = e.pageX;
+    currentX = startX;
+    dragStartTime = Date.now();
+    
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    bannerWrapper.classList.add('dragging');
+    
+    // Parar autoplay durante o arrasto
+    pararAutoplay();
+}
+
+function duranteArrasto(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    currentX = e.pageX;
+    const diff = currentX - startX;
+    
+    // Limitar o arrasto para não passar dos limites
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    const maxDrag = bannerWrapper.offsetWidth * 0.3; // Máximo 30% de arrasto
+    
+    let limitedDiff = diff;
+    if (Math.abs(diff) > maxDrag) {
+        limitedDiff = maxDrag * (diff > 0 ? 1 : -1);
+    }
+    
+    // Feedback visual do arrasto (movimento parcial)
+    const currentTranslate = -bannerIndex * 100;
+    const partialMove = (limitedDiff / bannerWrapper.offsetWidth) * 100;
+    bannerWrapper.style.transform = `translateX(calc(${currentTranslate}% + ${partialMove}px))`;
+}
+
+function finalizarArrasto(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    const diff = currentX - startX;
+    const dragDuration = Date.now() - dragStartTime;
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    
+    // Remove a classe de dragging
+    bannerWrapper.classList.remove('dragging');
+    
+    // Determina se deve mudar de slide baseado na distância ou velocidade
+    const threshold = bannerWrapper.offsetWidth * 0.15; // 15% do width (um pouco mais sensível)
+    
+    if (Math.abs(diff) > threshold || (dragDuration < 300 && Math.abs(diff) > 20)) {
+        // Arrasto suficiente ou rápido
+        if (diff > 0) {
+            // Arrastou para direita -> slide anterior
+            slideAnterior();
+        } else {
+            // Arrastou para esquerda -> próximo slide
+            proximoSlide();
+        }
+    } else {
+        // Arrasto pequeno, volta para o slide atual E considera como clique
+        irParaSlide(bannerIndex);
+        
+        // Dispara o clique no slide atual se o movimento foi muito pequeno
+        if (Math.abs(diff) < 10) {
+            setTimeout(() => {
+                const slides = document.querySelectorAll('.banner-slide');
+                if (slides[bannerIndex]) {
+                    const colecao = slides[bannerIndex].dataset.colecao;
+                    filtrarPorColecao(colecao);
+                }
+            }, 50);
+        }
+    }
+    
+    isDragging = false;
+}
+
+function cancelarArrasto() {
+    if (isDragging) {
+        const bannerWrapper = document.getElementById('banner-wrapper');
+        bannerWrapper.classList.remove('dragging');
+        irParaSlide(bannerIndex);
+        isDragging = false;
+    }
+}
+
+// Versões para touch
+function iniciarArrastoTouch(e) {
+    e.preventDefault();
+    isDragging = true;
+    startX = e.touches[0].pageX;
+    currentX = startX;
+    dragStartTime = Date.now();
+    
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    bannerWrapper.classList.add('dragging');
+}
+
+function duranteArrastoTouch(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    currentX = e.touches[0].pageX;
+    const diff = currentX - startX;
+    
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    const currentTranslate = -bannerIndex * 100;
+    const partialMove = (diff / bannerWrapper.offsetWidth) * 100;
+    bannerWrapper.style.transform = `translateX(calc(${currentTranslate}% + ${partialMove}px))`;
+}
+
+function finalizarArrastoTouch(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    const diff = currentX - startX;
+    const dragDuration = Date.now() - dragStartTime;
+    const bannerWrapper = document.getElementById('banner-wrapper');
+    
+    bannerWrapper.classList.remove('dragging');
+    
+    const threshold = bannerWrapper.offsetWidth * 0.2;
+    
+    if (Math.abs(diff) > threshold || (dragDuration < 300 && Math.abs(diff) > 30)) {
+        if (diff > 0) {
+            slideAnterior();
+        } else {
+            proximoSlide();
+        }
+        isDragging = false;
+    } else {
+        // Se foi um toque rápido sem movimento significativo, considera como clique
+        irParaSlide(bannerIndex);
+        
+        // Dispara o clique no slide atual
+        setTimeout(() => {
+            const slides = document.querySelectorAll('.banner-slide');
+            if (slides[bannerIndex]) {
+                const colecao = slides[bannerIndex].dataset.colecao;
+                filtrarPorColecao(colecao);
+            }
+        }, 50);
+        
+        isDragging = false;
+    }
 }
 
 // Função para filtrar por coleção ao clicar no banner
@@ -137,11 +324,9 @@ function filtrarPorColecao(colecao) {
     filtroAtual = colecao;
     renderizarProdutos();
     
-    // Rolar suavemente até os produtos
-    document.getElementById('produtos-grid').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'nearest' 
-    });
+    
+    // Rolar para o elemento de informação dos produtos
+    rolarParaInfoProdutos();
 }
 
 // Funções de navegação do banner
@@ -156,6 +341,7 @@ function irParaSlide(index) {
     const bannerWrapper = document.getElementById('banner-wrapper');
     if (bannerWrapper) {
         bannerWrapper.style.transform = `translateX(-${bannerIndex * 100}%)`;
+        bannerWrapper.classList.remove('dragging'); // Garante que remove classe de arrasto
     }
     
     // Atualizar indicadores
@@ -335,10 +521,8 @@ function mudarPagina(novaPagina) {
     paginaAtual = novaPagina;
     renderizarProdutosPaginados();
     
-    document.getElementById('produtos-grid').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-    });
+    // Rolar para o elemento de informação dos produtos
+    rolarParaInfoProdutos();
 }
 
 // Função para renderizar apenas os produtos da página atual
@@ -395,9 +579,18 @@ function mostrarInfoProdutos(total, inicio, fim) {
     }
     
     const fimReal = Math.min(fim, total);
+    
+    // Determinar o nome da coleção a ser exibido
+    let nomeColecao = '';
+    if (filtroAtual === 'todos') {
+        nomeColecao = '';
+    } else {
+        nomeColecao = ' - ['+filtroAtual+']';
+    }
+    
     infoContainer.innerHTML = `
         <span class="produtos-info-texto">
-            Mostrando ${inicio} - ${fimReal} de ${total} produtos
+            Mostrando ${inicio} - ${fimReal} de ${total} produtos ${nomeColecao}
         </span>
     `;
 }
@@ -417,6 +610,11 @@ function renderizarProdutos() {
     
     paginaAtual = 1;
     renderizarProdutosPaginados();
+    
+    // Se a pesquisa estiver vazia, mostrar o banner novamente
+    if (termoPesquisa.trim() === '') {
+        mostrarBanner();
+    }
 }
 
 // Adicionar estilos CSS para a paginação
@@ -531,11 +729,9 @@ function abrirModalProduto(produtoId) {
     
     modalBody.innerHTML = `
         <div class="modal-produto">
-            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px;" onerror="this.src='imagens/produtos/default.jpg'">
-            <h2 style="margin: 20px 0 10px;">${produto.nome}</h2>
-            <p style="color: #666; margin-bottom: 15px;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
-            <p style="margin-bottom: 20px;">${produto.descricao || 'Sem descrição disponível.'}</p>
-            
+            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 10px;" onerror="this.src='imagens/produtos/default.jpg'">
+            <h2 style="margin: 20px 0 10px; font-size: 1.1rem;">${produto.nome}</h2>
+            <p style="color: #666; margin-bottom: 15px; font-size: 0.8rem;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
             <div class="modal-preco-quantidade">
                 <div class="modal-preco">
                     <span class="preco-label">Preço:</span>
@@ -554,15 +750,18 @@ function abrirModalProduto(produtoId) {
                         </button>
                     </div>
                 </div>
+                
             </div>
-            
-            <div class="modal-total" id="modal-total">
+            <div class="modal-total" id="modal-total" style="text-align: center;">
                 Total: R$ ${produto.preco.toFixed(2)}
             </div>
-            
             <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinhoModal(${produto.id})">
                 <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
             </button>
+            <p style="margin-bottom: 20px; margin-top: 20px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
+            
+            
+            
         </div>
     `;
     
@@ -730,6 +929,7 @@ function mostrarNotificacao(mensagem) {
 }
 
 // Configurar event listeners
+// Configurar event listeners
 function configurarEventListeners() {
     // Pesquisa com debounce
     let timeoutId;
@@ -739,6 +939,45 @@ function configurarEventListeners() {
             termoPesquisa = e.target.value;
             renderizarProdutos();
         }, 300);
+    });
+    
+    // ===== NOVO: Evento de tecla Enter no campo de pesquisa =====
+    pesquisaInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Previne comportamento padrão do formulário
+            
+            const termo = e.target.value.trim();
+            
+            // Se o campo estiver vazio, apenas remove foco e restaura banner
+            if (termo === '') {
+                pesquisaInput.blur();
+                mostrarBanner(); // Restaura o banner se visível
+                return;
+            }
+            
+            // Feedback visual: mudar cor temporariamente
+            pesquisaInput.style.backgroundColor = '#f0f8ff';
+            pesquisaInput.style.borderColor = 'var(--primary-color)';
+            
+            // Esconder o banner
+            esconderBanner();
+            
+            // Atualiza a pesquisa imediatamente
+            termoPesquisa = termo;
+            renderizarProdutos();
+            
+            // Remove o foco do campo de pesquisa
+            pesquisaInput.blur();
+            
+            // Restaura a cor original após um tempo
+            setTimeout(() => {
+                pesquisaInput.style.backgroundColor = '';
+                pesquisaInput.style.borderColor = '';
+            }, 500);
+            
+            // CHAMAR A FUNÇÃO AUXILIAR PARA ROLAR ATÉ A INFORMAÇÃO DOS PRODUTOS
+            rolarParaInfoProdutos();
+        }
     });
     
     // Eventos do banner
@@ -764,5 +1003,80 @@ function configurarEventListeners() {
     if (bannerContainer) {
         bannerContainer.addEventListener('mouseenter', pararAutoplay);
         bannerContainer.addEventListener('mouseleave', iniciarAutoplay);
+    }
+}
+
+// Função auxiliar para rolar e destacar o elemento de informação
+function rolarParaInfoProdutos() {
+    
+        const produtosInfo = document.getElementById('produtos-info');
+        if (produtosInfo) {
+            const header = document.querySelector('.header');
+            const headerHeight = header ? header.offsetHeight : 0;
+            
+            // Offset para dar um espaçamento agradável
+            const offset = headerHeight + 20;
+            
+            const elementPosition = produtosInfo.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+            
+            // Destaque sutil no elemento de informação
+            produtosInfo.style.transition = 'background-color 0.3s ease';
+            produtosInfo.style.backgroundColor = 'rgba(18, 172, 159, 0.1)';
+            produtosInfo.style.borderRadius = '8px';
+            setTimeout(() => {
+                produtosInfo.style.backgroundColor = '';
+            }, 1000);
+        }
+}
+
+// ===== NOVAS FUNÇÕES PARA CONTROLAR O BANNER =====
+function esconderBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    const colecoesContainer = document.getElementById('colecoes-container');
+    
+    if (bannerContainer) {
+        bannerContainer.style.opacity = '0';
+        bannerContainer.style.height = '0';
+        bannerContainer.style.margin = '0';
+        bannerContainer.style.overflow = 'hidden';
+        bannerContainer.style.pointerEvents = 'none';
+        
+        // Parar autoplay quando esconder
+        pararAutoplay();
+    }
+    
+    // Ajustar margem da coleções para ficar mais próximo da pesquisa
+    if (colecoesContainer) {
+        colecoesContainer.style.transition = 'margin-top 0.3s ease';
+        colecoesContainer.style.marginTop = '0';
+    }
+}
+
+function mostrarBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    const colecoesContainer = document.getElementById('colecoes-container');
+    
+    if (bannerContainer) {
+        bannerContainer.style.transition = 'opacity 0.3s ease, height 0.3s ease, margin 0.3s ease';
+        bannerContainer.style.opacity = '1';
+        bannerContainer.style.height = ''; // Volta ao tamanho original
+        bannerContainer.style.margin = ''; // Volta à margem original
+        bannerContainer.style.overflow = '';
+        bannerContainer.style.pointerEvents = '';
+        
+        // Reiniciar autoplay
+        iniciarAutoplay();
+    }
+    
+    // Restaurar margem original das coleções
+    if (colecoesContainer) {
+        colecoesContainer.style.transition = 'margin-top 0.3s ease';
+        colecoesContainer.style.marginTop = '';
     }
 }
