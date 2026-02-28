@@ -166,5 +166,4 @@ function finalizarCompra() {
         localStorage.removeItem('carrinho');
         renderizarCarrinho();
     }
-
 }

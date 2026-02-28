@@ -4,6 +4,10 @@ let colecoes = new Set();
 let filtroAtual = 'todos';
 let termoPesquisa = '';
 
+// ===== NOVO: Configuração da paginação =====
+const ITENS_POR_PAGINA = 20;
+let paginaAtual = 1;
+
 // Elementos do DOM
 const produtosGrid = document.getElementById('produtos-grid');
 const pesquisaInput = document.getElementById('pesquisa');
@@ -24,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarProdutos();
     atualizarContadorCarrinho();
     configurarEventListeners();
+    adicionarEstilosPaginacao(); // NOVO: Adicionar estilos da paginação
 });
 
 // Carregar produtos do JSON
@@ -40,7 +45,7 @@ async function carregarProdutos() {
         });
         
         renderizarColecoes();
-        renderizarBanner(); // Agora o banner será renderizado
+        renderizarBanner();
         renderizarProdutos();
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
@@ -49,7 +54,6 @@ async function carregarProdutos() {
 }
 
 // Função para carregar e renderizar o banner
-// Função para carregar e renderizar o banner (apenas imagens, sem textos)
 function renderizarBanner() {
     // Obter coleções únicas
     const colecoesArray = Array.from(colecoes).sort();
@@ -63,7 +67,7 @@ function renderizarBanner() {
         imagem: 'imagens/banners/1todos.jpg'
     });
     
-    // Adicionar slides para cada coleção - usando o nome EXATO da coleção
+    // Adicionar slides para cada coleção
     colecoesArray.forEach(colecao => {
         bannerSlides.push({
             colecao: colecao,
@@ -76,7 +80,7 @@ function renderizarBanner() {
     
     if (!bannerWrapper) return;
     
-    // Renderizar slides - APENAS A IMAGEM, sem overlay de texto
+    // Renderizar slides
     let slidesHTML = '';
     let indicatorsHTML = '';
     
@@ -211,8 +215,10 @@ function renderizarColecoes() {
     });
 }
 
-// Renderizar produtos com filtros
-function renderizarProdutos() {
+// ===== NOVO: Funções de paginação =====
+
+// Função auxiliar para obter produtos filtrados
+function getProdutosFiltrados() {
     let produtosFiltrados = produtos;
     
     // Filtrar por coleção
@@ -230,13 +236,120 @@ function renderizarProdutos() {
         );
     }
     
-    if (produtosFiltrados.length === 0) {
-        produtosGrid.innerHTML = '<div class="loading">Nenhum produto encontrado</div>';
+    return produtosFiltrados;
+}
+
+// Criar container para os controles de paginação
+function criarControlesPaginacao() {
+    let paginationContainer = document.getElementById('pagination-container');
+    
+    if (!paginationContainer) {
+        paginationContainer = document.createElement('div');
+        paginationContainer.id = 'pagination-container';
+        paginationContainer.className = 'pagination-container';
+        
+        const produtosGrid = document.getElementById('produtos-grid');
+        if (produtosGrid && produtosGrid.parentNode) {
+            produtosGrid.parentNode.insertBefore(paginationContainer, produtosGrid.nextSibling);
+        }
+    }
+    
+    return paginationContainer;
+}
+
+// Renderizar controles de paginação
+function renderizarPaginacao(totalItens) {
+    const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA);
+    const paginationContainer = criarControlesPaginacao();
+    
+    if (totalPaginas <= 1) {
+        paginationContainer.innerHTML = '';
         return;
     }
     
+    let html = '<div class="pagination">';
+    
+    // Botão anterior
+    html += `
+        <button class="page-btn prev-btn" ${paginaAtual === 1 ? 'disabled' : ''} 
+                onclick="mudarPagina(${paginaAtual - 1})">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    `;
+    
+    // Determinar quais páginas mostrar
+    let inicio = Math.max(1, paginaAtual - 2);
+    let fim = Math.min(totalPaginas, paginaAtual + 2);
+    
+    if (fim - inicio < 4) {
+        if (inicio === 1) {
+            fim = Math.min(totalPaginas, inicio + 4);
+        } else if (fim === totalPaginas) {
+            inicio = Math.max(1, fim - 4);
+        }
+    }
+    
+    // Primeira página
+    if (inicio > 1) {
+        html += `<button class="page-btn" onclick="mudarPagina(1)">1</button>`;
+        if (inicio > 2) {
+            html += `<span class="page-dots">...</span>`;
+        }
+    }
+    
+    // Páginas do meio
+    for (let i = inicio; i <= fim; i++) {
+        html += `<button class="page-btn ${i === paginaAtual ? 'active' : ''}" 
+                        onclick="mudarPagina(${i})">${i}</button>`;
+    }
+    
+    // Última página
+    if (fim < totalPaginas) {
+        if (fim < totalPaginas - 1) {
+            html += `<span class="page-dots">...</span>`;
+        }
+        html += `<button class="page-btn" onclick="mudarPagina(${totalPaginas})">${totalPaginas}</button>`;
+    }
+    
+    // Botão próximo
+    html += `
+        <button class="page-btn next-btn" ${paginaAtual === totalPaginas ? 'disabled' : ''} 
+                onclick="mudarPagina(${paginaAtual + 1})">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    `;
+    
+    html += '</div>';
+    paginationContainer.innerHTML = html;
+}
+
+// Função para mudar de página
+function mudarPagina(novaPagina) {
+    const produtosFiltrados = getProdutosFiltrados();
+    const totalPaginas = Math.ceil(produtosFiltrados.length / ITENS_POR_PAGINA);
+    
+    if (novaPagina < 1 || novaPagina > totalPaginas) {
+        return;
+    }
+    
+    paginaAtual = novaPagina;
+    renderizarProdutosPaginados();
+    
+    document.getElementById('produtos-grid').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
+}
+
+// Função para renderizar apenas os produtos da página atual
+function renderizarProdutosPaginados() {
+    const produtosFiltrados = getProdutosFiltrados();
+    const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+    const fim = inicio + ITENS_POR_PAGINA;
+    const produtosPagina = produtosFiltrados.slice(inicio, fim);
+    
     let html = '';
-    produtosFiltrados.forEach(produto => {
+    produtosPagina.forEach(produto => {
         html += `
             <div class="produto-card" data-id="${produto.id}">
                 <img src="${produto.imagem}" alt="${produto.nome}" class="produto-imagem" onerror="this.src='imagens/produtos/default.jpg'">
@@ -251,13 +364,164 @@ function renderizarProdutos() {
     
     produtosGrid.innerHTML = html;
     
-    // Adicionar evento de clique nos cards para abrir modal
+    // Adicionar evento de clique nos cards
     document.querySelectorAll('.produto-card').forEach(card => {
         card.addEventListener('click', (e) => {
             const produtoId = parseInt(card.dataset.id);
             abrirModalProduto(produtoId);
         });
     });
+    
+    // Renderizar controles de paginação
+    renderizarPaginacao(produtosFiltrados.length);
+    
+    // Mostrar informação de produtos
+    mostrarInfoProdutos(produtosFiltrados.length, inicio + 1, fim);
+}
+
+// Função para mostrar informação sobre os produtos
+function mostrarInfoProdutos(total, inicio, fim) {
+    let infoContainer = document.getElementById('produtos-info');
+    
+    if (!infoContainer) {
+        infoContainer = document.createElement('div');
+        infoContainer.id = 'produtos-info';
+        infoContainer.className = 'produtos-info';
+        
+        const produtosGrid = document.getElementById('produtos-grid');
+        if (produtosGrid && produtosGrid.parentNode) {
+            produtosGrid.parentNode.insertBefore(infoContainer, produtosGrid);
+        }
+    }
+    
+    const fimReal = Math.min(fim, total);
+    infoContainer.innerHTML = `
+        <span class="produtos-info-texto">
+            Mostrando ${inicio} - ${fimReal} de ${total} produtos
+        </span>
+    `;
+}
+
+// Função principal de renderizar produtos (substitui a original)
+function renderizarProdutos() {
+    const produtosFiltrados = getProdutosFiltrados();
+    
+    if (produtosFiltrados.length === 0) {
+        produtosGrid.innerHTML = '<div class="loading">Nenhum produto encontrado</div>';
+        const paginationContainer = document.getElementById('pagination-container');
+        if (paginationContainer) {
+            paginationContainer.innerHTML = '';
+        }
+        return;
+    }
+    
+    paginaAtual = 1;
+    renderizarProdutosPaginados();
+}
+
+// Adicionar estilos CSS para a paginação
+function adicionarEstilosPaginacao() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .pagination-container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .page-btn {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 8px;
+            border: 2px solid var(--border-color);
+            background: white;
+            color: var(--text-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-dots {
+            padding: 0 5px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .prev-btn, .next-btn {
+            font-size: 0.9rem;
+        }
+        
+        .produtos-info {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .produtos-info-texto {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            .page-btn {
+                min-width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .pagination {
+                gap: 3px;
+            }
+            
+            .page-btn {
+                min-width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+            
+            .page-dots {
+                padding: 0 2px;
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
 }
 
 // Abrir modal com detalhes do produto
@@ -411,7 +675,38 @@ function adicionarAoCarrinho(event, produtoId) {
 function atualizarContadorCarrinho() {
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
-    carrinhoCount.textContent = totalItens;
+    
+    // Atualizar contador do header
+    const carrinhoCount = document.getElementById('carrinho-count');
+    if (carrinhoCount) {
+        carrinhoCount.textContent = totalItens;
+    }
+    
+    // Controlar botão flutuante
+    const floatingCart = document.getElementById('floating-cart');
+    const floatingCount = document.getElementById('floating-cart-count');
+    
+    if (floatingCart && floatingCount) {
+        if (totalItens > 0) {
+            // Verifica se o botão estava oculto para aplicar animação de entrada apenas uma vez
+            const estavaOculto = floatingCart.style.display === 'none' || !floatingCart.style.display;
+            
+            floatingCart.style.display = 'block';
+            floatingCount.textContent = totalItens;
+            
+            // Aplica animação de entrada apenas se estava oculto
+            if (estavaOculto) {
+                floatingCart.classList.add('show');
+                // Remove a classe após a animação terminar
+                setTimeout(() => {
+                    floatingCart.classList.remove('show');
+                }, 300);
+            }
+        } else {
+            floatingCart.style.display = 'none';
+            floatingCart.classList.remove('show', 'pulse');
+        }
+    }
 }
 
 // Mostrar notificação
@@ -419,9 +714,19 @@ function mostrarNotificacao(mensagem) {
     notificacao.textContent = mensagem;
     notificacao.classList.add('mostrar');
     
+    // Efeito de pulso no botão flutuante
+    const floatingCart = document.getElementById('floating-cart');
+    if (floatingCart && floatingCart.style.display === 'block') {
+        floatingCart.classList.add('pulse');
+        setTimeout(() => {
+            floatingCart.classList.remove('pulse');
+        }, 500);
+    }
+    
+    // Timer para remover a notificação (3 segundos)
     setTimeout(() => {
         notificacao.classList.remove('mostrar');
-    }, 3000);
+    }, 2000);
 }
 
 // Configurar event listeners
