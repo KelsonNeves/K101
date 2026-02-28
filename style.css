@@ -531,13 +531,14 @@ body {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: var(--secondary-color);
-    color: white;
+    background: #ffffff;
+    color: #1f1f1f;
     padding: 1rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     transform: translateX(100px);
     opacity: 0;
+    border-left: 2px solid var(--primary-color);
+    border-right: 2px solid var(--primary-color);
     transition: transform 0.3s ease, opacity 0.3s ease;
     z-index: 1001;
     pointer-events: none;
@@ -854,4 +855,5 @@ body {
     .notificacao.mostrar {
         transform: translateY(0);
     }
+
 }
