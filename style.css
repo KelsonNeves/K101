@@ -537,8 +537,9 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     transform: translateX(100px);
     opacity: 0;
-    border-left: 2px solid var(--primary-color);
-    border-right: 2px solid var(--primary-color);
+    border-radius: 5px;
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
     transition: transform 0.3s ease, opacity 0.3s ease;
     z-index: 1001;
     pointer-events: none;
@@ -857,3 +858,4 @@ body {
     }
 
 }
+
