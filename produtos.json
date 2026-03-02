@@ -31,7 +31,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -41,6 +41,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -76,7 +112,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -86,6 +122,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -121,7 +193,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -131,6 +203,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -166,7 +274,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -176,6 +284,122 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },{
+        "id": 1,
+        "nome": "Adesivo de Coração Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/BADBOY.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 2,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/G4 RAIVOSO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 3,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/GOL DO BAGAÇO1.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 4,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 5,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -211,7 +435,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -221,6 +445,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -256,7 +516,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -266,6 +526,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -301,7 +597,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -311,6 +607,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -346,7 +678,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -356,6 +688,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -391,7 +759,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -401,6 +769,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -436,7 +840,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -446,6 +850,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -481,7 +921,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -491,6 +931,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -526,7 +1002,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -536,6 +1012,42 @@
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
         "imagem": "imagens/produtos/2.png",
+        "colecao": "Estrelasddd",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 6,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
+        "colecao": "Estrelas",
+        "tags": ["estrela", "brilhante", "céu"]
+    },
+    {
+        "id": 7,
+        "nome": "Adesivo de Gato",
+        "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
+        "preco": 6.00,
+        "imagem": "imagens/produtos/OSASCORTE.png",
+        "colecao": "Animais",
+        "tags": ["gato", "animal", "fofo"]
+    },
+    {
+        "id": 8,
+        "nome": "Adesivo de Coração",
+        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
+        "preco": 5.50,
+        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "colecao": "Corações",
+        "tags": ["coração", "romântico", "pequeno"]
+    },
+    {
+        "id": 9,
+        "nome": "Adesivo de Estrela",
+        "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
+        "preco": 4.90,
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     },
@@ -571,7 +1083,7 @@
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
-        "imagem": "imagens/produtos/TIAGO-AUTOSOM.png",
+        "imagem": "imagens/produtos/PICAPAL_RAIVOSO.png",
         "colecao": "Corações",
         "tags": ["coração", "romântico", "pequeno"]
     },
@@ -585,34 +1097,25 @@
         "tags": ["estrela", "brilhante", "céu"]
     },
     {
-        "id": 1,
-        "nome": "Adesivo de Coração Adesivo de Coração",
-        "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
-        "preco": 5.50,
-        "imagem": "imagens/produtos/BADBOY.png",
-        "colecao": "Corações",
-        "tags": ["coração", "romântico", "pequeno"]
-    },
-    {
-        "id": 2,
+        "id": 6,
         "nome": "Adesivo de Estrela",
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
-        "imagem": "imagens/produtos/G4 RAIVOSO.png",
+        "imagem": "imagens/produtos/CABO_ENRROLADO.png",
         "colecao": "Estrelas",
         "tags": ["estrela", "brilhante", "céu"]
     },
     {
-        "id": 3,
+        "id": 7,
         "nome": "Adesivo de Gato",
         "descricao": "Adesivo fofo de gatinho. Recorte perfeito, parecendo um adesivo colado.",
         "preco": 6.00,
-        "imagem": "imagens/produtos/GOL DO BAGAÇO1.png",
+        "imagem": "imagens/produtos/OSASCORTE.png",
         "colecao": "Animais",
         "tags": ["gato", "animal", "fofo"]
     },
     {
-        "id": 4,
+        "id": 8,
         "nome": "Adesivo de Coração",
         "descricao": "Adesivo em recorte no formato de coração. Perfeito para scrapbooking e decoração.",
         "preco": 5.50,
@@ -621,14 +1124,13 @@
         "tags": ["coração", "romântico", "pequeno"]
     },
     {
-        "id": 5,
+        "id": 9,
         "nome": "Adesivo de Estrela",
         "descricao": "Adesivo brilhante em formato de estrela. Disponível em várias cores.",
         "preco": 4.90,
-        "imagem": "imagens/produtos/2.png",
+        "imagem": "imagens/produtos/PATO_RAIVOSO.png",
         "colecao": "Estrelasddd",
         "tags": ["estrela", "brilhante", "céu"]
     }
-
 
 ]
