@@ -11,9 +11,15 @@
     <!-- HEADER COM LOGO -->
     <header class="header">
         <div class="container">
-            <div class="logo-container">
-                <img src="imagens/logo.png" alt="Minha Logo" class="logo" id="logo-img">
-                <h1>K101</h1>
+            <div class="header-left">
+                <!-- BOTÃO DO MENU LATERAL - FALTAVA ISSO! -->
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo-container" id="logo-container" style="cursor: pointer;">
+                    <img src="imagens/logo.png" alt="Minha Logo" class="logo" id="logo-img">
+                    <h1>K101</h1>
+                </div>
             </div>
             
             <!-- ÍCONE DO CARRINHO -->
@@ -26,6 +32,24 @@
         </div>
     </header>
 
+    <!-- MENU LATERAL -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i> Página Inicial</a></li>
+                <li><a href="personalizado.html"><i class="fas fa-paint-brush"></i> Adesivos Personalizados</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Em manutenção</a></li>
+            </ul>
+        </div>
+    </div>
+
     <!-- BARRA DE PESQUISA E FILTROS -->
     <main class="main-container">
         <div class="pesquisa-container">
@@ -33,7 +57,6 @@
             <i class="fas fa-search pesquisa-icon"></i>
         </div>
         
-        <!-- BANNER DE COLEÇÕES -->
         <!-- BANNER DE COLEÇÕES -->
         <div class="banner-container" id="banner-container">
             <div class="banner-wrapper" id="banner-wrapper">
@@ -70,7 +93,7 @@
     <!-- MODAL DO PRODUTO -->
     <div id="produto-modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close"><i class="fas fa-times"></i></span>
             <div class="modal-body" id="modal-body">
                 <!-- Conteúdo do modal será carregado aqui -->
             </div>

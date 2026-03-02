@@ -929,56 +929,156 @@ function mostrarNotificacao(mensagem) {
 }
 
 // Configurar event listeners
-// Configurar event listeners
 function configurarEventListeners() {
+    console.log('Configurando event listeners...'); // Debug
+    
     // Pesquisa com debounce
     let timeoutId;
-    pesquisaInput.addEventListener('input', (e) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            termoPesquisa = e.target.value;
-            renderizarProdutos();
-        }, 300);
-    });
-    
-    // ===== NOVO: Evento de tecla Enter no campo de pesquisa =====
-    pesquisaInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // Previne comportamento padrão do formulário
+    if (pesquisaInput) {
+        pesquisaInput.addEventListener('input', (e) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                termoPesquisa = e.target.value;
+                renderizarProdutos();
+            }, 300);
+        });
+    }
+
+    // ===== Reset ao clicar na logo (COM SCROLL PARA O TOPO) =====
+    const logoContainer = document.getElementById('logo-container');
+    if (logoContainer) {
+        logoContainer.addEventListener('click', (e) => {
+            e.preventDefault();
             
-            const termo = e.target.value.trim();
+            // SCROLL PARA O TOPO DA PÁGINA
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Scroll suave
+            });
             
-            // Se o campo estiver vazio, apenas remove foco e restaura banner
-            if (termo === '') {
-                pesquisaInput.blur();
-                mostrarBanner(); // Restaura o banner se visível
-                return;
+            // Limpar campo de pesquisa
+            if (pesquisaInput) {
+                pesquisaInput.value = '';
+                termoPesquisa = '';
             }
             
-            // Feedback visual: mudar cor temporariamente
-            pesquisaInput.style.backgroundColor = '#f0f8ff';
-            pesquisaInput.style.borderColor = 'var(--primary-color)';
+            // Resetar filtro para 'todos'
+            filtroAtual = 'todos';
             
-            // Esconder o banner
-            esconderBanner();
+            // Atualizar botões de coleção
+            document.querySelectorAll('.colecao-btn').forEach(btn => {
+                btn.classList.remove('ativa');
+                if (btn.dataset.colecao === 'todos') {
+                    btn.classList.add('ativa');
+                }
+            });
             
-            // Atualiza a pesquisa imediatamente
-            termoPesquisa = termo;
+            // Mostrar banner novamente
+            mostrarBanner();
+            
+            // Resetar página atual
+            paginaAtual = 1;
+            
+            // Renderizar produtos
             renderizarProdutos();
             
-            // Remove o foco do campo de pesquisa
-            pesquisaInput.blur();
-            
-            // Restaura a cor original após um tempo
+            // Feedback visual sutil
+            logoContainer.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                pesquisaInput.style.backgroundColor = '';
-                pesquisaInput.style.borderColor = '';
-            }, 500);
-            
-            // CHAMAR A FUNÇÃO AUXILIAR PARA ROLAR ATÉ A INFORMAÇÃO DOS PRODUTOS
-            rolarParaInfoProdutos();
-        }
-    });
+                logoContainer.style.transform = '';
+            }, 200);
+        });
+    }
+    
+    // ===== Menu lateral =====
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarClose = document.getElementById('sidebar-close');
+    
+    console.log('menuToggle:', menuToggle); // Debug
+    console.log('sidebar:', sidebar); // Debug
+    console.log('sidebarOverlay:', sidebarOverlay); // Debug
+    console.log('sidebarClose:', sidebarClose); // Debug
+    
+    if (menuToggle && sidebar && sidebarOverlay && sidebarClose) {
+        // Abrir menu
+        menuToggle.addEventListener('click', () => {
+            console.log('Clicou no menu toggle!'); // Debug
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Previne scroll da página
+        });
+        
+        // Fechar menu (botão X)
+        sidebarClose.addEventListener('click', () => {
+            console.log('Fechando menu pelo X'); // Debug
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        // Fechar menu (clicar no overlay)
+        sidebarOverlay.addEventListener('click', () => {
+            console.log('Fechando menu pelo overlay'); // Debug
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        // Fechar menu com tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                console.log('Fechando menu por ESC'); // Debug
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    } else {
+        console.log('Algum elemento do menu não foi encontrado!');
+    }
+    
+    // ===== Evento de tecla Enter no campo de pesquisa =====
+    if (pesquisaInput) {
+        pesquisaInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Previne comportamento padrão do formulário
+                
+                const termo = e.target.value.trim();
+                
+                // Se o campo estiver vazio, apenas remove foco e restaura banner
+                if (termo === '') {
+                    pesquisaInput.blur();
+                    mostrarBanner(); // Restaura o banner se visível
+                    return;
+                }
+                
+                // Feedback visual: mudar cor temporariamente
+                pesquisaInput.style.backgroundColor = '#f0f8ff';
+                pesquisaInput.style.borderColor = 'var(--primary-color)';
+                
+                // Esconder o banner
+                esconderBanner();
+                
+                // Atualiza a pesquisa imediatamente
+                termoPesquisa = termo;
+                renderizarProdutos();
+                
+                // Remove o foco do campo de pesquisa
+                pesquisaInput.blur();
+                
+                // Restaura a cor original após um tempo
+                setTimeout(() => {
+                    pesquisaInput.style.backgroundColor = '';
+                    pesquisaInput.style.borderColor = '';
+                }, 500);
+                
+                // CHAMAR A FUNÇÃO AUXILIAR PARA ROLAR ATÉ A INFORMAÇÃO DOS PRODUTOS
+                rolarParaInfoProdutos();
+            }
+        });
+    }
     
     // Eventos do banner
     const btnPrev = document.getElementById('banner-prev');

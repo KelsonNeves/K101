@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Personalizar Nome - K101</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Filtro SVG com controles -->
+    <svg style="position: absolute; width: 0; height: 0;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="borda-filete" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox">
+                <!-- Grossura da borda -->
+                <feMorphology in="SourceAlpha" operator="dilate" radius="10" result="borda-grossa" id="controle-grossura"/>
+                
+                <!-- Arredondamento dos cantos -->
+                <feGaussianBlur in="borda-grossa" stdDeviation="5" result="borda-blur" id="controle-arredondamento"/>
+                
+                <!-- Limiarização -->
+                <feComponentTransfer in="borda-blur" result="borda-arredondada">
+                    <feFuncA type="linear" slope="5" intercept="-0.9"/>
+                </feComponentTransfer>
+                
+                <!-- Cor preta -->
+                <feColorMatrix in="borda-arredondada" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="borda-preta"/>
+                
+                <!-- Composição com original -->
+                <feComposite in="SourceGraphic" in2="borda-preta" operator="over"/>
+            </filter>
+        </defs>
+    </svg>
+    
+    <style>
+        /* Reset e estilos base */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+            overflow-x: hidden;
+        }
+
+        /* HEADER fixo */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        /* Container principal centralizado */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* CABEÇALHO DO EDITOR */
+        .cabecalho-editor {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-right: 420px; /* Espaço para a prévia fixa */
+        }
+
+        .btn-voltar {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-voltar:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .cabecalho-editor h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        /* PRÉVIA FIXA EM TODAS AS TELAS */
+        .previa-container {
+            position: fixed;
+            top: 150px;
+            right: calc(50% - 400px); /* Centralizado no lado direito */
+            width: 800px;
+            background-color: #f8f9fa;
+            background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 2px solid var(--primary-color);
+            z-index: 900;
+        }
+
+        /* CONTEÚDO (CONTROLES) OCUPA O LADO ESQUERDO */
+        .conteudo-wrapper {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .controles-edicao {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        #previa-adesivo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-align: center;
+            word-break: break-word;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.2s ease;
+            line-height: 1.2;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            z-index: 2;
+            max-width: 100%;
+        }
+
+        /* Efeito FILETE */
+        #previa-adesivo.com-borda-filete {
+            filter: url(#borda-filete) drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+            color: currentColor;
+        }
+
+        #previa-adesivo:not(.com-borda-filete) {
+            filter: drop-shadow(0 0 0 3px black) drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .dica-filete {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #2c3e50;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary-color);
+        }
+
+        /* ===== TODOS OS SEUS ESTILOS DE CONTROLES PERMANECEM IGUAIS ===== */
+        .grupo-controle {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        .grupo-controle:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .grupo-controle label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .campo-texto {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .campo-texto:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(18, 172, 159, 0.1);
+        }
+
+        .selecao-cor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .cor-opcao {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .cor-opcao:hover {
+            transform: scale(1.1);
+        }
+
+        .cor-opcao.selecionada {
+            border-color: #333;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .selecao-fonte {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .fonte-opcao {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .fonte-opcao:hover {
+            border-color: var(--primary-color);
+        }
+
+        .fonte-opcao.selecionada {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-borda {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-borda:hover {
+            background: #f5f5f5;
+        }
+
+        .checkbox-borda input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-borda span {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .controle-deslizante {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .controle-deslizante label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .controle-deslizante input[type=range] {
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .controle-deslizante input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .controle-deslizante input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--primary-color);
+        }
+
+        .valor-controle {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .btn-adicionar {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 2rem;
+            transition: all 0.3s;
+        }
+
+        .btn-adicionar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        /* RESPONSIVIDADE - PRÉVIA SEMPRE FIXA */
+        @media (max-width: 1200px) {
+            .previa-container {
+                right: calc(50% - 400px);
+                width: 800px;
+            }
+            
+            .cabecalho-editor {
+                padding-right: 380px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-wrapper {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .previa-container {
+                position: fixed;
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                width: auto;
+                min-height: auto;
+                padding: 1.5rem;
+                z-index: 1000;
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            }
+
+            #previa-adesivo {
+                font-size: 2.5rem;
+            }
+
+            .cabecalho-editor {
+                padding-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .conteudo-wrapper {
+                max-width: 100%;
+                margin-bottom: 180px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .previa-container {
+                padding: 1rem;
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            #previa-adesivo {
+                font-size: 2rem;
+            }
+
+            .dica-filete {
+                font-size: 0.75rem;
+                margin-top: 0.5rem;
+            }
+
+            .controles-edicao {
+                padding: 1.5rem;
+            }
+
+            .cor-opcao {
+                width: 45px;
+                height: 45px;
+            }
+
+            .fonte-opcao {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .conteudo-wrapper {
+                margin-bottom: 150px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cabecalho-editor {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .cabecalho-editor h1 {
+                font-size: 1.2rem;
+            }
+
+            #previa-adesivo {
+                font-size: 1.8rem;
+            }
+
+            .cor-opcao {
+                width: 40px;
+                height: 40px;
+            }
+
+            .btn-adicionar {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .conteudo-wrapper {
+                margin-bottom: 150px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* Ajuste para telas muito pequenas */
+        @media (max-width: 360px) {
+            #previa-adesivo {
+                font-size: 1.5rem;
+            }
+
+            .previa-container {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-left">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer;">
+                    <img src="../../imagens/logo.png" alt="K101" class="logo">
+                    <h1>K101 - Personalizar Nome</h1>
+                </div>
+            </div>
+            <div class="carrinho-icon">
+                <a href="../../carrinho.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="carrinho-count" id="carrinho-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="../../index.html"><i class="fas fa-home"></i> Página Inicial</a></li>
+                <li><a href="../personalizado.html"><i class="fas fa-paint-brush"></i> Adesivos Personalizados</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Em manutenção</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <!-- CABEÇALHO -->
+        <div class="cabecalho-editor">
+            <button class="btn-voltar" onclick="window.location.href='../../personalizado.html'">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <h1>Personalizar Adesivo de Nome</h1>
+        </div>
+
+        <!-- PRÉVIA FIXA EM TODAS AS TELAS -->
+        <div class="previa-container">
+            <div class="previa-adesivo-container">
+                <div id="previa-adesivo">Seu Nome</div>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO (CONTROLES) -->
+        <div class="conteudo-wrapper">
+            <div class="controles-edicao">
+                <!-- Texto -->
+                <div class="grupo-controle">
+                    <label><i class="fas fa-pencil-alt"></i> Digite o nome:</label>
+                    <input type="text" id="texto-adesivo" class="campo-texto" placeholder="Ex: Ana, João, Maria..." value="Seu Nome">
+                </div>
+
+                <!-- Cores -->
+                <div class="grupo-controle">
+                    <label><i class="fas fa-palette"></i> Escolha a cor:</label>
+                    <div class="selecao-cor" id="selecao-cor">
+                        <!-- As cores serão carregadas aqui via JS -->
+                    </div>
+                </div>
+
+                <!-- Fontes -->
+                <div class="grupo-controle">
+                    <label><i class="fas fa-font"></i> Escolha a fonte:</label>
+                    <div class="selecao-fonte" id="selecao-fonte">
+                        <!-- As fontes serão carregadas aqui via JS -->
+                    </div>
+                </div>
+
+                <!-- Borda com efeito Filete -->
+                <div class="grupo-controle">
+                    <label><i class="fas fa-border-all"></i> Borda com cantos arredondados (Filete):</label>
+                    
+                    <label class="checkbox-borda">
+                        <input type="checkbox" id="borda-ativa">
+                        <span>Ativar borda preta com cantos arredondados</span>
+                    </label>
+                    
+                    <div id="controles-filete" style="display: none;">
+                        <!-- Controle de grossura -->
+                        <div class="controle-deslizante">
+                            <label>
+                                <span><i class="fas fa-arrows-alt-h"></i> Grossura da borda:</span>
+                                <span class="valor-controle" id="grossura-valor">10</span>
+                            </label>
+                            <input type="range" id="grossura-borda" min="3" max="5" value="3" step="1">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 0.3rem;">
+                                <span>Fina</span>
+                                <span>Média</span>
+                                <span>Grossa</span>
+                            </div>
+                        </div>
+
+                        <!-- Controle de arredondamento -->
+                        <div class="controle-deslizante">
+                            <label>
+                                <span><i class="fas fa-circle"></i> Arredondamento dos cantos:</span>
+                                <span class="valor-controle" id="arredondamento-valor">5</span>
+                            </label>
+                            <input type="range" id="arredondamento-borda" min="0" max="1" value="0" step="1">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 0.3rem;">
+                                <span>Pouco</span>
+                                <span>Médio</span>
+                                <span>Muito</span>
+                            </div>
+                        </div>
+
+                        <div class="dica-filete">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>O arredondamento suaviza os cantos da borda</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão Adicionar ao Carrinho -->
+                <button class="btn-adicionar" id="adicionar-carrinho">
+                    <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificações -->
+    <div id="notificacao" class="notificacao"></div>
+
+    <script>
+        // ===== CONFIGURAÇÕES PERSONALIZÁVEIS =====
+        const CORES_DISPONIVEIS = [
+            { nome: 'Vermelho', codigo: '#FF0000' },
+            { nome: 'Azul', codigo: '#0000FF' },
+            { nome: 'Verde', codigo: '#00FF00' },
+            { nome: 'Amarelo', codigo: '#FFFF00' },
+            { nome: 'Roxo', codigo: '#800080' },
+            { nome: 'Laranja', codigo: '#FFA500' },
+            { nome: 'Rosa', codigo: '#FF69B4' },
+            { nome: 'Preto', codigo: '#000000' },
+            { nome: 'Branco', codigo: '#FFFFFF' },
+            { nome: 'Vinho', codigo: '#800000' }
+        ];
+
+        const FONTES_DISPONIVEIS = [
+            { nome: 'Padrão', arquivo: 'Arial, sans-serif' },
+            { nome: 'Personalizada 1', arquivo: 'url("../fontes/Mostwasted.ttf")' },
+            { nome: 'Personalizada 2', arquivo: 'url("../fontes/OCR-B 10 BT.ttf")' },
+            { nome: 'Personalizada 2', arquivo: 'url("../fontes/revue-bold.ttf")' },
+        ];
+        // ==========================================
+
+        // Elementos do DOM
+        const previaElement = document.getElementById('previa-adesivo');
+        const textoInput = document.getElementById('texto-adesivo');
+        const corContainer = document.getElementById('selecao-cor');
+        const fonteContainer = document.getElementById('selecao-fonte');
+        
+        // Elementos da borda
+        const bordaCheckbox = document.getElementById('borda-ativa');
+        const controlesFilete = document.getElementById('controles-filete');
+        const grossuraSlider = document.getElementById('grossura-borda');
+        const arredondamentoSlider = document.getElementById('arredondamento-borda');
+        const grossuraValor = document.getElementById('grossura-valor');
+        const arredondamentoValor = document.getElementById('arredondamento-valor');
+
+        // Elementos do filtro SVG
+        const controleGrossura = document.getElementById('controle-grossura');
+        const controleArredondamento = document.getElementById('controle-arredondamento');
+
+        // Estado atual
+        let corSelecionada = CORES_DISPONIVEIS[0];
+        let fonteSelecionada = FONTES_DISPONIVEIS[0];
+        let bordaAtiva = false;
+        let grossuraAtual = 3;
+        let arredondamentoAtual = 0;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarOpcoes();
+            configurarEventListeners();
+            atualizarPrevia();
+            atualizarContadorCarrinho();
+            
+            // Inicializa os valores do filtro
+            atualizarFiltro(grossuraAtual, arredondamentoAtual);
+        });
+
+        // Carrega as opções
+        function inicializarOpcoes() {
+            // Cores
+            CORES_DISPONIVEIS.forEach((cor, index) => {
+                const corDiv = document.createElement('div');
+                corDiv.className = `cor-opcao ${index === 0 ? 'selecionada' : ''}`;
+                corDiv.style.backgroundColor = cor.codigo;
+                corDiv.dataset.cor = cor.codigo;
+                corDiv.dataset.nome = cor.nome;
+                corDiv.title = cor.nome;
+                corContainer.appendChild(corDiv);
+            });
+
+            // Fontes
+            FONTES_DISPONIVEIS.forEach((fonte, index) => {
+                if (fonte.arquivo.startsWith('url(')) {
+                    const fontFace = `
+                        @font-face {
+                            font-family: '${fonte.nome}';
+                            src: ${fonte.arquivo};
+                        }
+                    `;
+                    const style = document.createElement('style');
+                    style.textContent = fontFace;
+                    document.head.appendChild(style);
+                }
+
+                const fonteBtn = document.createElement('button');
+                fonteBtn.className = `fonte-opcao ${index === 0 ? 'selecionada' : ''}`;
+                fonteBtn.textContent = fonte.nome;
+                fonteBtn.dataset.fonte = fonte.arquivo.startsWith('url(') ? fonte.nome : 'Arial, sans-serif';
+                fonteBtn.dataset.nome = fonte.nome;
+                fonteBtn.style.fontFamily = fonte.arquivo.startsWith('url(') ? fonte.nome : 'Arial, sans-serif';
+                fonteContainer.appendChild(fonteBtn);
+            });
+        }
+
+        // Configura eventos
+        function configurarEventListeners() {
+            // Texto
+            textoInput.addEventListener('input', atualizarPrevia);
+
+            // Cor
+            corContainer.addEventListener('click', (e) => {
+                const corDiv = e.target.closest('.cor-opcao');
+                if (!corDiv) return;
+
+                document.querySelectorAll('.cor-opcao').forEach(c => c.classList.remove('selecionada'));
+                corDiv.classList.add('selecionada');
+                corSelecionada = {
+                    nome: corDiv.dataset.nome,
+                    codigo: corDiv.dataset.cor
+                };
+                atualizarPrevia();
+            });
+
+            // Fonte
+            fonteContainer.addEventListener('click', (e) => {
+                const fonteBtn = e.target.closest('.fonte-opcao');
+                if (!fonteBtn) return;
+
+                document.querySelectorAll('.fonte-opcao').forEach(f => f.classList.remove('selecionada'));
+                fonteBtn.classList.add('selecionada');
+                
+                const fonteNome = fonteBtn.dataset.nome;
+                fonteSelecionada = FONTES_DISPONIVEIS.find(f => f.nome === fonteNome);
+                atualizarPrevia();
+            });
+
+            // Borda checkbox
+            bordaCheckbox.addEventListener('change', (e) => {
+                bordaAtiva = e.target.checked;
+                controlesFilete.style.display = bordaAtiva ? 'block' : 'none';
+                atualizarPrevia();
+            });
+
+            // Sliders
+            grossuraSlider.addEventListener('input', (e) => {
+                grossuraAtual = parseInt(e.target.value);
+                grossuraValor.textContent = grossuraAtual;
+                atualizarFiltro(grossuraAtual, arredondamentoAtual);
+                atualizarPrevia();
+            });
+
+            arredondamentoSlider.addEventListener('input', (e) => {
+                arredondamentoAtual = parseInt(e.target.value);
+                arredondamentoValor.textContent = arredondamentoAtual;
+                atualizarFiltro(grossuraAtual, arredondamentoAtual);
+                atualizarPrevia();
+            });
+
+            // Botão adicionar ao carrinho
+            document.getElementById('adicionar-carrinho').addEventListener('click', adicionarAoCarrinho);
+        }
+
+        // Atualiza o filtro SVG com os valores atuais
+        function atualizarFiltro(grossura, arredondamento) {
+            if (controleGrossura) {
+                controleGrossura.setAttribute('radius', grossura);
+            }
+            
+            if (controleArredondamento) {
+                controleArredondamento.setAttribute('stdDeviation', arredondamento);
+            }
+        }
+
+        // Atualiza prévia
+        function atualizarPrevia() {
+            const texto = textoInput.value.trim() || 'Seu Nome';
+            previaElement.textContent = texto;
+
+            // Aplica cor
+            previaElement.style.color = corSelecionada.codigo;
+
+            // Aplica fonte
+            if (fonteSelecionada.arquivo.startsWith('url(')) {
+                previaElement.style.fontFamily = `'${fonteSelecionada.nome}', Arial, sans-serif`;
+            } else {
+                previaElement.style.fontFamily = fonteSelecionada.arquivo;
+            }
+
+            // Remove classe de borda
+            previaElement.classList.remove('com-borda-filete');
+            
+            // Aplica borda se ativa
+            if (bordaAtiva) {
+                previaElement.classList.add('com-borda-filete');
+            } else {
+                previaElement.style.filter = 'drop-shadow(0 0 0 3px black) drop-shadow(2px 2px 4px rgba(0,0,0,0.3))';
+            }
+        }
+
+        // Adiciona ao carrinho
+        function adicionarAoCarrinho() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+
+            const nomePersonalizado = `Adesivo Nome: ${textoInput.value.trim() || 'Sem nome'}`;
+            const preco = 10.00;
+
+            const novoItem = {
+                id: `nome-${Date.now()}`,
+                nome: nomePersonalizado,
+                preco: preco,
+                imagem: '',
+                quantidade: 1,
+                configuracao: {
+                    tipo: 'nome',
+                    texto: textoInput.value,
+                    cor: corSelecionada,
+                    fonte: fonteSelecionada,
+                    bordaAtiva: bordaAtiva,
+                    grossuraBorda: grossuraAtual,
+                    arredondamentoBorda: arredondamentoAtual
+                }
+            };
+
+            carrinho.push(novoItem);
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+            mostrarNotificacao('✅ Adesivo de nome adicionado ao carrinho!');
+            atualizarContadorCarrinho();
+        }
+
+        // Funções auxiliares
+        function atualizarContadorCarrinho() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+            
+            const carrinhoCount = document.getElementById('carrinho-count');
+            if (carrinhoCount) {
+                carrinhoCount.textContent = totalItens;
+            }
+        }
+
+        function mostrarNotificacao(mensagem) {
+            const notificacao = document.getElementById('notificacao');
+            if (!notificacao) return;
+
+            notificacao.textContent = mensagem;
+            notificacao.classList.add('mostrar');
+            
+            setTimeout(() => {
+                notificacao.classList.remove('mostrar');
+            }, 2000);
+        }
+
+        // Menu lateral
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarClose = document.getElementById('sidebar-close');
+            
+            if (menuToggle && sidebar && sidebarOverlay && sidebarClose) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                sidebarClose.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+                
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
