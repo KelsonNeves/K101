@@ -729,7 +729,7 @@ function abrirModalProduto(produtoId) {
     
     modalBody.innerHTML = `
         <div class="modal-produto">
-            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 10px;" onerror="this.src='imagens/produtos/default.jpg'">
+            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: 10px;" onerror="this.src='imagens/produtos/default.jpg'">
             <h2 style="margin: 20px 0 10px; font-size: 1.1rem;">${produto.nome}</h2>
             <p style="color: #666; margin-bottom: 15px; font-size: 0.8rem;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
             <div class="modal-preco-quantidade">
