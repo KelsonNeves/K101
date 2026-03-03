@@ -42,20 +42,20 @@ function renderizarItensCarrinho(carrinho) {
         
         html += `
             <div class="carrinho-item" data-id="${item.id}">
-                <img src="${item.imagem}" alt="${item.nome}" class="item-imagem">
+                <img src="${item.imagem}" alt="${item.nome}" class="item-imagem" onerror="this.src='imagens/produtos/default.jpg'">
                 <div class="item-info">
                     <h3>${item.nome}</h3>
                     <p class="item-preco">R$ ${item.preco.toFixed(2)}</p>
                 </div>
                 <div class="item-quantidade">
-                    <button class="quantidade-btn" onclick="alterarQuantidade(${item.id}, -1)">-</button>
+                    <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', -1)">-</button>
                     <span class="quantidade-input">${item.quantidade}</span>
-                    <button class="quantidade-btn" onclick="alterarQuantidade(${item.id}, 1)">+</button>
+                    <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', 1)">+</button>
                 </div>
                 <div class="item-total">
                     R$ ${totalItem.toFixed(2)}
                 </div>
-                <i class="fas fa-trash item-remove" onclick="removerItem(${item.id})"></i>
+                <i class="fas fa-trash item-remove" onclick="removerItem('${item.id}')"></i>
             </div>
         `;
     });
@@ -94,29 +94,52 @@ function alterarQuantidade(produtoId, delta) {
     if (itemIndex !== -1) {
         const novaQuantidade = carrinho[itemIndex].quantidade + delta;
         
-        if (novaQuantidade <= 0) {
-            carrinho.splice(itemIndex, 1);
-        } else {
+        // ALTERAÇÃO AQUI: Só permite diminuir até 1, nunca remove
+        if (novaQuantidade >= 1) {
             carrinho[itemIndex].quantidade = novaQuantidade;
+            
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            renderizarCarrinho();
+            
+            // Atualizar contador em todas as abas
+            atualizarContadoresGlobalmente();
         }
-        
-        localStorage.setItem('carrinho', JSON.stringify(carrinho));
-        renderizarCarrinho();
-        
-        // Atualizar contador no header da página principal (se existir)
-        if (window.opener && !window.opener.closed) {
-            window.opener.atualizarContadorCarrinho();
-        }
+        // Se tentar diminuir abaixo de 1, simplesmente não faz nada
     }
 }
 
-// Remover item específico
+// Função removerItem
 function removerItem(produtoId) {
     let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-    carrinho = carrinho.filter(item => item.id !== produtoId);
+    carrinho = carrinho.filter(item => item.id !== produtoId); // Agora compara string com string
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     renderizarCarrinho();
+    
+    // Atualizar contador em todas as abas
+    atualizarContadoresGlobalmente();
 }
+
+// NOVA FUNÇÃO - Atualizar contadores em todas as páginas
+function atualizarContadoresGlobalmente() {
+    const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+    
+    // Atualizar todos os elementos com id 'carrinho-count' na página atual
+    const contadores = document.querySelectorAll('#carrinho-count');
+    contadores.forEach(el => {
+        if (el) el.textContent = totalItens;
+    });
+    
+    // Disparar evento personalizado para outras abas
+    localStorage.setItem('carrinho-update', Date.now().toString());
+}
+
+// Ouvir mudanças em outras abas
+window.addEventListener('storage', (e) => {
+    if (e.key === 'carrinho' || e.key === 'carrinho-update') {
+        renderizarCarrinho();
+    }
+});
 
 // Limpar carrinho completamente
 function limparCarrinho() {

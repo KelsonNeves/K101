@@ -755,7 +755,7 @@ function abrirModalProduto(produtoId) {
             <div class="modal-total" id="modal-total" style="text-align: center;">
                 Total: R$ ${produto.preco.toFixed(2)}
             </div>
-            <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinhoModal(${produto.id})">
+            <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinho(${produto.id})">
                 <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
             </button>
             <p style="margin-bottom: 20px; margin-top: 20px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
@@ -799,7 +799,7 @@ function atualizarPrecoTotal() {
 }
 
 // Adicionar ao carrinho a partir do modal
-function adicionarAoCarrinhoModal(produtoId) {
+function adicionarAoCarrinho(produtoId) {
     const produto = produtos.find(p => p.id === produtoId);
     if (!produto) return;
     
@@ -808,13 +808,13 @@ function adicionarAoCarrinhoModal(produtoId) {
     
     let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     
-    const itemExistente = carrinho.find(item => item.id === produtoId);
+    const itemExistente = carrinho.find(item => item.id === produto.id.toString());
     
     if (itemExistente) {
         itemExistente.quantidade += quantidade;
     } else {
         carrinho.push({
-            id: produto.id,
+            id: produto.id.toString(),
             nome: produto.nome,
             preco: produto.preco,
             imagem: produto.imagem,
@@ -841,34 +841,6 @@ window.onclick = (event) => {
     }
 };
 
-// Função do carrinho
-function adicionarAoCarrinho(event, produtoId) {
-    event.stopPropagation();
-    
-    const produto = produtos.find(p => p.id === produtoId);
-    if (!produto) return;
-    
-    let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-    
-    const itemExistente = carrinho.find(item => item.id === produtoId);
-    
-    if (itemExistente) {
-        itemExistente.quantidade += 1;
-    } else {
-        carrinho.push({
-            id: produto.id,
-            nome: produto.nome,
-            preco: produto.preco,
-            imagem: produto.imagem,
-            quantidade: 1
-        });
-    }
-    
-    localStorage.setItem('carrinho', JSON.stringify(carrinho));
-    
-    mostrarNotificacao('✅ Produto adicionado ao carrinho!');
-    atualizarContadorCarrinho();
-}
 
 // Atualizar contador do carrinho
 function atualizarContadorCarrinho() {
@@ -945,50 +917,50 @@ function configurarEventListeners() {
     }
 
     // ===== Reset ao clicar na logo (COM SCROLL PARA O TOPO) =====
-    const logoContainer = document.getElementById('logo-container');
-    if (logoContainer) {
-        logoContainer.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            // SCROLL PARA O TOPO DA PÁGINA
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth' // Scroll suave
-            });
-            
-            // Limpar campo de pesquisa
-            if (pesquisaInput) {
-                pesquisaInput.value = '';
-                termoPesquisa = '';
-            }
-            
-            // Resetar filtro para 'todos'
-            filtroAtual = 'todos';
-            
-            // Atualizar botões de coleção
-            document.querySelectorAll('.colecao-btn').forEach(btn => {
-                btn.classList.remove('ativa');
-                if (btn.dataset.colecao === 'todos') {
-                    btn.classList.add('ativa');
-                }
-            });
-            
-            // Mostrar banner novamente
-            mostrarBanner();
-            
-            // Resetar página atual
-            paginaAtual = 1;
-            
-            // Renderizar produtos
-            renderizarProdutos();
-            
-            // Feedback visual sutil
-            logoContainer.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                logoContainer.style.transform = '';
-            }, 200);
+const logoContainer = document.getElementById('logo-container');
+if (logoContainer) {
+    logoContainer.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // SCROLL PARA O TOPO DA PÁGINA
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Scroll suave
         });
-    }
+        
+        // Limpar campo de pesquisa
+        if (pesquisaInput) {
+            pesquisaInput.value = '';
+            termoPesquisa = '';
+        }
+        
+        // Resetar filtro para 'todos'
+        filtroAtual = 'todos';
+        
+        // Atualizar botões de coleção
+        document.querySelectorAll('.colecao-btn').forEach(btn => {
+            btn.classList.remove('ativa');
+            if (btn.dataset.colecao === 'todos') {
+                btn.classList.add('ativa');
+            }
+        });
+        
+        // Mostrar banner novamente
+        mostrarBanner();
+        
+        // Resetar página atual
+        paginaAtual = 1;
+        
+        // Renderizar produtos
+        renderizarProdutos();
+        
+        // Feedback visual sutil
+        logoContainer.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            logoContainer.style.transform = '';
+        }, 200);
+    });
+}
     
     // ===== Menu lateral =====
     const menuToggle = document.getElementById('menu-toggle');
