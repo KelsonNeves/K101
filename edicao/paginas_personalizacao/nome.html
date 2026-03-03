@@ -51,20 +51,19 @@
 
         /* Container principal centralizado */
         .main-wrapper {
-            max-width: 1200px;
+            max-width: 800px; /* Largura centralizada para o formulário não ficar largo demais */
             margin: 0 auto;
-            padding: 100px 20px 20px;
-            position: relative;
-            min-height: 100vh;
+            padding: 100px 20px 40px;
+            display: block; /* Garante que os elementos fiquem um abaixo do outro */
         }
 
         /* CABEÇALHO DO EDITOR */
         .cabecalho-editor {
+            width: 100%;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 2rem;
-            padding-right: 420px;
         }
 
         .btn-voltar {
@@ -94,28 +93,27 @@
 
         /* PRÉVIA FIXA */
         .previa-container {
-            position: fixed;
-            top: 150px;
-            right: calc(50% - 400px);
-            width: 800px;
+            position: -webkit-sticky; /* Suporte Safari */
+            position: sticky;
+            top: 100px;       /* Distância do topo (ajuste conforme a altura do seu header) */
+            width: 100%;
+            height: 150px;   /* Altura que você definiu anteriormente */
             background-color: #f8f9fa;
             background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
             background-size: 20px 20px;
             border-radius: 20px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border: 2px solid var(--primary-color);
-            z-index: 900;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--primary-color);
+            z-index: 950;    /* Abaixo apenas do Header e Sidebar */
+            margin-bottom: 30px; /* Espaço para o começo dos controles */
         }
 
         .conteudo-wrapper {
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
+            margin: 0 auto;
         }
 
         .controles-edicao {
@@ -229,6 +227,7 @@
             border-radius: 8px;
             transition: background 0.3s;
             margin-bottom: 1rem;
+            accent-color: var(--primary-color);
         }
 
         .checkbox-borda:hover {
@@ -310,6 +309,47 @@
             border-radius: 8px;
             transition: background 0.3s;
         }
+        /* Estiliza a "bolinha" de seleção (radio button) em si */
+        .opcao-cor-borda input[type="radio"] {
+            /* Remove a aparência padrão em navegadores modernos para aplicar a nossa */
+            appearance: none;
+            -webkit-appearance: none;
+            
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            margin-right: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+        }
+
+        /* Estado quando a bolinha está selecionada */
+        .opcao-cor-borda input[type="radio"]:checked {
+            border-color: var(--primary-color);
+            background-color: white; /* Fundo branco para destacar o ponto central */
+        }
+
+        /* Cria o ponto central colorido dentro da bolinha */
+        .opcao-cor-borda input[type="radio"]:checked::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: block;
+        }
+
+        /* Efeito de hover na bolinha */
+        .opcao-cor-borda input[type="radio"]:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(18, 172, 159, 0.3); /* Sombra suave com a cor primária */
+        }
+        
 
         .opcao-cor-borda:hover {
             background: #e9ecef;
@@ -321,15 +361,52 @@
             cursor: pointer;
         }
 
+        /* 3. Barras de Deslizar (Sliders) */
+        /* Estiliza a "bolinha" do slider no Chrome, Edge e Safari */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        /* Estiliza a "bolinha" no Firefox */
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+
+        /* Estiliza a linha (track) quando o usuário passa o mouse ou interage */
+        input[type="range"]:active::-webkit-slider-runnable-track {
+            background: #e0e0e0; /* Cor de fundo da linha */
+        }
+
+        /* Caso queira que o preenchimento da barra (accent) seja a cor primária */
+        input[type="range"] {
+            accent-color: var(--primary-color);
+        }
+
         .cor-preview {
             width: 25px;
             height: 25px;
             border-radius: 4px;
             border: 2px solid #333;
         }
+        .cor-preview.selecionada {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
 
         .cor-preview.preta {
             background: black;
+            
         }
 
         .cor-preview.branca {
@@ -453,6 +530,49 @@
             border-top: 2px dashed var(--border-color);
             margin-top: 0.5rem;
         }
+        /* Estilos do Loading */
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Classe para esconder o loading */
+        .loading-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .previa-adesivo-container {
+            width: 90%;
+            height: 150px; /* Altura fixa para manter a consistência */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #svg-editor {
+            width: 100%;
+            height: 100%;
+            transition: viewBox 0.3s ease-in-out; /* Suaviza o zoom ao digitar */
+        }
+
+        #svg-texto-frente, #svg-texto-contorno {
+            font-weight: bold;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+
 
         /* Responsividade */
         @media (max-width: 1200px) {
@@ -477,7 +597,7 @@
                 right: 20px;
                 left: 20px;
                 width: auto;
-                min-height: auto;
+                min-height: 150px;
                 padding: 1.5rem;
                 z-index: 1000;
                 box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
@@ -510,6 +630,9 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            .previa-container {
+                height: 100px;
+            }
             #previa-adesivo {
                 font-size: 1.8rem;
             }
@@ -521,13 +644,39 @@
     </style>
 </head>
 <body>
+    <div id="loading-overlay" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out, visibility 0.5s;
+    ">
+        <img src="../../imagens/logo1.png" alt="Logo K101" style="
+            width: 200px; /* Ajuste o tamanho da logo conforme desejar */
+            height: auto;
+            margin-bottom: 20px; /* Espaço entre a logo e o círculo */
+        ">
+
+        <div class="loader"></div>
+
+        <p style="margin-top: 20px; color: var(--primary-color); font-weight: 600; font-family: sans-serif; letter-spacing: 1px;">
+            PREPARANDO EDITOR...
+        </p>
+    </div>
     <header class="header">
         <div class="container">
             <div class="header-left">
                 <button class="menu-toggle" id="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer;">
+                <div class="logo-container" onclick="window.location.href='../../nav.html'" style="cursor: pointer;">
                     <img src="../../imagens/logo.png" alt="K101" class="logo">
                     <h1>K101</h1>
                 </div>
@@ -570,7 +719,25 @@
         <!-- PRÉVIA FIXA -->
         <div class="previa-container">
             <div class="previa-adesivo-container">
-                <div id="previa-adesivo">Seu Nome</div>
+                <svg id="svg-editor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="100%" height="100%">
+                    <defs>
+                        <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                            <feOffset dx="2" dy="2" />
+                            <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.5" />
+                            </feComponentTransfer>
+                            <feMerge>
+                                <feMergeNode />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <g filter="url(#dropShadow)">
+                        <text id="svg-texto-contorno" fill="none" stroke-width="0" stroke-linejoin="round" stroke-linecap="round"></text>
+                        <text id="svg-texto-frente"></text>
+                    </g>
+                </svg>
             </div>
         </div>
 
@@ -580,10 +747,19 @@
                 <!-- Texto -->
                 <div class="grupo-controle">
                     <label><i class="fas fa-pencil-alt"></i> Digite o nome:</label>
-                    <input type="text" id="texto-adesivo" class="campo-texto" placeholder="Ex: Ana, João, Maria..." value="Seu Nome">
+                    <input type="text" id="texto-adesivo" class="campo-texto" placeholder="Ex: Ana, João, Maria..." value="">
                 </div>
 
                 <!-- Cores -->
+                 <div class="grupo-controle">
+                    <label><i class="fas fa-layer-group"></i> Tipo de Adesivo:</label>
+                    <select id="selecao-tipo-adesivo" class="campo-texto">
+                        <option value="vinil">Vinil Brilho</option>
+                        <option value="refletivo">Refletivo</option>
+                        <option value="metalico">Metálico / Cromado</option>
+                        <option value="fluorescente">Fluorescente (Neon)</option>
+                    </select>
+                </div>
                 <div class="grupo-controle">
                     <label><i class="fas fa-palette"></i> Escolha a cor:</label>
                     <div class="selecao-cor" id="selecao-cor"></div>
@@ -612,12 +788,10 @@
                                 <label class="opcao-cor-borda">
                                     <input type="radio" name="cor-borda" id="borda-preta" value="preta" checked>
                                     <span class="cor-preview preta"></span>
-                                    Preta
                                 </label>
                                 <label class="opcao-cor-borda">
                                     <input type="radio" name="cor-borda" id="borda-branca" value="branca">
                                     <span class="cor-preview branca"></span>
-                                    Branca
                                 </label>
                             </div>
                         </div>
@@ -628,7 +802,7 @@
                                 <span><i class="fas fa-arrows-alt-h"></i> Grossura da borda:</span>
                                 <span class="valor-controle" id="grossura-valor">3</span>
                             </label>
-                            <input type="range" id="grossura-borda" min="2" max="5" value="3" step="1">
+                            <input type="range" id="grossura-borda" class="slider-custom" min="2" max="5" value="3" step="1">
                             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 0.3rem;">
                                 <span>Fina</span>
                                 <span>Média</span>
@@ -642,8 +816,8 @@
                                 <span><i class="fas fa-circle"></i> Arredondamento dos cantos:</span>
                                 <span class="valor-controle" id="arredondamento-valor">1</span>
                             </label>
-                            <input type="range" id="arredondamento-borda" min="0" max="1" value="1" step="1">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 0.3rem;">
+                            <input type="range" id="arredondamento-borda" class="slider-custom" min="0" max="1" value="1" step="1">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666666; margin-top: 0.3rem;">
                                 <span>Pouco</span>
                                 <span>Médio</span>
                                 <span>Muito</span>
@@ -679,6 +853,10 @@
                     </div>
                 </div>
 
+
+                <button class="btn-adicionar" id="baixar-svg" style="background: linear-gradient(135deg, #3498db, #2980b9); margin-top: 10px;">
+                    <i class="fas fa-file-download"></i> Baixar Arquivo SVG (Vetor)
+                </button>
                 <!-- Botão Adicionar -->
                 <button class="btn-adicionar" id="adicionar-carrinho">
                     <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
@@ -691,21 +869,47 @@
     <div id="notificacao" class="notificacao"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
     <script>
         // ===== CONFIGURAÇÕES =====
-        const CORES_DISPONIVEIS = [
-            { nome: 'Vermelho', codigo: '#FF0000' },
-            { nome: 'Azul', codigo: '#0000FF' },
-            { nome: 'Verde', codigo: '#00FF00' },
-            { nome: 'Amarelo', codigo: '#FFFF00' },
-            { nome: 'Roxo', codigo: '#800080' },
-            { nome: 'Laranja', codigo: '#FFA500' },
-            { nome: 'Rosa', codigo: '#FF69B4' },
-            { nome: 'Preto', codigo: '#000000' },
-            { nome: 'Branco', codigo: '#FFFFFF' },
-            { nome: 'Vinho', codigo: '#800000' }
-        ];
+        const CATEGORIAS_ADESIVO = {
+            vinil: {
+                nome: 'Vinil Brilho (Padrão)',
+                precoAdicional: 0,
+                cores: [
+                    { nome: 'Preto', codigo: '#000000' },
+                    { nome: 'Branco', codigo: '#FFFFFF' },
+                    { nome: 'Vermelho', codigo: '#FF0000' },
+                    { nome: 'Azul', codigo: '#0000FF' }
+                ]
+            },
+            refletivo: {
+                nome: 'Refletivo (Segurança)',
+                precoAdicional: 5.00,
+                cores: [
+                    { nome: 'Branco Refletivo', codigo: '#E0E0E0' },
+                    { nome: 'Vermelho Refletivo', codigo: '#D32F2F' },
+                    { nome: 'Amarelo Refletivo', codigo: '#FBC02D' }
+                ]
+            },
+            metalico: {
+                nome: 'Metálico / Cromado',
+                precoAdicional: 8.00,
+                cores: [
+                    { nome: 'Prata Cromado', codigo: '#C0C0C0' },
+                    { nome: 'Dourado', codigo: '#D4AF37' }
+                ]
+            },
+            fluorescente: {
+                nome: 'Fluorescente (Neon)',
+                precoAdicional: 3.50,
+                cores: [
+                    { nome: 'Verde Neon', codigo: '#39FF14' },
+                    { nome: 'Rosa Neon', codigo: '#FF6EC7' },
+                    { nome: 'Laranja Neon', codigo: '#FF5F1F' }
+                ]
+            }
+        };
 
         const FONTES_DISPONIVEIS = [
             { nome: 'Padrão', arquivo: 'Arial, sans-serif' },
@@ -734,21 +938,108 @@
         const controleArredondamento = document.getElementById('controle-arredondamento');
         const controleCor = document.getElementById('controle-cor');
 
+        const svgTextoFrente = document.getElementById('svg-texto-frente');
+        const svgTextoContorno = document.getElementById('svg-texto-contorno');
+
         // ===== ESTADO =====
-        let corSelecionada = CORES_DISPONIVEIS[0];
         let fonteSelecionada = FONTES_DISPONIVEIS[0];
         let bordaAtiva = false;
         let corBorda = 'preta';
         let grossuraAtual = 3;
         let arredondamentoAtual = 2;
 
+        let tipoSelecionado = 'vinil'; // Padrão inicial
+        let corSelecionada = CATEGORIAS_ADESIVO.vinil.cores[0];
+
         // ===== FUNÇÕES =====
         function calcularPrecoUnitario() {
             let precoBase = 10.00;
+            
+            // Soma o adicional do material
+            precoBase += CATEGORIAS_ADESIVO[tipoSelecionado].precoAdicional;
+            
             if (bordaAtiva) precoBase += 2.00;
             if (corBorda === 'branca') precoBase += 1.00;
+            
             return precoBase;
         }
+
+
+        async function baixarSVG() {
+            try {
+                mostrarNotificacao('🚀 Convertendo tudo em curvas para Corel...');
+
+                const texto = textoInput.value.trim() || 'Seu Nome';
+                
+                // 1. Extrair a URL limpa do arquivo de fonte
+                const urlFonte = fonteSelecionada.arquivo.replace(/url\(["']?|["']?\)/g, "");
+                
+                // 2. Carregar a fonte via opentype.js para desenhar os caminhos
+                const font = await opentype.load(urlFonte);
+                
+                // 3. Configurações de desenho
+                const fontSize = 80;
+                const xCentro = 400; 
+                const yBase = 120; // Posição vertical centralizada
+                
+                // Calcula a largura para centralizar o desenho horizontalmente
+                const textWidth = font.getAdvanceWidth(texto, fontSize);
+                const xInicio = xCentro - (textWidth / 2);
+
+                // 4. Gera o "Caminho" (Path) das letras
+                // Isso transforma o texto em coordenadas matemáticas puras
+                const pathData = font.getPath(texto, xInicio, yBase, fontSize).toPathData(2);
+
+                // 5. Variáveis de estilo
+                const corTexto = corSelecionada.codigo;
+                const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+                const strokeWidth = bordaAtiva ? (grossuraAtual * 3) : 0;
+                const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
+
+                // 6. Montagem do XML compatível com CorelDraw (SVG 1.1)
+                // Note que NÃO existe a tag <text>, apenas <path>. O Corel lerá como um desenho perfeito.
+                const svgString = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
+                    <g>
+                        ${bordaAtiva ? `
+                        <path d="${pathData}" 
+                            fill="none" 
+                            stroke="${corHexBorda}" 
+                            stroke-width="${strokeWidth}" 
+                            stroke-linejoin="${lineJoin}" 
+                            stroke-linecap="round" />` : ''}
+                        
+                        <path d="${pathData}" 
+                            fill="${corTexto}" />
+                    </g>
+                </svg>`.trim();
+
+                // 7. Cabeçalho de compatibilidade absoluta
+                const conteudoFinal = [
+                    '<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
+                    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+                    svgString
+                ].join('\n');
+
+                // 8. Processo de Download
+                const blob = new Blob([conteudoFinal], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `K101_CURVAS_${texto}.svg`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+                mostrarNotificacao('✅ Vetor (curvas) pronto para produção!');
+
+            } catch (error) {
+                console.error('Erro na exportação:', error);
+                mostrarNotificacao('❌ Erro: Verifique o caminho da fonte');
+            }
+        }
+
+        // Registrar o evento no DOMContentLoaded
+        document.getElementById('baixar-svg').addEventListener('click', baixarSVG);
 
         function atualizarPrecos() {
             const precoUnitario = calcularPrecoUnitario();
@@ -768,9 +1059,11 @@
             atualizarPrecos();
         }
 
-        function inicializarOpcoes() {
-            // Cores
-            CORES_DISPONIVEIS.forEach((cor, index) => {
+        function renderizarCores(tipoId) {
+            corContainer.innerHTML = ''; // Limpa as cores atuais
+            const categoria = CATEGORIAS_ADESIVO[tipoId];
+            
+            categoria.cores.forEach((cor, index) => {
                 const corDiv = document.createElement('div');
                 corDiv.className = `cor-opcao ${index === 0 ? 'selecionada' : ''}`;
                 corDiv.style.backgroundColor = cor.codigo;
@@ -778,7 +1071,17 @@
                 corDiv.dataset.nome = cor.nome;
                 corDiv.title = cor.nome;
                 corContainer.appendChild(corDiv);
+                
+                // Se for o primeiro da lista, já seleciona ele
+                if(index === 0) corSelecionada = cor;
             });
+        }
+
+        function inicializarOpcoes() {
+            
+            renderizarCores('vinil');
+
+            
 
             // Fontes
             FONTES_DISPONIVEIS.forEach((fonte, index) => {
@@ -817,42 +1120,97 @@
                 }
             }
         }
+        function eCorClara(color) {
+            const hex = color.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            // Fórmula de luminosidade percebida (padrão ITU-R BT.709)
+            const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            
+            return luma > 128; // Retorna true se a cor for clara
+        }
 
         function atualizarFundoPrevia() {
             const previaContainer = document.querySelector('.previa-container');
             
-            if (bordaAtiva && corBorda === 'branca') {
-                // Fundo mais escuro para borda branca
-                previaContainer.style.backgroundColor = '#606060';
-                previaContainer.style.backgroundImage = 'radial-gradient(circle, #777 1px, transparent 1px)';
+            // 1. Determina qual cor "domina" a visibilidade
+            // Se a borda estiver ativa, ela é a cor mais externa. Se não, usamos a cor do texto.
+            let corParaTeste;
+            
+            if (bordaAtiva) {
+                corParaTeste = corBorda === 'branca' ? '#FFFFFF' : '#000000';
             } else {
-                // Fundo normal
+                corParaTeste = corSelecionada.codigo;
+            }
+
+            // 2. Aplica o fundo baseado na luminosidade da cor dominante
+            if (eCorClara(corParaTeste)) {
+                // Se a cor for clara (Ex: Branco, Amarelo), fundo fica ESCURO
+                previaContainer.style.backgroundColor = '#404040';
+                previaContainer.style.backgroundImage = 'radial-gradient(circle, #555 1px, transparent 1px)';
+                previaContainer.style.borderColor = 'var(--primary-color)';
+            } else {
+                // Se a cor for escura (Ex: Preto, Azul, Vinho), fundo fica CLARO
                 previaContainer.style.backgroundColor = '#f8f9fa';
                 previaContainer.style.backgroundImage = 'radial-gradient(circle, #ccc 1px, transparent 1px)';
+                previaContainer.style.borderColor = 'var(--primary-color)';
             }
         }
 
-        function atualizarPrevia() {
-            const texto = textoInput.value.trim() || 'Seu Nome';
-            previaElement.textContent = texto;
-            previaElement.style.color = corSelecionada.codigo;
+        function atualizarPrevia(deveRedimensionar = false) {
+            const texto = textoInput.value.trim() || '';
             
-            if (fonteSelecionada.arquivo.startsWith('url(')) {
-                previaElement.style.fontFamily = `'${fonteSelecionada.nome}', Arial, sans-serif`;
-            } else {
-                previaElement.style.fontFamily = fonteSelecionada.arquivo;
-            }
+            // 1. Atualiza conteúdo e Estilo base
+            svgTextoFrente.textContent = texto;
+            svgTextoContorno.textContent = texto;
 
-            previaElement.classList.remove('com-borda-filete');
+            const familiaFonte = fonteSelecionada.arquivo.startsWith('url(') ? `'${fonteSelecionada.nome}'` : fonteSelecionada.arquivo;
             
+            [svgTextoFrente, svgTextoContorno].forEach(el => {
+                el.style.fontFamily = familiaFonte;
+                el.style.fontSize = "80px"; 
+                el.setAttribute('dominant-baseline', 'central');
+                el.setAttribute('text-anchor', 'middle');
+                el.setAttribute('x', '400');
+                el.setAttribute('y', '100');
+            });
+
+            svgTextoFrente.setAttribute('fill', corSelecionada.codigo);
+
+            // 2. Lógica de Borda (Apenas visual, não mexe no zoom aqui)
             if (bordaAtiva) {
-                previaElement.classList.add('com-borda-filete');
+                const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+                const strokeWidth = grossuraAtual * 3; 
+                
+                svgTextoContorno.setAttribute('stroke', corHexBorda);
+                svgTextoContorno.setAttribute('stroke-width', strokeWidth);
+                svgTextoContorno.setAttribute('stroke-linejoin', arredondamentoAtual > 0 ? 'round' : 'miter');
+                svgTextoContorno.style.display = 'block';
             } else {
-                previaElement.style.filter = 'drop-shadow(0 0 0 3px black) drop-shadow(2px 2px 4px rgba(0,0,0,0.3))';
+                svgTextoContorno.style.display = 'none';
             }
 
-            // Adicione esta linha:
+            // 3. CENTRALIZAÇÃO CONDICIONAL
+            // Só executa o cálculo do viewBox se o gatilho for Texto ou Fonte
+            if (deveRedimensionar) {
+                const svgEditor = document.getElementById('svg-editor');
+                const grupoSvg = svgEditor.querySelector('g');
+
+                setTimeout(() => {
+                    const bbox = grupoSvg.getBBox();
+                    const margem = 40; 
+
+                    if (bbox.width > 0) {
+                        const novoViewBox = `${bbox.x - margem} ${bbox.y - margem} ${bbox.width + (margem * 2)} ${bbox.height + (margem * 2)}`;
+                        svgEditor.setAttribute('viewBox', novoViewBox);
+                    }
+                }, 50);
+            }
+
             atualizarFundoPrevia();
+            atualizarPrecos();
         }
 
         // ===== EVENT LISTENERS =====
@@ -868,14 +1226,15 @@
                     nome: corDiv.dataset.nome,
                     codigo: corDiv.dataset.cor
                 };
-                atualizarPrevia();
+                atualizarPrevia(false);
+                atualizarFundoPrevia();
                 atualizarPrecos();
             });
 
             fonteSelect.addEventListener('change', (e) => {
                 const fonteNome = e.target.value;
                 fonteSelecionada = FONTES_DISPONIVEIS.find(f => f.nome === fonteNome);
-                atualizarPrevia();
+                atualizarPrevia(true);
                 atualizarPrecos();
             });
 
@@ -885,30 +1244,30 @@
                 if (bordaAtiva) {
                     atualizarFiltro(grossuraAtual, arredondamentoAtual, corBorda);
                 }
-                atualizarPrevia();
-                atualizarPrecos();
                 atualizarFundoPrevia();
+                atualizarPrevia(false);
+                atualizarPrecos();
             });
 
             grossuraSlider.addEventListener('input', (e) => {
                 grossuraAtual = parseInt(e.target.value);
                 grossuraValor.textContent = grossuraAtual;
                 if (bordaAtiva) atualizarFiltro(grossuraAtual, arredondamentoAtual, corBorda);
-                atualizarPrevia();
+                atualizarPrevia(false);
             });
 
             arredondamentoSlider.addEventListener('input', (e) => {
                 arredondamentoAtual = parseInt(e.target.value);
                 arredondamentoValor.textContent = arredondamentoAtual;
                 if (bordaAtiva) atualizarFiltro(grossuraAtual, arredondamentoAtual, corBorda);
-                atualizarPrevia();
+                atualizarPrevia(false);
             });
 
             bordaPretaRadio.addEventListener('change', (e) => {
                 if (e.target.checked) {
                     corBorda = 'preta';
                     if (bordaAtiva) atualizarFiltro(grossuraAtual, arredondamentoAtual, corBorda);
-                    atualizarPrevia();
+                    atualizarPrevia(false);
                     atualizarPrecos();
                     atualizarFundoPrevia();
                 }
@@ -918,10 +1277,16 @@
                 if (e.target.checked) {
                     corBorda = 'branca';
                     if (bordaAtiva) atualizarFiltro(grossuraAtual, arredondamentoAtual, corBorda);
-                    atualizarPrevia();
+                    atualizarPrevia(false);
                     atualizarPrecos();
                     atualizarFundoPrevia();
                 }
+            });
+            document.getElementById('selecao-tipo-adesivo').addEventListener('change', (e) => {
+                tipoSelecionado = e.target.value;
+                renderizarCores(tipoSelecionado); // Gera as novas cores
+                atualizarPrevia(false);           // Atualiza o visual
+                atualizarPrecos();                // Atualiza o valor total
             });
 
             document.getElementById('adicionar-carrinho').addEventListener('click', adicionarAoCarrinho);
@@ -1005,106 +1370,45 @@
 
         // Função para capturar a prévia como imagem
         async function capturarPreviaComoImagem() {
-            const previaContainer = document.querySelector('.previa-container');
-            const texto = textoInput.value.trim() || 'Seu Nome';
-            
-            // Criar um elemento temporário para captura
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'fixed';
-            tempDiv.style.top = '-9999px';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.width = '800px';
-            tempDiv.style.height = '300px';
-            tempDiv.style.backgroundColor = bordaAtiva && corBorda === 'branca' ? '#606060' : '#f8f9fa';
-            tempDiv.style.backgroundImage = bordaAtiva && corBorda === 'branca' 
-                ? 'radial-gradient(circle, #777 1px, transparent 1px)' 
-                : 'radial-gradient(circle, #ccc 1px, transparent 1px)';
-            tempDiv.style.backgroundSize = '20px 20px';
-            tempDiv.style.borderRadius = '20px';
-            tempDiv.style.display = 'flex';
-            tempDiv.style.alignItems = 'center';
-            tempDiv.style.justifyContent = 'center';
-            tempDiv.style.border = '2px solid #12ac9f';
-            
-            // Criar o elemento de texto
-            const textElement = document.createElement('div');
-            textElement.textContent = texto;
-            textElement.style.fontSize = '3.5rem';
-            textElement.style.fontWeight = 'bold';
-            textElement.style.textAlign = 'center';
-            textElement.style.wordBreak = 'break-word';
-            textElement.style.display = 'inline-block';
-            textElement.style.padding = '0.5rem 1.5rem';
-            textElement.style.lineHeight = '1.2';
-            textElement.style.maxWidth = '100%';
-            textElement.style.color = corSelecionada.codigo;
-            
-            // Aplicar a fonte
-            if (fonteSelecionada.arquivo.startsWith('url(')) {
-                textElement.style.fontFamily = `'${fonteSelecionada.nome}', Arial, sans-serif`;
-            } else {
-                textElement.style.fontFamily = fonteSelecionada.arquivo;
-            }
-            
-            // SIMULAR A BORDA COM TEXT-SHADOW (MÉTODO DAS 8 DIREÇÕES)
-            if (bordaAtiva) {
-                const corBordaCSS = corBorda === 'preta' ? '#000000' : '#FFFFFF';
-                const grossura = grossuraAtual * 2; // Ajuste de escala
-                
-                textElement.style.textShadow = `
-                    -${grossura}px -${grossura}px 0 ${corBordaCSS},
-                    ${grossura}px -${grossura}px 0 ${corBordaCSS},
-                    -${grossura}px ${grossura}px 0 ${corBordaCSS},
-                    ${grossura}px ${grossura}px 0 ${corBordaCSS},
-                    -${grossura}px 0 0 ${corBordaCSS},
-                    ${grossura}px 0 0 ${corBordaCSS},
-                    0 -${grossura}px 0 ${corBordaCSS},
-                    0 ${grossura}px 0 ${corBordaCSS}
-                `;
-                
-                // Para bordas mais grossas, adicionar uma segunda camada
-                if (grossura > 3) {
-                    textElement.style.textShadow += `, 
-                        -${grossura+1}px -${grossura+1}px 0 ${corBordaCSS},
-                        ${grossura+1}px -${grossura+1}px 0 ${corBordaCSS},
-                        -${grossura+1}px ${grossura+1}px 0 ${corBordaCSS},
-                        ${grossura+1}px ${grossura+1}px 0 ${corBordaCSS}`;
-                }
-            } else {
-                // Sem borda: apenas sombra para simular recorte
-                textElement.style.textShadow = '3px 3px 5px rgba(0,0,0,0.3)';
-                textElement.style.filter = 'drop-shadow(0 0 0 3px black)';
-            }
-            
-            tempDiv.appendChild(textElement);
-            document.body.appendChild(tempDiv);
-            
             try {
-                const canvas = await html2canvas(tempDiv, {
-                    scale: 2,
-                    backgroundColor: null,
-                    allowTaint: true,
-                    useCORS: true,
-                    logging: false
-                });
+                const svgClonado = document.getElementById('svg-editor').cloneNode(true);
                 
-                const imagemBase64 = canvas.toDataURL('image/png');
-                document.body.removeChild(tempDiv);
-                return imagemBase64;
+                // Ajustes para o arquivo final não ter a sombra de visualização
+                const grupo = svgClonado.querySelector('g');
+                if(grupo) grupo.removeAttribute('filter');
+
+                // Converter SVG para String
+                const serializer = new XMLSerializer();
+                let svgString = serializer.serializeToString(svgClonado);
+                
+                // Adicionar namespace se faltar
+                if(!svgString.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+                    svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+                }
+
+                // Retorna o Base64 do SVG para salvar no carrinho
+                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
                 
             } catch (error) {
-                console.error('Erro ao capturar imagem:', error);
-                document.body.removeChild(tempDiv);
-                mostrarNotificacao('❌ Erro ao gerar imagem do adesivo');
+                console.error('Erro ao gerar SVG:', error);
                 return null;
             }
         }
                 // ===== INICIALIZAÇÃO =====
                 document.addEventListener('DOMContentLoaded', () => {
+                    // --- Lógica do Loading ---
+                    const loadingOverlay = document.getElementById('loading-overlay');
+                    
+                    setTimeout(() => {
+                        loadingOverlay.classList.add('loading-hidden');
+                        // Opcional: remover do DOM após a transição para economizar memória
+                        setTimeout(() => loadingOverlay.remove(), 500);
+                    }, 1500); // 2000ms = 2 segundos
+
                     inicializarOpcoes();
                     configurarEventListeners();
                     configurarMenuLateral();
-                    atualizarPrevia();
+                    atualizarPrevia(true);
                     atualizarContadorCarrinho();
                     atualizarPrecos();
                     atualizarFiltro(grossuraAtual, arredondamentoAtual, corBorda);

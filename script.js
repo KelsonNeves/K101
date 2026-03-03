@@ -915,52 +915,6 @@ function configurarEventListeners() {
             }, 300);
         });
     }
-
-    // ===== Reset ao clicar na logo (COM SCROLL PARA O TOPO) =====
-const logoContainer = document.getElementById('logo-container');
-if (logoContainer) {
-    logoContainer.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // SCROLL PARA O TOPO DA PÁGINA
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth' // Scroll suave
-        });
-        
-        // Limpar campo de pesquisa
-        if (pesquisaInput) {
-            pesquisaInput.value = '';
-            termoPesquisa = '';
-        }
-        
-        // Resetar filtro para 'todos'
-        filtroAtual = 'todos';
-        
-        // Atualizar botões de coleção
-        document.querySelectorAll('.colecao-btn').forEach(btn => {
-            btn.classList.remove('ativa');
-            if (btn.dataset.colecao === 'todos') {
-                btn.classList.add('ativa');
-            }
-        });
-        
-        // Mostrar banner novamente
-        mostrarBanner();
-        
-        // Resetar página atual
-        paginaAtual = 1;
-        
-        // Renderizar produtos
-        renderizarProdutos();
-        
-        // Feedback visual sutil
-        logoContainer.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            logoContainer.style.transform = '';
-        }, 200);
-    });
-}
     
     // ===== Menu lateral =====
     const menuToggle = document.getElementById('menu-toggle');
