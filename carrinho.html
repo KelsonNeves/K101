@@ -7,6 +7,80 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="carrinho.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos adicionais para o campo de nome */
+        .cliente-info {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .cliente-info h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .cliente-info h3 i {
+            font-size: 1.3rem;
+        }
+        
+        .campo-nome {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .campo-nome:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+        }
+        
+        .campo-nome.error {
+            border-color: #ff4444;
+            background-color: #fff8f8;
+        }
+        
+        .mensagem-erro {
+            color: #ff4444;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .mensagem-erro.mostrar {
+            display: flex;
+        }
+        
+        .mensagem-erro i {
+            font-size: 0.9rem;
+        }
+        
+        .btn-finalizar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-finalizar:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -33,5 +107,4 @@
 
     <script src="carrinho.js"></script>
 </body>
-
 </html>
