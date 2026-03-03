@@ -20,7 +20,7 @@ function renderizarCarrinho() {
                 <i class="fas fa-shopping-cart"></i>
                 <h2>Seu carrinho está vazio</h2>
                 <p>Adicione alguns produtos para continuar</p>
-                <a href="index.html" style="color: var(--primary-color);">Continuar comprando</a>
+                <a href="nav.html" style="color: var(--primary-color);">Voltar a comprar</a>
             </div>
         `;
         carrinhoResumo.innerHTML = '';
@@ -189,4 +189,5 @@ function finalizarCompra() {
         localStorage.removeItem('carrinho');
         renderizarCarrinho();
     }
+
 }
