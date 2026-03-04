@@ -348,6 +348,7 @@
         }
         
         tr { 
+            background: #303030; 
             transition: background 0.2s;
         }
         
@@ -532,6 +533,7 @@
             gap: 8px;
             transition: all 0.2s;
             font-size: 0.9rem;
+            text-align: center;
         }
         
         .btn-back:hover { 
@@ -574,6 +576,7 @@
         }
 
         .status-selector select {
+            max-width: 100%;
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 4px;
@@ -593,12 +596,10 @@
             margin-top: 10px;
             border-radius: 8px;
             transition: all 0.2s;
-            border-left: 4px solid transparent;
         }
 
         .item-row:hover {
             background: #383838;
-            transform: translateX(5px);
         }
 
         .item-info {
@@ -606,9 +607,9 @@
         }
 
         .item-nome {
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--text);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -634,7 +635,7 @@
         }
 
         .item-detalhes i {
-            color: var(--primary);
+            color: var(--text);
             font-size: 0.8rem;
         }
 
@@ -737,132 +738,510 @@
             color: var(--text-secondary);
         }
 
-        /* Responsividade */
-        @media screen and (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        /* Responsividade Mobile - Versão Lista Compacta */
+@media screen and (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
 
-            .pedido-hero {
-                padding: 20px;
-            }
+    .dashboard-item {
+        padding: 10px;
+    }
 
-            .pedido-hero-header {
-                flex-direction: column;
-                gap: 15px;
-            }
+    .dashboard-value {
+        font-size: 1.2rem;
+    }
 
-            .pedido-hero-cliente {
-                text-align: left;
-            }
+    /* HEADER */
+    .header {
+        flex-direction: column;
+        gap: 2px;
+        margin-bottom: 15px;
+    }
 
-            .pedido-hero-cliente .cliente-nome {
-                justify-content: flex-start;
-            }
+    .header h1 {
+        font-size: 1.4rem;
+    }
 
-            .pedido-hero-footer {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+    /* FILTROS */
+    .filtros-header {
+        padding: 10px 15px;
+    }
 
-            .pedido-acoes-bar {
-                flex-direction: column;
-                gap: 10px;
-            }
+    .filtros-titulo span {
+        font-size: 0.9rem;
+    }
 
-            .acoes-esquerda, .acoes-direita {
-                width: 100%;
-            }
+    .filtros-container {
+        padding: 15px;
+        grid-template-columns: 1fr;
+    }
 
-            .btn-back, .btn-danger {
-                flex: 1;
-                justify-content: center;
-            }
+    .filtro-acoes {
+        grid-column: span 1;
+        flex-direction: column;
+    }
 
-            .status-selector {
-                width: 100%;
-            }
+    /* TABELA - Versão lista compacta */
+    table {
+        font-size: 0.8rem;
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-            .status-selector select {
-                flex: 1;
-            }
+    /* MOSTRAR OS TÍTULOS DAS COLUNAS NO MOBILE */
+    thead {
+        display: table-header-group;
+    }
 
-            .item-row {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+    thead tr {
+        display: table-row;
+        background: transparent;
+        border: none;
+    }
 
-            .btn-download {
-                width: 100%;
-                justify-content: center;
-            }
+    /* Esconder títulos das colunas que não aparecem no mobile */
+    thead th:nth-of-type(1), /* Data */
+    thead th:nth-of-type(4) { /* Itens */
+        display: none;
+    }
 
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
+    /* Ajustar os títulos que aparecem */
+    thead th {
+        display: table-cell;
+        padding: 8px 5px;
+        font-size: 0.75rem;
+        text-align: left;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border);
+        background: transparent;
+        vertical-align: middle;
+    }
 
-            thead {
-                display: none;
-            }
+    thead th i {
+        font-size: 0.7rem;
+        margin-left: 3px;
+    }
 
-            tr {
-                margin-bottom: 15px;
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                padding: 10px;
-            }
+    /* Ajustar larguras para corresponder às colunas */
+    thead th:nth-of-type(2) { /* ID */
+        width: 25%;
+    }
 
-            td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 10px;
-                border: none;
-                border-bottom: 1px solid var(--border);
-            }
+    thead th:nth-of-type(3) { /* Cliente */
+        width: 30%;
+    }
 
-            td:last-child {
-                border-bottom: none;
-            }
+    thead th:nth-of-type(5) { /* Total */
+        width: 20%;
+    }
 
-            td:before {
-                content: attr(data-label);
-                font-weight: bold;
-                color: var(--text-secondary);
-                margin-right: 10px;
-                min-width: 70px;
-                font-size: 0.8rem;
-            }
-        }
+    thead th:nth-of-type(6) { /* Status */
+        width: 15%;
+    }
 
-        @media screen and (max-width: 480px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
+    thead th:nth-of-type(7) { /* Ações */
+        width: 10%;
+        text-align: center;
+    }
 
-            .filtros-container {
-                grid-template-columns: 1fr;
-            }
+    /* CORPO DA TABELA */
+    tbody {
+        display: table-row-group;
+    }
 
-            .filtro-acoes {
-                grid-column: span 1;
-                flex-direction: column;
-            }
+    tr {
+        display: table-row;
+        background: #303030;
+        border: none;
+    }
 
-            .pedido-hero-id .id-value {
-                font-size: 1.5rem;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
+    td {
+        display: table-cell;
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
 
-            .pedido-hero-id .id-value span {
-                font-size: 1rem;
-                margin-left: 0;
-            }
-        }
+    /* Esconder células das colunas ocultas */
+    td:nth-of-type(1), /* Data */
+    td:nth-of-type(4) { /* Itens */
+        display: none;
+    }
+
+    /* Estilo das células visíveis */
+    td:nth-of-type(2) { /* ID */
+        width: 25%;
+        font-weight: bold;
+        color: var(--primary);
+    }
+
+    td:nth-of-type(3) { /* Cliente */
+        width: 30%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    td:nth-of-type(5) { /* Total */
+        width: 20%;
+        color: var(--primary);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    td:nth-of-type(6) { /* Status */
+        width: 15%;
+    }
+
+    td:nth-of-type(7) { /* Ações */
+        width: 10%;
+        text-align: center;
+    }
+
+    /* Ajustes nos elementos internos */
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .btn-view {
+        display: inline-block;
+        padding: 4px 6px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        background: var(--primary);
+        color: #000;
+        border: none;
+        border-radius: 4px;
+        width: auto;
+        min-width: 60px;
+    }
+
+    .btn-view i {
+        margin-right: 3px;
+        font-size: 0.65rem;
+    }
+
+    /* Remover any :before que possa interferir */
+    td:before {
+        content: none;
+    }
+
+    /* AJUSTES NO HERO DO PEDIDO */
+    .pedido-hero {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .pedido-hero-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        gap: 10px;
+    }
+
+    .pedido-hero-id {
+        flex: 1;
+    }
+
+    .pedido-hero-id .id-label {
+        font-size: 0.7rem;
+    }
+
+    .pedido-hero-id .id-value {
+        font-size: 1.2rem;
+        gap: 8px;
+    }
+
+    .pedido-hero-id .id-value span {
+        font-size: 0.9rem;
+        padding: 4px 10px;
+    }
+
+    .pedido-hero-cliente {
+        text-align: right;
+        flex: 1;
+    }
+
+    .pedido-hero-cliente .cliente-nome {
+        font-size: 1rem;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+
+    .pedido-hero-cliente .cliente-nome i {
+        font-size: 1.2rem;
+    }
+
+    .pedido-hero-cliente .cliente-contato {
+        font-size: 0.7rem;
+        margin-top: 2px;
+    }
+
+    .pedido-hero-footer {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        gap: 10px;
+    }
+
+    .pedido-hero-data {
+        font-size: 0.75rem;
+        gap: 10px;
+    }
+
+    .pedido-hero-total {
+        font-size: 1rem;
+        padding: 5px 12px;
+        white-space: nowrap;
+    }
+
+    /* BARRA DE AÇÕES */
+    .pedido-acoes-bar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 5px 0;
+        gap: 8px;
+    }
+
+    .acoes-esquerda {
+        flex: 1;
+    }
+
+    .acoes-direita {
+        flex: 2;
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .btn-back {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        width: auto;
+    }
+
+    .btn-back i {
+        font-size: 0.8rem;
+    }
+
+    .btn-danger {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        width: auto;
+        flex: 1;
+    }
+
+    .btn-danger i {
+        font-size: 0.8rem;
+        margin-right: 4px;
+    }
+
+    .status-selector {
+        padding: 4px 10px;
+        gap: 5px;
+        flex: 1;
+    }
+
+    .status-selector label {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .status-selector label i {
+        font-size: 0.7rem;
+        margin-right: 2px;
+    }
+
+    .status-selector select {
+        padding: 4px 20px 4px 6px;
+        font-size: 0.75rem;
+        max-width: 100%;
+    }
+
+    /* ITENS DO PEDIDO */
+    .item-row {
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+        padding: 12px;
+    }
+
+    .item-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .item-nome {
+        font-size: 1rem;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 5px;
+    }
+
+    .item-nome i {
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .item-detalhes {
+        font-size: 0.75rem;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .item-detalhes span {
+        white-space: nowrap;
+    }
+
+    .item-detalhes i {
+        font-size: 0.7rem;
+    }
+
+    .btn-download {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .btn-download i {
+        font-size: 0.7rem;
+        margin-right: 4px;
+    }
+
+    /* Ajustes para o texto adicional dos itens */
+    .item-info div[style*="color: #666"] {
+        font-size: 0.7rem !important;
+        margin-top: 3px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .status-selector-titulo{
+        display: none;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media screen and (max-width: 480px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filtros-container {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 0.7rem;
+    }
+
+    thead th {
+        font-size: 0.7rem;
+        padding: 6px 3px;
+    }
+
+    td {
+        padding: 8px 3px;
+    }
+
+    /* Cliente - limitar tamanho e adicionar ... */
+    td:nth-of-type(3) {
+        max-width: 80px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Total - sem quebra de linha */
+    td:nth-of-type(5) {
+        white-space: nowrap;
+    }
+
+    .btn-view {
+        padding: 3px 4px;
+        font-size: 0.65rem;
+        min-width: 50px;
+    }
+
+    .btn-view i {
+        display: none;
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+        white-space: nowrap;
+    }
+
+    /* AJUSTES ADICIONAIS PARA TELAS MUITO PEQUENAS */
+    .pedido-hero-id .id-value {
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+    }
+    
+    .pedido-hero-id .id-value span {
+        font-size: 0.8rem;
+        margin-left: 0;
+    }
+    
+    .pedido-hero-cliente .cliente-nome {
+        font-size: 0.9rem;
+    }
+    
+    .pedido-hero-total {
+        font-size: 0.9rem;
+        padding: 4px 8px;
+    }
+    
+    .pedido-acoes-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .acoes-direita {
+        width: 100%;
+    }
+    
+    .status-selector select {
+        max-width: 100%;
+    }
+    
+    .item-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .btn-download {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .item-nome {
+        white-space: normal;
+        word-break: break-word;
+    }
+    .status-selector-titulo{
+        display: none;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -882,7 +1261,7 @@
     <div id="admin-area">
         <div class="header">
             <h1><i class="fas fa-shopping-bag"></i> Pedidos</h1>
-            <button class="btn-back" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <button class="btn-back" onclick="location.reload()" id="btn-sair"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
 
         <div id="view-lista">
@@ -1029,7 +1408,7 @@
                 </div>
                 <div class="acoes-direita">
                     <div class="status-selector">
-                        <label for="status-pedido"><i class="fas fa-tag"></i> Status:</label>
+                        <label for="status-pedido" class="status-selector-titulo"><i class="fas fa-tag"></i> Status:</label>
                         <select id="status-pedido" onchange="atualizarStatusPedido()">
                             <option value="EM ABERTO">🔴 Em Aberto</option>
                             <option value="PRODUZINDO">🟡 Produzindo</option>
@@ -1549,6 +1928,8 @@
         // Mostrar detalhes e esconder lista
         document.getElementById('view-lista').style.display = 'none';
         document.getElementById('detalhes-pedido').style.display = 'block';
+        document.getElementById('btn-sair').style.display = 'none';
+        
     };
 
     window.atualizarStatusPedido = async () => {
@@ -1745,6 +2126,7 @@
     window.voltarLista = () => {
         document.getElementById('detalhes-pedido').style.display = 'none';
         document.getElementById('view-lista').style.display = 'block';
+        document.getElementById('btn-sair').style.display = 'block';
         window.pedidoAtual = null;
         fecharModal();
     };

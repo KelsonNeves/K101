@@ -287,7 +287,7 @@ async function finalizarCompra() {
                 email: ''     // Pode ser adicionado depois
             },
             itens: itensParaSalvar,
-            status: 'Pendente',
+            status: 'EM ABERTO',
             total: carrinho.reduce((total, item) => total + (Number(item.preco) * Number(item.quantidade)), 0)
         });
 
