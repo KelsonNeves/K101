@@ -739,7 +739,7 @@ function abrirModalProduto(produtoId) {
                 </div>
                 
                 <div class="modal-quantidade">
-                    <span class="quantidade-label">Quantidade:</span>
+                    <span class="quantidade-label">Qtd</span>
                     <div class="quantidade-controles">
                         <button class="quantidade-btn-modal" onclick="alterarQuantidadeModal(-1)">
                             <i class="fas fa-minus"></i>

@@ -36,7 +36,7 @@ function renderizarCarrinho() {
     renderizarResumo(carrinho);
 }
 
-// Renderizar itens do carrinho
+// Renderizar itens do carrinho - CORRIGIDO
 function renderizarItensCarrinho(carrinho) {
     let html = '';
     let subtotal = 0;
@@ -54,15 +54,23 @@ function renderizarItensCarrinho(carrinho) {
                     <h3>${item.nome}</h3>
                     <p class="item-preco">R$ ${item.preco.toFixed(2)}</p>
                 </div>
-                <div class="item-quantidade">
-                    <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', -1)">-</button>
-                    <span class="quantidade-input">${item.quantidade}</span>
-                    <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', 1)">+</button>
+                <div class="quantidade-container">
+                <i class="fas fa-trash item-remove" onclick="removerItem('${item.id}')"></i>
+                    <span class="quantidade-label">Qtd</span>
+                    <div class="quantidade-controles">
+                        <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', -1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" class="quantidade-input" value="${item.quantidade}" min="1" max="99" readonly>
+                        <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', 1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="item-total">
                     R$ ${totalItem.toFixed(2)}
                 </div>
-                <i class="fas fa-trash item-remove" onclick="removerItem('${item.id}')"></i>
+                
             </div>
         `;
     });
@@ -76,20 +84,14 @@ function renderizarResumo(carrinho) {
     
     carrinhoResumo.innerHTML = `
         <div class="cliente-info">
-            <h3>
-                <i class="fas fa-user-circle" style="color: var(--primary-color);"></i>
-                Identificação
-            </h3>
-            <input type="text" 
-                id="nome-cliente" 
-                class="campo-nome" 
-                placeholder="Digite seu nome completo *" 
-                value="${nomeCliente}"
-                onkeyup="validarNomeCliente()"
-                onblur="validarNomeCliente()">
-            <div class="mensagem-erro" id="erro-nome">
+            <h3><i class="fas fa-user-circle"></i> Identificação</h3>
+            <input type="text" id="nome-cliente" class="campo-nome" placeholder="Seu nome completo *" value="${nomeCliente}" onkeyup="validarCamposCliente()">
+            
+            <input type="tel" id="telefone-cliente" class="campo-nome" style="margin-top: 10px;" placeholder="WhatsApp (DDD + Número) *" onkeyup="mascaraTelefone(this); validarCamposCliente()" maxlength="15">
+            
+            <div class="mensagem-erro" id="erro-cliente">
                 <i class="fas fa-exclamation-circle"></i>
-                Por favor, digite seu nome para finalizar o pedido
+                Preencha nome e telefone válidos
             </div>
         </div>
         <h2>Resumo do Pedido</h2>
@@ -139,15 +141,29 @@ window.validarNomeCliente = () => {
     }
 };
 
+window.mascaraTelefone = (i) => {
+    let v = i.value.replace(/\D/g, "");
+    v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+    v = v.replace(/(\d{5})(\d)/, "$1-$2");
+    i.value = v;
+};
+
+window.validarCamposCliente = () => {
+    const n = document.getElementById('nome-cliente').value.trim();
+    const t = document.getElementById('telefone-cliente').value.replace(/\D/g, "");
+    const btn = document.getElementById('btn-finalizar');
+    const valido = n.length >= 3 && t.length >= 10;
+    btn.disabled = !valido;
+};
+
 // Alterar quantidade de um item
-function alterarQuantidade(produtoId, delta) {
+window.alterarQuantidade = (produtoId, delta) => {
     let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     const itemIndex = carrinho.findIndex(item => item.id === produtoId);
     
     if (itemIndex !== -1) {
         const novaQuantidade = carrinho[itemIndex].quantidade + delta;
         
-        // ALTERAÇÃO AQUI: Só permite diminuir até 1, nunca remove
         if (novaQuantidade >= 1) {
             carrinho[itemIndex].quantidade = novaQuantidade;
             
@@ -157,20 +173,19 @@ function alterarQuantidade(produtoId, delta) {
             // Atualizar contador em todas as abas
             atualizarContadoresGlobalmente();
         }
-        // Se tentar diminuir abaixo de 1, simplesmente não faz nada
     }
-}
+};
 
 // Função removerItem
-function removerItem(produtoId) {
+window.removerItem = (produtoId) => {
     let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-    carrinho = carrinho.filter(item => item.id !== produtoId); // Agora compara string com string
+    carrinho = carrinho.filter(item => item.id !== produtoId);
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     renderizarCarrinho();
     
     // Atualizar contador em todas as abas
     atualizarContadoresGlobalmente();
-}
+};
 
 // NOVA FUNÇÃO - Atualizar contadores em todas as páginas
 function atualizarContadoresGlobalmente() {
@@ -195,22 +210,30 @@ window.addEventListener('storage', (e) => {
 });
 
 // Limpar carrinho completamente
-function limparCarrinho() {
+window.limparCarrinho = () => {
     if (confirm('Tem certeza que deseja limpar todo o carrinho?')) {
         localStorage.removeItem('carrinho');
         renderizarCarrinho();
     }
-}
+};
 
-// Finalizar compra via WhatsApp
-async function finalizarCompra() {
+// Finalizar compra via WhatsApp (CORRIGIDO)
+window.finalizarCompra = async () => {
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-    if (carrinho.length === 0) return alert('Carrinho vazio!');
+    
+    // Captura o telefone
+    const telefoneInput = document.getElementById('telefone-cliente');
+    const telefoneCliente = telefoneInput ? telefoneInput.value.trim() : '';
+
+    if (carrinho.length === 0) {
+        alert('Carrinho vazio!');
+        return;
+    }
     
     // VALIDAÇÃO DO NOME
     const nomeInput = document.getElementById('nome-cliente');
+    let nomeCliente = "";
     if (!nomeInput) {
-        // Se o input não existir (caso raro), tenta pegar da sessionStorage
         nomeCliente = sessionStorage.getItem('nomeClienteTemp') || '';
     } else {
         nomeCliente = nomeInput.value.trim();
@@ -218,14 +241,21 @@ async function finalizarCompra() {
     
     if (nomeCliente.length < 3) {
         alert('Por favor, digite seu nome completo para finalizar o pedido.');
-        if (nomeInput) {
-            nomeInput.focus();
-            nomeInput.classList.add('error');
-        }
+        if (nomeInput) { nomeInput.focus(); nomeInput.classList.add('error'); }
+        return;
+    }
+
+    // VALIDAÇÃO DO TELEFONE (OBRIGATÓRIO)
+    // Verifica se tem pelo menos 10 dígitos (DDD + número)
+    const telefoneLimpo = telefoneCliente.replace(/\D/g, "");
+    if (telefoneLimpo.length < 10) {
+        alert('Por favor, insira um telefone válido com DDD.');
+        if (telefoneInput) { telefoneInput.focus(); telefoneInput.classList.add('error'); }
         return;
     }
 
     try {
+        // Importar Firebase
         const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
         const { getDatabase, ref, set } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
 
@@ -248,12 +278,13 @@ async function finalizarCompra() {
         const itensParaSalvar = carrinho.map(item => {
             // Criar objeto base com campos obrigatórios
             const itemBase = {
+                icone_produto: item.icone_produto || 'fa-box', // Fallback se não existir
                 id: item.id || Date.now().toString(),
                 nome: item.nome || 'Produto',
                 preco: Number(item.preco) || 0,
                 quantidade: Number(item.quantidade) || 1,
                 tipo: item.tipo || 'padrao',
-                paginaOrigem: item.paginaOrigem || determinarPaginaOrigem(item),
+                servico: item.servico || 'adesivo',
                 temSVG: !!(item.svgRaw && typeof item.svgRaw === 'string' && item.svgRaw !== 'undefined')
             };
 
@@ -266,15 +297,9 @@ async function finalizarCompra() {
             if (item.svgRaw && typeof item.svgRaw === 'string' && item.svgRaw !== 'undefined') {
                 itemBase.svgRaw = item.svgRaw;
             }
-            
-            // Adicionar especificações adicionais se existirem
-            if (item.especificacoes) itemBase.especificacoes = item.especificacoes;
 
             return itemBase;
         });
-
-        // Verificar se todos os itens são válidos
-        console.log('Itens para salvar:', itensParaSalvar);
 
         // Salva todos os itens do carrinho no Firebase (AGORA COM NOME DO CLIENTE)
         await set(ref(db, 'PEDIDOS/' + idPedido), {
@@ -282,24 +307,23 @@ async function finalizarCompra() {
             data: new Date().toISOString(),
             cliente: {
                 nome: nomeCliente,
-                // Reservado para futuras informações do cliente
-                telefone: '', // Pode ser adicionado depois
-                email: ''     // Pode ser adicionado depois
+                telefone: telefoneCliente,
+                email: ''
             },
             itens: itensParaSalvar,
             status: 'EM ABERTO',
             total: carrinho.reduce((total, item) => total + (Number(item.preco) * Number(item.quantidade)), 0)
         });
 
-        // CONSTRUIR MENSAGEM DO WHATSAPP (AGORA COM NOME DO CLIENTE)
+        // CONSTRUIR MENSAGEM DO WHATSAPP
         let mensagem = `🧾 *PEDIDO: ${idPedido}*\n`;
-        mensagem += `👤 *Cliente: ${nomeCliente}*\n`; // Nome do cliente na mensagem
+        mensagem += `👤 *Cliente: ${nomeCliente}*\n`;
         mensagem += `----------------------------\n`;
 
         // Iterar sobre cada item do carrinho
-        carrinho.forEach((item, index) => {
+        carrinho.forEach((item) => {
             // Determinar o tipo de produto para formatação específica
-            const tipoProduto = determinarTipoProduto(item);
+            const tipoProduto = item.servico;
             
             // Nome do item (sempre presente)
             mensagem += `\n*- [ ${item.nome} ]*\n`;
@@ -320,21 +344,6 @@ async function finalizarCompra() {
                 case 'adesivo-normal':
                     // Adesivo normal (sem personalização)
                     break;
-                    
-                case 'produto-futuro-a':
-                    mensagem += `Especificação futura A\n`;
-                    break;
-                    
-                case 'produto-futuro-b':
-                    mensagem += `Especificação futura B\n`;
-                    break;
-                    
-                default:
-                    if (item.especificacoes) {
-                        Object.entries(item.especificacoes).forEach(([key, value]) => {
-                            mensagem += `└ ${key}: ${value}\n`;
-                        });
-                    }
             }
         });
 
@@ -351,7 +360,7 @@ async function finalizarCompra() {
         renderizarCarrinho();
         atualizarContadoresGlobalmente();
         
-        // Mostrar mensagem de sucesso antes de redirecionar
+        // Mostrar mensagem de sucesso
         alert(`✅ Pedido enviado com sucesso, ${nomeCliente}! Você será redirecionado para a página inicial.`);
         
         setTimeout(() => {
@@ -362,34 +371,4 @@ async function finalizarCompra() {
         console.error("Erro ao salvar pedido:", e);
         alert('Erro ao processar pedido. Verifique o console (F12) para mais detalhes.');
     }
-}
-
-// Função auxiliar para determinar o tipo de produto baseado nas propriedades
-function determinarTipoProduto(item) {
-    // Se tem svgRaw, provavelmente é adesivo personalizado
-    if (item.svgRaw && typeof item.svgRaw === 'string') {
-        return 'adesivo-personalizado';
-    }
-    
-    // Se é adesivo mas sem personalização
-    if (item.nome && item.nome.toLowerCase().includes('adesivo') && !item.svgRaw) {
-        return 'adesivo-normal';
-    }
-    
-    // Verificar pela página de origem
-    if (item.paginaOrigem === 'nome.html') return 'adesivo-personalizado';
-    
-    // Você pode adicionar mais condições conforme criar novas páginas
-    // if (item.paginaOrigem === 'canecas.html') return 'produto-futuro-a';
-    // if (item.paginaOrigem === 'camisetas.html') return 'produto-futuro-b';
-    
-    // Se não se encaixar em nenhuma categoria específica
-    return 'produto-generico';
-}
-
-// Função auxiliar para determinar página de origem (fallback)
-function determinarPaginaOrigem(item) {
-    if (item.svgRaw) return 'nome.html';
-    if (item.nome && item.nome.toLowerCase().includes('adesivo')) return 'produtos.html';
-    return 'desconhecida';
-}
+};

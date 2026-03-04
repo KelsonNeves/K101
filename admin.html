@@ -1384,6 +1384,7 @@
                     <div class="pedido-hero-cliente">
                         <div class="cliente-nome" id="cliente-nome-hero">
                             <i class="fas fa-user-circle"></i>
+                            
                         </div>
                         <div class="cliente-contato" id="cliente-contato-hero"></div>
                     </div>
@@ -1876,7 +1877,8 @@
         if (pedido.itens && pedido.itens.length > 0) {
             pedido.itens.forEach((item, index) => {
                 const temSVG = !!(item.svgRaw || item.temSVG === true);
-                const iconeItem = temSVG ? 'fa-file-svg' : 'fa-box';
+                const temICONE = !!(item.icone_produto || item.icone_produto === true);
+                const iconeItem = temICONE ? item.icone_produto : 'fa-box';
                 const corItem = temSVG ? 'var(--primary)' : '#999';
                 
                 const precoUnitario = Number(item.preco) || 0;
@@ -1891,7 +1893,7 @@
                     <div class="item-info">
                         <div class="item-nome">
                             <i class="fas ${iconeItem}"></i>
-                            ${item.texto || item.nome || 'Item sem identificação'}
+                            ${item.texto || item.nome || 'Item sem identificação'} - [${item.servico}]
                         </div>
                         <div class="item-detalhes">
                             <span><i class="fas fa-tag"></i> ${item.tipo || 'Produto'}</span>

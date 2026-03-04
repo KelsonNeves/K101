@@ -420,6 +420,7 @@ body {
 
 .modal-body {
     padding: 20px 0;
+    
 }
 
 .modal-preco-quantidade {
@@ -436,6 +437,7 @@ body {
 .modal-preco {
     display: flex;
     align-items: center;
+    text-align: center;
     gap: 10px;
 }
 
@@ -450,13 +452,22 @@ body {
     color: var(--primary-color);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 .modal-quantidade {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.quantidade-label {
+    gap: 1rem;
     font-size: 1rem;
     color: #666;
 }
@@ -465,14 +476,17 @@ body {
     display: flex;
     align-items: center;
     gap: 5px;
+    background: #f8f9fa;
+    padding: 5px;
+    border-radius: 40px;
 }
 
 .quantidade-btn-modal {
-    width: 35px;
-    height: 35px;
-    border: 1px solid var(--border-color);
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--border-color);
     background: white;
-    border-radius: 5px;
+    border-radius: 30px;
     cursor: pointer;
     font-size: 1rem;
     display: flex;
@@ -489,14 +503,15 @@ body {
 }
 
 .quantidade-input-modal {
-    width: 60px;
-    height: 35px;
+    width: 50px;
+    height: 38px;
     text-align: center;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
     font-size: 1rem;
-    padding: 0 5px;
-    -moz-appearance: textfield;
+    font-weight: bold;
+    background: white;
+    color: var(--text-color);
 }
 
 .quantidade-input-modal::-webkit-inner-spin-button,
@@ -505,8 +520,9 @@ body {
     margin: 0;
 }
 
+
 .modal-total {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
     text-align: right;
@@ -514,27 +530,27 @@ body {
     padding: 10px;
     border-top: 2px dashed var(--border-color);
 }
-
 .btn-add-carrinho-modal {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: transform 0.3s;
-}
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
 
-.btn-add-carrinho-modal:hover {
-    transform: translateY(-2px);
-}
+        .btn-add-carrinho-modal:hover {
+            transform: translateY(-2px);
+        }
 
 /* ===== NOTIFICAÇÃO ===== */
 .notificacao {
