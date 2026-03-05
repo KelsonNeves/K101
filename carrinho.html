@@ -8,6 +8,22 @@
     <link rel="stylesheet" href="carrinho.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Permite seleção de texto apenas em inputs e áreas de texto */
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
         /* Estilos adicionais para o campo de nome */
         .cliente-info {
             background: white;

@@ -1,8 +1,22 @@
+
 * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Permite seleção de texto apenas em inputs e áreas de texto */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 :root {
@@ -13,10 +27,11 @@
     --success-color: #28a745;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
+    --background-color: #fafafa;
 }
 
 body {
-    background-color: #fafafa;
+    background-color: var(--background-color);
 }
 
 /* ===== HEADER ===== */

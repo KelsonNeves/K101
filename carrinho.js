@@ -78,7 +78,7 @@ function renderizarItensCarrinho(carrinho) {
     carrinhoItems.innerHTML = html;
 }
 
-// Renderizar resumo do carrinho (MODIFICADO)
+// Renderizar resumo do carrinho
 function renderizarResumo(carrinho) {
     const subtotal = carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
     
@@ -117,7 +117,7 @@ function renderizarResumo(carrinho) {
     }
 }
 
-// NOVA FUNÇÃO: Validar nome do cliente
+// Validar nome do cliente
 window.validarNomeCliente = () => {
     const inputNome = document.getElementById('nome-cliente');
     const erroNome = document.getElementById('erro-nome');
@@ -187,7 +187,7 @@ window.removerItem = (produtoId) => {
     atualizarContadoresGlobalmente();
 };
 
-// NOVA FUNÇÃO - Atualizar contadores em todas as páginas
+// Atualizar contadores em todas as páginas
 function atualizarContadoresGlobalmente() {
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
@@ -279,7 +279,6 @@ window.finalizarCompra = async () => {
             // Criar objeto base com campos obrigatórios
             const itemBase = {
                 icone_produto: item.icone_produto || 'fa-box', // Fallback se não existir
-                id: item.id || Date.now().toString(),
                 nome: item.nome || 'Produto',
                 preco: Number(item.preco) || 0,
                 quantidade: Number(item.quantidade) || 1,
