@@ -408,7 +408,6 @@
             border: 3px solid #b8b8b8;
             transition: all 0.3s;
             box-shadow: 0 0px 5px rgba(0, 0, 0, 0.295);
-            margin-right: 20px;
             width: 100%;
             font-weight: 600;
         }
@@ -602,66 +601,66 @@
         }
 
         /* Responsividade */
-        @media (max-width: 1200px) {
-            .previa-container {
-                right: calc(50% - 400px);
-                width: auto;
-            }
-        }
+@media (max-width: 1200px) {
+    .previa-container {
+        right: calc(50% - 400px);
+        width: auto;
+    }
+}
 
-        @media (max-width: 992px) {
-            .previa-container {
-                position: fixed;
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-                width: auto;
-                height: 110px;
-                z-index: 1000;
-            }
-            
-            .conteudo-wrapper {
-                margin-bottom: 180px;
-            }
-            
-            .cabecalho-editor {
-                padding-right: 0;
-            }
-        }
+@media (max-width: 992px) {
+    .previa-container {
+        position: sticky; /* Mudado de fixed para sticky */
+        top: 100px; /* Mantém a mesma distância do header */
+        bottom: auto; /* Remove o bottom */
+        right: auto;
+        left: auto;
+        width: 100%; /* Volta a ocupar 100% da largura */
+        height: 120px; /* Mantém a altura original */
+        z-index: 950;
+        margin-bottom: 20px; /* Adiciona margem inferior */
+    }
+    
+    .conteudo-wrapper {
+        margin-bottom: 40px; /* Reduz a margem inferior */
+    }
+    
+    .cabecalho-editor {
+        padding-right: 0;
+    }
+}
 
-        @media (max-width: 768px) {
-            .card-editor {
-                padding: 1.5rem;
-            }
-            
-            .preco-valor {
-                font-size: 1.5rem;
-            }
-            .caixadeIcone{
-                grid-template-columns: repeat(5, 1fr);
-            }
-        
-        }
+@media (max-width: 768px) {
+    .card-editor {
+        padding: 1.5rem;
+    }
+    
+    .preco-valor {
+        font-size: 1.5rem;
+    }
+    .caixadeIcone{
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
 
-        @media (max-width: 480px) {
-            .card-titulo {
-                font-size: 1.1rem;
-            }
-            
-            .preco-quantidade-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .cor-opcao {
-                width: 40px;
-                height: 40px;
-            }
-            .caixadeIcone{
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
+@media (max-width: 480px) {
+    .card-titulo {
+        font-size: 1.1rem;
+    }
+    
+    .preco-quantidade-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .cor-opcao {
+        width: 40px;
+        height: 40px;
+    }
+    .caixadeIcone{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
 
         /* Dropdown customizado */
         .dropdown-custom {
@@ -1016,7 +1015,7 @@
 
                             <!-- Posição do ícone -->
                             <hr>
-                            <div style="margin-top: 15px;">
+                            <div style="margin-top: 10px;">
                                 <p class="legenda-funcao">Posição do ícone:</p>
                                 <div class="checkbox-group">
                                     <label class="checkbox-option" >
@@ -1035,8 +1034,8 @@
                             </div>
 
                             <!-- NOVO: Controle deslizante para tamanho do ícone -->
-                            <hr>
-                            <div class="controle-deslizante" style="margin-top: 15px;">
+                            <hr style="margin-top: 30px;">
+                            <div class="controle-deslizante" style="margin-top: 10px;">
                                 <label>
                                     <p class="legenda-funcao">Tamanho do ícone</p>
                                     <span class="valor-controle" id="tamanho-icone-valor">40</span>px
@@ -1049,8 +1048,8 @@
                                 </div>
                             </div>
                             <!-- NOVO: Controle deslizante para distância do ícone -->
-                            <hr>
-                            <div class="controle-deslizante" style="margin-top: 15px;">
+                            
+                            <div class="controle-deslizante" style="margin-top: 10px;">
                                 <label>
                                     <p class="legenda-funcao">Distância do ícone</p>
                                     <span class="valor-controle" id="distancia-icone-valor">25</span>px
@@ -1064,13 +1063,13 @@
                             </div>
 
                             <!-- NOVO: Controle deslizante para altura do ícone -->
-                            <hr>
+                            
                             <div class="controle-deslizante" style="margin-top: 15px;">
                                 <label>
                                     <p class="legenda-funcao">Altura do ícone</p>
                                     <span class="valor-controle" id="altura-icone-valor">85</span>px
                                 </label>
-                                <input type="range" id="altura-icone" min="75" max="90" value="85" step="1">
+                                <input type="range" id="altura-icone" min="75" max="100" value="85" step="1">
                                 <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
                                     <span>Acima</span>
                                     <span>Central</span>
@@ -1136,6 +1135,11 @@
                         <span>BORDA</span>     
                     </div>
                     <div class="card-conteudo" id="controles-filete" style="display: none;">
+
+
+                            <p style="margin-top: 10px; margin-bottom: 25px; color: #818181; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> Adesivo a mais que vai no fundo FUNDO do principal. É sobreposição de adesivos, dando aspecto de relevo.
+                            </p>
                         
                             <div class="card-titulo" style="margin-top: 10px;">
                                 
@@ -1149,6 +1153,7 @@
                                 </label>
                             </div>
                             <hr>
+                            
                             <div class="controle-deslizante">
                                 <label>
                                     <p class="legenda-funcao">Grossura</p>
@@ -1210,16 +1215,16 @@
     <div class="dimensoes-info" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 16px; text-align: center;">
         <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div>
-                <span style="color: #666; font-size: 0.9rem; display: block;">Largura final</span>
-                <span id="largura-final" style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">15</span>
+                <span style="color: #666; font-size: 0.9rem; display: block;">Largura</span>
+                <span id="largura-final" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">15</span>
                 <span style="color: #666;">cm</span>
             </div>
             <div>
-                <i class="fas fa-times" style="color: #999; font-size: 1.5rem;"></i>
+                <i class="fas fa-times" style="color: #999; font-size: 1.1rem;"></i>
             </div>
             <div>
-                <span style="color: #666; font-size: 0.9rem; display: block;">Altura proporcional</span>
-                <span id="altura-proporcional" style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">--</span>
+                <span style="color: #666; font-size: 0.9rem; display: block;">Altura</span>
+                <span id="altura-proporcional" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">--</span>
                 <span style="color: #666;">cm</span>
             </div>
         </div>
@@ -1252,40 +1257,41 @@
         const CATEGORIAS_ADESIVO = {
             vinil: {
                 nome: 'Vinil Brilho (Padrão)',
-                precoAdicional: 0,
+                precoAdicional: 1,
                 cores: [
                     { nome: 'Preto', codigo: '#000000' },
                     { nome: 'Branco', codigo: '#FFFFFF' },
-                    { nome: 'Vermelho', codigo: '#FF0000' },
-                    { nome: 'Azul', codigo: '#0000FF' }
+                    { nome: 'Vermelho', codigo: '#D91108' },
+                    { nome: 'Laranja', codigo: '#E47429' },
+                    { nome: 'Amarelo', codigo: '#EDCB08' },
+                    { nome: 'Azul escuro', codigo: '#0840D7' },
+                    { nome: 'Azul claro', codigo: '#08C8ED' },
+                    { nome: 'Verde escuro', codigo: '#087636' },
+                    { nome: 'Verde claro', codigo: '#36BF36' },
+                    { nome: 'Roxo', codigo: '#B456CC' },
+                    { nome: 'Rosa', codigo: '#ED91ED' },
+                    { nome: 'Pele', codigo: '#EDBFBF' },
                 ]
             },
             refletivo: {
                 nome: 'Refletivo (Segurança)',
-                precoAdicional: 5.00,
+                precoAdicional: 1.05,
                 cores: [
-                    { nome: 'Branco Refletivo', codigo: '#E0E0E0' },
-                    { nome: 'Vermelho Refletivo', codigo: '#D32F2F' },
-                    { nome: 'Amarelo Refletivo', codigo: '#FBC02D' }
+                    { nome: 'Branco Refletivo', codigo: '#E6E6E6' },
+                    { nome: 'Vermelho Refletivo', codigo: '#FF0000' },
+                    { nome: 'Laranja Refletivo', codigo: '#FF571A' },
+                    { nome: 'Amarelo Refletivo', codigo: '#FFF000' },
+                    { nome: 'Azul Refletivo', codigo: '#0000FF' },
+                    { nome: 'Verde Refletivo', codigo: '#00CE4F' }
                 ]
             },
-            metalico: {
+            especiais: {
                 nome: 'Metálico / Cromado',
-                precoAdicional: 8.00,
+                precoAdicional: 1.10,
                 cores: [
-                    { nome: 'Prata Cromado', codigo: '#C0C0C0' },
-                    { nome: 'Dourado', codigo: '#D4AF37' }
+                    
                 ]
             },
-            fluorescente: {
-                nome: 'Fluorescente (Neon)',
-                precoAdicional: 3.50,
-                cores: [
-                    { nome: 'Verde Neon', codigo: '#39FF14' },
-                    { nome: 'Rosa Neon', codigo: '#FF6EC7' },
-                    { nome: 'Laranja Neon', codigo: '#FF5F1F' }
-                ]
-            }
         };
 
         const FONTES_DISPONIVEIS = [
@@ -1355,6 +1361,8 @@
         let arredondamentoAtual = 1;
         let larguraAdesivo = 15;
 
+        let timeoutRedimensionamento = null;
+
 
 
         let iconeAtivo = false;
@@ -1378,6 +1386,9 @@
 
         // NOVA VARIÁVEL PARA ARMAZENAR O SVG COMPLETO
         let svgCompletoAtual = null;
+
+        //Quantidades possiveis de compra
+        const QUANTIDADES_FIXAS = [1, 2, 3, 5, 10, 25, 50, 100];
 
 
 async function carregarIcones() {
@@ -1579,14 +1590,38 @@ function criarIconeSVG(posicaoX, posicaoY) {
 
         // ===== FUNÇÕES =====
 function calcularPrecoUnitario() {
-    let precoBase = 10.00;
-    
+
+    let precoBase = 0;
+    const quantidade = parseInt(document.getElementById('quantidade-personalizado').value) || 1;
+
+    // Tabela de preços
+    if (larguraAdesivo<=15) precoBase = 20.00;
+    else if (larguraAdesivo<=20) precoBase = 22.50;
+    else if (larguraAdesivo<=25) precoBase = 25.00;
+    else if (larguraAdesivo<=35) precoBase = 27.50;
+    else if (larguraAdesivo<=45) precoBase = 30.00;
+    else if (larguraAdesivo<=50) precoBase = 35.00;
+    else if (larguraAdesivo<=60) precoBase = 40.00;
+    else if (larguraAdesivo<=70) precoBase = 45.00;
+    else if (larguraAdesivo<=80) precoBase = 55.00;
+    else if (larguraAdesivo<=90) precoBase = 60.00;
+    else if (larguraAdesivo<=100) precoBase = 70.00;
+
+    //Desconto por quantidade
+    if (quantidade === QUANTIDADES_FIXAS[0]) precoBase = precoBase;
+    else if (quantidade === QUANTIDADES_FIXAS[1]) precoBase *= 0.75;
+    else if (quantidade === QUANTIDADES_FIXAS[2]) precoBase *= 0.60;
+    else if (quantidade <= QUANTIDADES_FIXAS[3]) precoBase *= 0.50;
+    else if (quantidade <= QUANTIDADES_FIXAS[4]) precoBase *= 0.35;
+    else if (quantidade <= QUANTIDADES_FIXAS[5]) precoBase *= 0.25;
+    else if (quantidade <= QUANTIDADES_FIXAS[6]) precoBase *= 0.23;
+    else if (quantidade <= QUANTIDADES_FIXAS[7]) precoBase *= 0.22;
+   
     // Soma o adicional do material
-    precoBase += CATEGORIAS_ADESIVO[tipoSelecionado].precoAdicional;
+    precoBase *= CATEGORIAS_ADESIVO[tipoSelecionado].precoAdicional;
     
-    if (bordaAtiva) precoBase += 2.00;
-    if (corBorda === 'branca') precoBase += 1.00;
-    if (corSecundariaAtivo) precoBase += 3.00;
+    if (bordaAtiva) precoBase *= 1.1 * ((larguraAdesivo/(larguraAdesivo*quantidade*10))+1);
+    if (corSecundariaAtivo) precoBase *= 1.1;
     
     return precoBase;
 }
@@ -1608,27 +1643,30 @@ function calcularAlturaProporcional() {
     
     if (bbox.width === 0) return '0.0';
     
+    // FATOR DE CORREÇÃO - ajuste este valor conforme necessário
+    // Se a altura está aparecendo maior que o real, diminua este valor
+    // Se está aparecendo menor que o real, aumente este valor
+    const fatorCorrecao = 0.65; // Comece com 0.8 e ajuste conforme necessário
+    
     // Largura real do conteúdo em pixels
     const larguraRealPixels = bbox.width;
     
     // Altura real do conteúdo em pixels
     const alturaRealPixels = bbox.height;
     
-    // Converter pixels para cm (96 DPI = 37.8 pixels por cm)
-    const pixelsPorCm = 37.8;
+    // Largura do adesivo em cm (desejada pelo usuário)
+    const larguraDesejadaCm = larguraAdesivo;
     
-    // Largura real em cm
-    const larguraRealCm = larguraRealPixels / pixelsPorCm;
+    // Calcular quantos pixels por cm na escala atual
+    const pixelsPorCmNaEscala = larguraRealPixels / larguraDesejadaCm;
     
-    // Fator de escala baseado na largura desejada
-    const fatorEscala = larguraAdesivo / larguraRealCm;
-    
-    // Altura proporcional em cm
-    const alturaProporcional = (alturaRealPixels / pixelsPorCm) * fatorEscala;
+    // Altura em cm = altura em pixels / pixels por cm na escala * fator de correção
+    const alturaProporcional = (alturaRealPixels / pixelsPorCmNaEscala) * fatorCorrecao;
     
     // Retornar com 1 casa decimal
     return alturaProporcional.toFixed(1);
 }
+
 function atualizarDisplayLargura() {
     const larguraInput = document.getElementById('largura-personalizado');
     const larguraValor = document.getElementById('largura-valor');
@@ -1671,10 +1709,32 @@ function atualizarPrecos() {
 
 function alterarQuantidadePersonalizado(delta) {
     const input = document.getElementById('quantidade-personalizado');
-    let novaQuantidade = parseInt(input.value) + delta;
-    if (novaQuantidade < 1) novaQuantidade = 1;
-    if (novaQuantidade > 99) novaQuantidade = 99;
+    const valorAtual = parseInt(input.value);
+    
+    // Encontra o índice do valor atual no array
+    let indiceAtual = QUANTIDADES_FIXAS.indexOf(valorAtual);
+    
+    // Se o valor atual não estiver no array (por algum motivo), encontra o mais próximo
+    if (indiceAtual === -1) {
+        // Encontra o valor mais próximo no array
+        let valorMaisProximo = QUANTIDADES_FIXAS.reduce((prev, curr) => {
+            return (Math.abs(curr - valorAtual) < Math.abs(prev - valorAtual) ? curr : prev);
+        });
+        indiceAtual = QUANTIDADES_FIXAS.indexOf(valorMaisProximo);
+    }
+    
+    // Calcula o novo índice baseado no delta
+    let novoIndice = indiceAtual + delta;
+    
+    // Garante que o índice está dentro dos limites do array
+    if (novoIndice < 0) novoIndice = 0;
+    if (novoIndice >= QUANTIDADES_FIXAS.length) novoIndice = QUANTIDADES_FIXAS.length - 1;
+    
+    // Atualiza o valor do input
+    const novaQuantidade = QUANTIDADES_FIXAS[novoIndice];
     input.value = novaQuantidade;
+    
+    // Atualiza os preços
     atualizarPrecos();
 }
 
@@ -1947,8 +2007,6 @@ async function gerarSVGCompleto() {
             throw new Error('Fonte padrão, não precisa carregar');
         }
         
-        console.log('Tentando carregar fonte:', urlFonte); // Para debug
-        
         const font = await opentype.load(urlFonte);
         
         // ===== GERAR PATHS DO TEXTO =====
@@ -2196,7 +2254,9 @@ async function gerarSVGCompleto() {
     return svgString;
 }
 
-// FUNÇÃO MODIFICADA: atualizarPrevia agora usa a lógica de paths
+
+
+// FUNÇÃO MODIFICADA: atualizarPrevia (apenas com a correção do debounce)
 async function atualizarPrevia(deveRedimensionar = false) {
     const texto = textoInput.value.trim() || '';
     const familiaFonte = fonteSelecionada.arquivo.startsWith('url(') ? `'${fonteSelecionada.nome}'` : fonteSelecionada.arquivo;
@@ -2220,11 +2280,7 @@ async function atualizarPrevia(deveRedimensionar = false) {
             // Armazenar para uso no carrinho
             svgCompletoAtual = svgCompleto;
             
-            // Para visualização, ainda usamos o método antigo (textos SVG)
-            // pois é mais leve e rápido para a interface
-            // Mas podemos manter isso como fallback ou usar o novo método se preferir
-            
-            // Código original de visualização (mantido para compatibilidade)
+            // Código original de visualização (mantido igual)
             [svgTextoFrente, svgTextoContorno].forEach(el => {
                 el.style.fontFamily = familiaFonte;
                 el.style.fontSize = "50px";
@@ -2235,7 +2291,7 @@ async function atualizarPrevia(deveRedimensionar = false) {
             // Medição para centralização
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
-            context.font = ` 50px ${familiaFonte}`;
+            context.font = `50px ${familiaFonte}`;
 
             let larguras = [];
             let larguraTotal = 0;
@@ -2340,16 +2396,30 @@ async function atualizarPrevia(deveRedimensionar = false) {
         console.error('Erro ao gerar SVG completo:', error);
     }
 
+    // APENAS ESTA PARTE FOI MODIFICADA - Redimensionamento com debounce
     if (deveRedimensionar) {
-        setTimeout(() => {
+        // Cancelar o timeout anterior se existir
+        if (timeoutRedimensionamento) {
+            clearTimeout(timeoutRedimensionamento);
+        }
+        
+        // Criar um novo timeout para redimensionar após 50ms
+        timeoutRedimensionamento = setTimeout(() => {
             const svgEditor = document.getElementById('svg-editor');
             const grupoSvg = svgEditor.querySelector('g');
-            const bbox = grupoSvg.getBBox();
-            if (bbox.width > 0) {
-                const margem = 40;
-                svgEditor.setAttribute('viewBox', `${bbox.x - margem} ${bbox.y - margem} ${bbox.width + (margem * 2)} ${bbox.height + (margem * 2)}`);
+            
+            if (grupoSvg) {
+                const bbox = grupoSvg.getBBox();
+                if (bbox.width > 0) {
+                    const margem = 40;
+                    svgEditor.setAttribute('viewBox', 
+                        `${bbox.x - margem} ${bbox.y - margem} ${bbox.width + (margem * 2)} ${bbox.height + (margem * 2)}`
+                    );
+                }
             }
-        }, 50);
+            
+            timeoutRedimensionamento = null;
+        }, 50); // Pequeno delay de 50ms para acumular múltiplas mudanças
     }
 
     atualizarFundoPrevia();
@@ -2584,13 +2654,15 @@ function configurarEventListeners() {
 
     if (diminuirLargura) {
         diminuirLargura.addEventListener('click', () => {
-            alterarLarguraPersonalizado(-1); // -1 passo = -5cm
+            alterarLarguraPersonalizado(-1);
+            atualizarPrecos();
         });
     }
 
     if (aumentarLargura) {
         aumentarLargura.addEventListener('click', () => {
-            alterarLarguraPersonalizado(1); // +1 passo = +5cm
+            alterarLarguraPersonalizado(1);
+            atualizarPrecos();
         });
     }
 
