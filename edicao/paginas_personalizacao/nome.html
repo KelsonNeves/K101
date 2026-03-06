@@ -27,6 +27,12 @@
             -webkit-user-select: text;
             user-select: text;
         }
+        hr {
+            border: 0;
+            height: 2px;
+            background: #bebebe;
+            margin-bottom: 40px;
+        }
 
         /* Reset e estilos base */
         body {
@@ -96,7 +102,7 @@
             position: sticky;
             top: 100px;
             width: 100%;
-            height: 160px;
+            height: 200px;
             background-color: #f8f9fa;
             background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
             background-size: 20px 20px;
@@ -104,10 +110,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 0px 10px rgba(0, 0, 0, 0.726);
             border: 1px solid var(--primary-color);
             z-index: 950;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .conteudo-wrapper {
@@ -212,6 +218,10 @@
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(18, 172, 159, 0.1);
+        }
+        .legenda-funcao{
+            font-weight: 500;
+            margin:10px;
         }
 
         select.campo-texto {
@@ -328,11 +338,7 @@
             transition: background 0.3s;
         }
 
-        .opcao-cor-borda:hover {
-            background: #e9ecef;
-        }
-
-        .opcao-cor-borda input[type="radio"] {
+        input[type="radio"] {
             appearance: none;
             -webkit-appearance: none;
             width: 18px;
@@ -347,12 +353,12 @@
             transition: all 0.2s ease;
         }
 
-        .opcao-cor-borda input[type="radio"]:checked {
+        input[type="radio"]:checked {
             border-color: var(--primary-color);
             background-color: white;
         }
 
-        .opcao-cor-borda input[type="radio"]:checked::before {
+        input[type="radio"]:checked::before {
             content: "";
             width: 10px;
             height: 10px;
@@ -370,6 +376,7 @@
 
         .cor-preview.preta {
             background: black;
+            margin-right:30px;
         }
 
         .cor-preview.branca {
@@ -387,6 +394,7 @@
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
+            margin-top: 20px;
         }
 
         .checkbox-option {
@@ -394,14 +402,29 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            padding: 5px 5px;
-            background: #e7e7e7;
+            padding: 10px 15px;
+            background: #f0f0f0;
             border-radius: 10px;
+            border: 3px solid #b8b8b8;
             transition: all 0.3s;
+            box-shadow: 0 0px 5px rgba(0, 0, 0, 0.295);
+            margin-right: 20px;
+            width: 100%;
+            font-weight: 600;
         }
 
         .checkbox-option:hover {
-            background: #e9ecef;
+            background: #ffffff;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0px 5px rgba(0, 0, 0, 0.466);
+            transform: translateY(-2px);
+        }
+
+        .checkbox-option:has(input[type="checkbox"]:checked), .checkbox-option:has(input[type="radio"]:checked)  {
+            background: var(--primary-color); 
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #ffffff;
         }
 
         .checkbox-option input[type="checkbox"] {
@@ -582,7 +605,7 @@
         @media (max-width: 1200px) {
             .previa-container {
                 right: calc(50% - 400px);
-                width: 800px;
+                width: auto;
             }
         }
 
@@ -594,9 +617,8 @@
                 right: 20px;
                 left: 20px;
                 width: auto;
-                height: 140px;
+                height: 110px;
                 z-index: 1000;
-                box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
             }
             
             .conteudo-wrapper {
@@ -640,6 +662,185 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+
+        /* Dropdown customizado */
+        .dropdown-custom {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .dropdown-selecionado {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .dropdown-selecionado:hover {
+            border-color: var(--primary-color);
+        }
+
+        .dropdown-selecionado i {
+            transition: transform 0.3s;
+            color: var(--primary-color);
+        }
+
+        .dropdown-custom.ativo .dropdown-selecionado i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-opcoes {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 16px;
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-custom.ativo .dropdown-opcoes {
+            display: block;
+        }
+
+        .dropdown-opcao {
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-opcao:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-opcao:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .dropdown-opcao.selecionada {
+            background: var(--primary-color-light);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Garantir que a fonte seja aplicada ao texto da opção */
+        .dropdown-opcao {
+            font-family: inherit; /* Será sobrescrito por JavaScript */
+        }
+
+        /* Ajustes para mobile */
+        @media (max-width: 768px) {
+            .dropdown-opcoes {
+                max-height: 200px;
+            }
+        }
+
+
+
+        /* Estilos para o controle de largura */
+.largura-container {
+    margin: 20px 0;
+    padding-top: 15px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.largura-label {
+    color: #666;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.largura-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.largura-controles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.largura-btn {
+    width: 45px;
+    height: 45px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    color: var(--text-color);
+}
+
+.largura-btn:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.largura-input {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    background: white;
+    color: var(--text-color);
+}
+
+.largura-input::-webkit-inner-spin-button,
+.largura-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.dimensoes-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f0f0;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.dimensoes-info i.fa-times {
+    color: #999;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .largura-input {
+        width: 60px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .largura-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
     </style>
 </head>
 <body>
@@ -755,14 +956,23 @@
                     </div>
                 </div>
 
-                <!-- CARD: FONTE -->
+                <!-- CARD: FONTE - VERSÃO CUSTOMIZADA -->
                 <div class="card-editor">
                     <div class="card-titulo">
                         <i class="fas fa-font"></i>
                         <span>FONTES</span>
                     </div>
                     <div class="card-conteudo">
-                        <select id="selecao-fonte" class="campo-texto"></select>
+                        <!-- Dropdown customizado -->
+                        <div class="dropdown-custom" id="dropdown-fontes">
+                            <div class="dropdown-selecionado" id="fonte-selecionada">
+                                <span id="fonte-nome">Carregando...</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="dropdown-opcoes" id="dropdown-opcoes-fontes">
+                                <!-- Opções serão inseridas aqui via JavaScript -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -773,7 +983,7 @@
                         <span>COR PRINCIPAL</span>
                     </div>
                         <div class="card-conteudo">
-                            <p style="margin-bottom: 15px;">Material:</p>
+                            <p class="legenda-funcao">Material:</p>
                             <select id="selecao-tipo-adesivo" class="campo-texto">
                                 <option value="vinil">Vinil Brilho</option>
                                 <option value="refletivo">Refletivo</option>
@@ -786,17 +996,104 @@
                         
                 </div>
 
-                <!-- CARD: DESTAQUES ESPECIAIS -->
+                <!-- CARD: ICONES -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                        <input class="card-seletor" type="checkbox" id="icone-ativo">
+                        <i class="fas fa-star"></i>
+                        <span>ICONES</span>
+                    </div>
+                    <div class="card-conteudo" id="controles-icone" style="display: none;">
+
+                        <!-- NOVA SEÇÃO: ÍCONES SVG -->
+                        <div class="card-conteudo" style="margin-top: 15px;">
+                            <p class="legenda-funcao">
+                                <i class=""></i> Ícones Decorativos
+                            </p>
+                            
+                            <!-- Grid de miniaturas de ícones -->
+                            <div id="icones-grid" class="caixadeIcone"></div>
+
+                            <!-- Posição do ícone -->
+                            <hr>
+                            <div style="margin-top: 15px;">
+                                <p class="legenda-funcao">Posição do ícone:</p>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option" >
+                                        <input type="radio" name="posicao-icone" id="icone-inicio" value="inicio" checked>
+                                        <span>No início</span>
+                                    </label>
+                                    <label class="checkbox-option" >
+                                        <input type="radio" name="posicao-icone" id="icone-final" value="final">
+                                        <span>No final</span>
+                                    </label>
+                                    <label class="checkbox-option" >
+                                        <input type="radio" name="posicao-icone" id="icone-ambos" value="ambos">
+                                        <span>Início e final</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- NOVO: Controle deslizante para tamanho do ícone -->
+                            <hr>
+                            <div class="controle-deslizante" style="margin-top: 15px;">
+                                <label>
+                                    <p class="legenda-funcao">Tamanho do ícone</p>
+                                    <span class="valor-controle" id="tamanho-icone-valor">40</span>px
+                                </label>
+                                <input type="range" id="tamanho-icone" min="35" max="50" value="40" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Pequeno</span>
+                                    <span>Médio</span>
+                                    <span>Grande</span>
+                                </div>
+                            </div>
+                            <!-- NOVO: Controle deslizante para distância do ícone -->
+                            <hr>
+                            <div class="controle-deslizante" style="margin-top: 15px;">
+                                <label>
+                                    <p class="legenda-funcao">Distância do ícone</p>
+                                    <span class="valor-controle" id="distancia-icone-valor">25</span>px
+                                </label>
+                                <input type="range" id="distancia-icone" min="10" max="50" value="25" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Próximo</span>
+                                    <span>Médio</span>
+                                    <span>Distante</span>
+                                </div>
+                            </div>
+
+                            <!-- NOVO: Controle deslizante para altura do ícone -->
+                            <hr>
+                            <div class="controle-deslizante" style="margin-top: 15px;">
+                                <label>
+                                    <p class="legenda-funcao">Altura do ícone</p>
+                                    <span class="valor-controle" id="altura-icone-valor">85</span>px
+                                </label>
+                                <input type="range" id="altura-icone" min="75" max="90" value="85" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Acima</span>
+                                    <span>Central</span>
+                                    <span>Abaixo</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CARD: COR SECUNDARIA -->
                 <div class="card-editor">
                     <div class="card-titulo">
                         <input class="card-seletor" type="checkbox" id="destaques-ativo">
-                        <i class="fas fa-star"></i>
-                        <span>DESTAQUES</span>
+                        <i class="fas fa-palette"></i>
+                        <span>COR SECUNDÁRIA</span>
                     </div>
-                    <div class="card-conteudo" id="controles-destaques" style="display: none;">
+                    <div class="card-conteudo" id="controles-cor-secundaria" style="display: none;">
                         
+                        <p class="legenda-funcao">Cor Secondária</p>
                         <div class="card-conteudo">
-                            <p style="margin-bottom: 15px;">Cor Secondária</p>
+                            
                             <select id="selecao-tipo-secundario" class="campo-texto">
                                 <option value="vinil">Vinil Brilho</option>
                                 <option value="refletivo">Refletivo</option>
@@ -805,75 +1102,29 @@
                             </select>
                             <div class="selecao-cor" id="selecao-cor-secundaria"></div>
                         </div>
-
-                        
-
+                        <hr>
+                        <p class="legenda-funcao" >Utilização da cor secundária</p>
                         <div>
                             <div class="checkbox-group">
                                 <label class="checkbox-option">
                                     <input type="checkbox" id="destaque-primeira-letra" checked>
-                                    <span>Apenas primeira letra</span>
+                                    <span>Primeira letra</span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" id="destaque-primeiras-letras" checked>
-                                    <span>Iniciais</span>
+                                    <input type="checkbox" id="destaque-primeiras-letras">
+                                    <span>Iniciais de cada palavra</span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" id="destaque-especiais">
+                                    <input type="checkbox" id="destaque-especiais" >
                                     <span>Caracteres especiais</span>
+                                </label><label class="checkbox-option">
+                                    <input type="checkbox" id="destaque-icone">
+                                    <span>Icone</span>
                                 </label>
                             </div>
-                        </div>
-
-
-
-                        <!-- NOVA SEÇÃO: ÍCONES SVG -->
-                        <div class="card-conteudo" style="margin-top: 15px;">
-                            <p style="margin-bottom: 15px; font-weight: 600;">
-                                <i class="fas fa-icons"></i> Ícones Decorativos
-                            </p>
-                            
-                            <!-- Grid de miniaturas de ícones -->
-                            <div id="icones-grid" class="caixadeIcone"></div>
-
-                            <!-- Posição do ícone -->
-                            <div style="margin-top: 15px;">
-                                <p style="margin-bottom: 10px; font-weight: 500;">Posição do ícone:</p>
-                                <div class="checkbox-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                    <label class="checkbox-option" style="flex: 1;">
-                                        <input type="radio" name="posicao-icone" id="icone-inicio" value="inicio" checked>
-                                        <span>No início</span>
-                                    </label>
-                                    <label class="checkbox-option" style="flex: 1;">
-                                        <input type="radio" name="posicao-icone" id="icone-final" value="final">
-                                        <span>No final</span>
-                                    </label>
-                                    <label class="checkbox-option" style="flex: 1;">
-                                        <input type="radio" name="posicao-icone" id="icone-ambos" value="ambos">
-                                        <span>Início e final</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Botão para limpar seleção -->
-                            <button id="limpar-icone" style="
-                                width: 100%;
-                                margin-top: 15px;
-                                padding: 8px;
-                                background: #ff4444;
-                                color: white;
-                                border: none;
-                                border-radius: 8px;
-                                cursor: pointer;
-                                font-size: 0.9rem;
-                                display: none;
-                            ">
-                                <i class="fas fa-times"></i> Remover ícone
-                            </button>
                         </div>
                     </div>
                 </div>
-                
 
                 
 
@@ -886,20 +1137,21 @@
                     </div>
                     <div class="card-conteudo" id="controles-filete" style="display: none;">
                         
-                            <div class="opcoes-cor-borda">
+                            <div class="card-titulo" style="margin-top: 10px;">
+                                
                                 <label class="opcao-cor-borda">
+                                    <span style="color: #555; font-weight: 500; margin-right: 20px;">Cor</span>
                                     <input type="radio" name="cor-borda" id="borda-preta" value="preta" checked>
                                     <span class="cor-preview preta"></span>
-                                </label>
-                                <label class="opcao-cor-borda">
+
                                     <input type="radio" name="cor-borda" id="borda-branca" value="branca">
                                     <span class="cor-preview branca"></span>
                                 </label>
                             </div>
-
+                            <hr>
                             <div class="controle-deslizante">
                                 <label>
-                                    <span>Grossura</span>
+                                    <p class="legenda-funcao">Grossura</p>
                                     <span class="valor-controle" id="grossura-valor">3</span>
                                 </label>
                                 <input type="range" id="grossura-borda" min="2" max="5" value="3" step="1">
@@ -909,12 +1161,7 @@
                                     <span>Grossa</span>
                                 </div>
                             </div>
-
-                            <div class="card-titulo" style="margin-top: 10px;">
-                                <span style="color: #555; font-weight: 500; margin-right: 20px;">Cantos arredondados</span>
-                                <input type="checkbox" id="arredondamento-checkbox">
-                            </div>
-            
+                            <hr>
                     </div>
                 </div>
 
@@ -940,6 +1187,47 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- NOVO: Controle de largura do adesivo (em cm) - com mesma aparência da quantidade -->
+<div style="margin: 20px 0; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span class="preco-label">Largura do adesivo</span>
+        <!-- Controles no MESMO ESTILO da quantidade -->
+        <div class="quantidade-controles" style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #f8f9fa; padding: 5px; border-radius: 40px;">
+            <button class="quantidade-btn" id="diminuir-largura" style="width: 38px; height: 38px;">
+                <i class="fas fa-minus"></i>
+            </button>
+            
+            <input type="number" id="largura-personalizado" class="quantidade-input" value="15" min="15" max="70" step="5" readonly style="width: 60px; height: 38px; font-size: 1rem;">
+            
+            <button class="quantidade-btn" id="aumentar-largura" style="width: 38px; height: 38px;">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Informações de dimensão proporcional (mantém o estilo atual) -->
+    <div class="dimensoes-info" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 16px; text-align: center;">
+        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <span style="color: #666; font-size: 0.9rem; display: block;">Largura final</span>
+                <span id="largura-final" style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">15</span>
+                <span style="color: #666;">cm</span>
+            </div>
+            <div>
+                <i class="fas fa-times" style="color: #999; font-size: 1.5rem;"></i>
+            </div>
+            <div>
+                <span style="color: #666; font-size: 0.9rem; display: block;">Altura proporcional</span>
+                <span id="altura-proporcional" style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);">--</span>
+                <span style="color: #666;">cm</span>
+            </div>
+        </div>
+        <p style="margin-top: 10px; color: #666; font-size: 0.85rem; font-style: italic;">
+            <i class="fas fa-info-circle"></i> Altura calculada proporcionalmente ao texto e ícones
+        </p>
+    </div>
+</div>
                         
                         <div class="preco-total-container" id="preco-total">
                             Total: R$ 10,00
@@ -1001,31 +1289,53 @@
         };
 
         const FONTES_DISPONIVEIS = [
-            { nome: 'Padrão', arquivo: 'Arial, sans-serif' },
+            { nome: 'arialbd', arquivo: 'url("../fontes/arialbd.ttf")' },
+            { nome: 'balmoral-d', arquivo: 'url("../fontes/balmoral-d.ttf")' },
+            { nome: 'Barett Street', arquivo: 'url("../fontes/Barett Street.ttf")' },
+            { nome: 'Berani', arquivo: 'url("../fontes/Berani.otf")' },
+            { nome: 'Birthlong', arquivo: 'url("../fontes/Birthlong.ttf")' },
+            { nome: 'Deardorf Demo', arquivo: 'url("../fontes/Deardorf Demo.otf")' },
+            { nome: 'Embassy BT', arquivo: 'url("../fontes/Embassy BT.ttf")' },
+            { nome: 'Exotc350 Bd BT Bold', arquivo: 'url("../fontes/Exotc350 Bd BT Bold.ttf")' },
+            { nome: 'GraffitiYouth-Regular', arquivo: 'url("../fontes/GraffitiYouth-Regular.otf")' },
+            { nome: 'MickstoneCrush', arquivo: 'url("../fontes/MickstoneCrush.ttf")' },
             { nome: 'Mostwasted', arquivo: 'url("../fontes/Mostwasted.ttf")' },
-            { nome: 'OCR-B 10 BT', arquivo: 'url("../fontes/OCR-B 10 BT.ttf")' },
-            { nome: 'Revue Bold', arquivo: 'url("../fontes/revue-bold.ttf")' }
+            { nome: 'NEO CYBERN', arquivo: 'url("../fontes/NEO CYBERN.otf")' },
+            { nome: 'Noxlock-FreeT', arquivo: 'url("../fontes/Noxlock-Free.otf")' },
+            { nome: 'Pagal Font', arquivo: 'url("../fontes/Pagal Font.TTF")' },
+            { nome: 'revue-bold', arquivo: 'url("../fontes/revue-bold.ttf")' },
+            { nome: 'Street Wars Demo', arquivo: 'url("../fontes/Street Wars Demo.otf")' },
+            { nome: 'Vandals Puppies', arquivo: 'url("../fontes/Vandals Puppies.ttf")' },
         ];
 
         // ===== ELEMENTOS DOM =====
         const previaElement = document.getElementById('previa-adesivo');
         const textoInput = document.getElementById('texto-adesivo');
         const corContainer = document.getElementById('selecao-cor');
-        const fonteSelect = document.getElementById('selecao-fonte');
         
         const bordaCheckbox = document.getElementById('borda-ativa');
         const controlesFilete = document.getElementById('controles-filete');
         const grossuraSlider = document.getElementById('grossura-borda');
         const grossuraValor = document.getElementById('grossura-valor');
-        const arredondamentoCheckbox = document.getElementById('arredondamento-checkbox');
         const bordaPretaRadio = document.getElementById('borda-preta');
         const bordaBrancaRadio = document.getElementById('borda-branca');
         
         // NOVOS ELEMENTOS PARA DESTAQUES
-        const destaquesCheckbox = document.getElementById('destaques-ativo');
-        const controlesDestaques = document.getElementById('controles-destaques');
+        const corSecundariaCheckbox = document.getElementById('destaques-ativo');
+        const iconeCheckbox = document.getElementById('icone-ativo');
+
+
+
+
+        const controlesCorSecundaria = document.getElementById('controles-cor-secundaria');
+        const controlesIcone = document.getElementById('controles-icone');
+
+        
         const tipoSecundarioSelect = document.getElementById('selecao-tipo-secundario');
         const corSecundariaContainer = document.getElementById('selecao-cor-secundaria');
+
+
+        const destaqueIcone = document.getElementById('destaque-icone');
         const destaquePrimeiraLetra = document.getElementById('destaque-primeira-letra');
         const destaquePrimeirasLetras = document.getElementById('destaque-primeiras-letras');
         const destaqueEspeciais = document.getElementById('destaque-especiais');
@@ -1043,42 +1353,53 @@
         let corBorda = 'preta';
         let grossuraAtual = 3;
         let arredondamentoAtual = 1;
+        let larguraAdesivo = 15;
+
+
+
+        let iconeAtivo = false;
+        let tamanhoIcone = 40;
+        let alturaIcone = 85;
+        let distanciaIcone = 25;
 
         let tipoSelecionado = 'vinil';
         let corSelecionada = CATEGORIAS_ADESIVO.vinil.cores[0];
         
-        let destaquesAtivo = false;
+        let corSecundariaAtivo = false;
+
+        let corIconeSelecionado = false;
         let tipoSecundarioSelecionado = 'vinil';
         let corSecundariaSelecionada = CATEGORIAS_ADESIVO.vinil.cores[0];
         let tipoDestaqueSelecionado = 'primeira';
 
-        let iconesDisponiveis = []; // Array para armazenar os ícones carregados
-        let iconeSelecionado = null; // Ícone atualmente selecionado
-        let posicaoIcone = 'inicio'; // Posição do ícone: 'inicio', 'final', ou 'ambos'
+        let iconesDisponiveis = [];
+        let iconeSelecionado = null;
+        let posicaoIcone = 'inicio';
+
+        // NOVA VARIÁVEL PARA ARMAZENAR O SVG COMPLETO
+        let svgCompletoAtual = null;
 
 
 async function carregarIcones() {
     try {
         // Lista dos arquivos SVG que você tem na pasta
         const arquivosIcones = [
+            'borboleta.svg',
+            'caveira1.svg',
+            'caveira2.svg',
+            'chama.svg',
             'coracao1.svg',
             'coracao2.svg',
-            'coracao3.svg',
-            'coracao1.svg',
-            'coracao2.svg',
-            'coracao3.svg',
-            'coracao1.svg',
-            'coracao2.svg',
-            'coracao3.svg',
-            'coracao1.svg',
-            'coracao2.svg',
-            'coracao3.svg',
-            'coracao1.svg',
-            'coracao2.svg',
-            'coracao3.svg',
-            'coracao1.svg',
-            'coracao2.svg',
-            'coracao3.svg',
+            'grau.svg',
+            'faca1.svg',
+            'faca2.svg',
+            'arma2.svg',
+            'forte.svg',
+            'jogador.svg',
+            'arma1.svg',
+            'flor1.svg',
+            
+
             
             // Adicione aqui todos os nomes dos seus arquivos SVG
         ];
@@ -1164,32 +1485,32 @@ function renderizarGridIcones() {
         
         itemDiv.addEventListener('click', () => {
             iconeSelecionado = icone;
-            renderizarGridIcones(); // Re-renderiza para atualizar a borda
-            document.getElementById('limpar-icone').style.display = 'block';
+            renderizarGridIcones();
             atualizarPrevia(true);
+            atualizarDisplayLargura();
+            atualizarDisponibilidadeDestaques();
         });
         
         grid.appendChild(itemDiv);
     });
 }
 
-// ===== FUNÇÃO PARA CRIAR ÍCONE NO SVG =====
 function criarIconeSVG(posicaoX, posicaoY) {
     if (!iconeSelecionado) return null;
 
     const ns = "http://www.w3.org/2000/svg";
     const grupo = document.createElementNS(ns, "g");
     grupo.classList.add('icone-decorativo');
-    
+
+    // Determina qual cor usar baseado no destaque
+    const corParaAplicar = (corSecundariaAtivo && destaqueIcone.checked) ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
+        
     // Carrega o SVG do ícone
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(iconeSelecionado.svgCompleto, 'image/svg+xml');
     const svgOriginal = svgDoc.querySelector('svg');
     
     if (svgOriginal) {
-        // Determina qual cor usar baseado no destaque
-        const corParaAplicar = destaquesAtivo ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
-        
         // Configurações da borda
         const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
         const strokeWidth = bordaAtiva ? (grossuraAtual * 2) : 0;
@@ -1211,8 +1532,8 @@ function criarIconeSVG(posicaoX, posicaoY) {
             height = parseFloat(svgOriginal.getAttribute('height')) || 100;
         }
         
-        // Tamanho fixo para os ícones (40px)
-        const tamanhoAlvo = 40;
+        // Usa o tamanho definido pelo usuário
+        const tamanhoAlvo = tamanhoIcone;
         
         // Calcula a escala
         const escalaX = tamanhoAlvo / width;
@@ -1265,9 +1586,78 @@ function calcularPrecoUnitario() {
     
     if (bordaAtiva) precoBase += 2.00;
     if (corBorda === 'branca') precoBase += 1.00;
-    if (destaquesAtivo) precoBase += 3.00;
+    if (corSecundariaAtivo) precoBase += 3.00;
     
     return precoBase;
+}
+
+function calcularAlturaProporcional() {
+    const texto = textoInput.value.trim() || '';
+    
+    // Se não tiver texto, retorna 0
+    if (!texto && !iconeSelecionado) return '0.0';
+    
+    // Pega o elemento SVG e seu grupo
+    const svgEditor = document.getElementById('svg-editor');
+    const grupoSvg = svgEditor.querySelector('g');
+    
+    if (!grupoSvg) return '0.0';
+    
+    // Obtém o bounding box do grupo (dimensões reais do conteúdo)
+    const bbox = grupoSvg.getBBox();
+    
+    if (bbox.width === 0) return '0.0';
+    
+    // Largura real do conteúdo em pixels
+    const larguraRealPixels = bbox.width;
+    
+    // Altura real do conteúdo em pixels
+    const alturaRealPixels = bbox.height;
+    
+    // Converter pixels para cm (96 DPI = 37.8 pixels por cm)
+    const pixelsPorCm = 37.8;
+    
+    // Largura real em cm
+    const larguraRealCm = larguraRealPixels / pixelsPorCm;
+    
+    // Fator de escala baseado na largura desejada
+    const fatorEscala = larguraAdesivo / larguraRealCm;
+    
+    // Altura proporcional em cm
+    const alturaProporcional = (alturaRealPixels / pixelsPorCm) * fatorEscala;
+    
+    // Retornar com 1 casa decimal
+    return alturaProporcional.toFixed(1);
+}
+function atualizarDisplayLargura() {
+    const larguraInput = document.getElementById('largura-personalizado');
+    const larguraValor = document.getElementById('largura-valor');
+    const larguraFinal = document.getElementById('largura-final');
+    const alturaProporcional = document.getElementById('altura-proporcional');
+    
+    if (larguraInput) larguraInput.value = larguraAdesivo;
+    if (larguraValor) larguraValor.textContent = larguraAdesivo;
+    if (larguraFinal) larguraFinal.textContent = larguraAdesivo;
+    
+    // Calcular e mostrar altura proporcional
+    if (alturaProporcional) {
+        const altura = calcularAlturaProporcional();
+        alturaProporcional.textContent = altura;
+    }
+}
+
+function alterarLarguraPersonalizado(delta) {
+    // Cada passo equivale a 5cm
+    let novaAltura = larguraAdesivo + (delta * 5);
+    
+    // Respeitar os limites
+    if (novaAltura < 15) novaAltura = 15;
+    if (novaAltura > 100) novaAltura = 100;
+    
+    larguraAdesivo = novaAltura;
+    atualizarDisplayLargura();
+    
+    // A largura não precisa atualizar a prévia, apenas os cálculos de altura
 }
 
 function atualizarPrecos() {
@@ -1309,11 +1699,100 @@ function renderizarCores(tipoId, container) {
     });
 }
 
+// Variável para controlar o dropdown
+let dropdownAtivo = false;
+
+// Função para criar o dropdown customizado
+function inicializarDropdownFontes() {
+    const dropdown = document.getElementById('dropdown-fontes');
+    const selecionado = document.getElementById('fonte-selecionada');
+    const nomeFonte = document.getElementById('fonte-nome');
+    const opcoesContainer = document.getElementById('dropdown-opcoes-fontes');
+    
+    // Limpar e preencher opções
+    opcoesContainer.innerHTML = '';
+    FONTES_DISPONIVEIS.forEach((fonte, index) => {
+        const opcao = document.createElement('div');
+        opcao.className = `dropdown-opcao ${index === 0 ? 'selecionada' : ''}`;
+        opcao.textContent = fonte.nome;
+        
+        // Aplicar a fonte ao texto da opção
+        if (fonte.arquivo.startsWith('url(')) {
+            opcao.style.fontFamily = fonte.nome;
+        } else {
+            opcao.style.fontFamily = fonte.arquivo;
+        }
+        
+        opcao.dataset.indice = index;
+        opcao.dataset.nome = fonte.nome;
+        
+        opcao.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Atualizar seleção
+            document.querySelectorAll('.dropdown-opcao').forEach(opt => {
+                opt.classList.remove('selecionada');
+            });
+            opcao.classList.add('selecionada');
+            
+            // Atualizar texto do selecionado
+            nomeFonte.textContent = fonte.nome;
+            
+            // Aplicar a fonte ao texto do selecionado também
+            if (fonte.arquivo.startsWith('url(')) {
+                nomeFonte.style.fontFamily = fonte.nome;
+            } else {
+                nomeFonte.style.fontFamily = fonte.arquivo;
+            }
+            
+            // Atualizar variável
+            fonteSelecionada = fonte;
+            
+            // Fechar dropdown
+            dropdown.classList.remove('ativo');
+            dropdownAtivo = false;
+            
+            // Atualizar prévia
+            atualizarPrevia(true);
+            atualizarPrecos();
+        });
+        
+        opcoesContainer.appendChild(opcao);
+    });
+    
+    // Configurar clique no selecionado
+    selecionado.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('ativo');
+        dropdownAtivo = dropdown.classList.contains('ativo');
+    });
+    
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('ativo');
+            dropdownAtivo = false;
+        }
+    });
+    
+    // Inicializar com a primeira fonte
+    if (FONTES_DISPONIVEIS.length > 0) {
+        nomeFonte.textContent = FONTES_DISPONIVEIS[0].nome;
+        if (FONTES_DISPONIVEIS[0].arquivo.startsWith('url(')) {
+            nomeFonte.style.fontFamily = FONTES_DISPONIVEIS[0].nome;
+        } else {
+            nomeFonte.style.fontFamily = FONTES_DISPONIVEIS[0].arquivo;
+        }
+    }
+}
+
+
 function inicializarOpcoes() {
     renderizarCores('vinil', corContainer);
     renderizarCores('vinil', corSecundariaContainer);
 
-    // Fontes
+    // Fontes - AGORA USA O DROPDOWN CUSTOMIZADO
+    // Não precisa mais do loop para criar options no select
     FONTES_DISPONIVEIS.forEach((fonte, index) => {
         if (fonte.arquivo.startsWith('url(')) {
             const fontFace = `
@@ -1324,16 +1803,10 @@ function inicializarOpcoes() {
             `;
             document.head.appendChild(document.createElement('style')).textContent = fontFace;
         }
-
-        const option = document.createElement('option');
-        option.value = fonte.nome;
-        option.textContent = fonte.nome;
-        option.style.fontFamily = fonte.arquivo.startsWith('url(') ? fonte.nome : 'Arial, sans-serif';
-        if (index === 0) option.selected = true;
-        fonteSelect.appendChild(option);
     });
     
-    fonteSelecionada = FONTES_DISPONIVEIS[0];
+    // Inicializar dropdown customizado
+    inicializarDropdownFontes();
 }
 
 function eCorClara(color) {
@@ -1370,101 +1843,361 @@ function atualizarFundoPrevia() {
 }
 
 function aplicarDestaquesAoTexto(texto, corPrincipal, corSecundaria) {
-if (!destaquesAtivo || !texto) return { textoPrincipal: texto, destaques: [] };
+    if (!corSecundariaAtivo || !texto) return { textoPrincipal: texto, destaques: [] };
 
-const destaques = [];
-const posicoesDestaque = new Set(); // Usar Set para evitar duplicatas
+    const posicoesDestaque = new Set();
 
-// Verificar quais checkboxes estão ativos
-const primeiraAtivo = document.getElementById('destaque-primeira-letra').checked;
-const primeirasAtivo = document.getElementById('destaque-primeiras-letras').checked;
-const especiaisAtivo = document.getElementById('destaque-especiais').checked;
+    // Verificar quais checkboxes estão ativos
+    const primeiraAtivo = document.getElementById('destaque-primeira-letra').checked;
+    const primeirasAtivo = document.getElementById('destaque-primeiras-letras').checked;
+    const especiaisAtivo = document.getElementById('destaque-especiais').checked;
 
-// Se nenhuma opção estiver ativa, não aplica destaques
-if (!primeiraAtivo && !primeirasAtivo && !especiaisAtivo) {
-return { textoPrincipal: texto, destaques: [] };
-}
-
-// 1. Destacar primeira letra (se ativo)
-if (primeiraAtivo && texto.length > 0) {
-const primeiraLetra = texto[0];
-// CORREÇÃO: Verifica se é letra (incluindo acentuadas) ou número
-if (/[a-zA-Z0-9\u00C0-\u00FF]/.test(primeiraLetra)) {
-    posicoesDestaque.add(0);
-}
-}
-
-// 2. Destacar primeiras letras de cada palavra
-if (primeirasAtivo) {
-// CORREÇÃO: Considera apenas espaços e caracteres NÃO letras/números como separadores
-// Letras acentuadas são consideradas parte da palavra
-let i = 0;
-while (i < texto.length) {
-    // Pular caracteres que NÃO são letras (incluindo acentuadas) e números
-    while (i < texto.length && !/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) {
-        i++;
+    // Se nenhuma opção estiver ativa, não aplica destaques
+    if (!primeiraAtivo && !primeirasAtivo && !especiaisAtivo) {
+        return { textoPrincipal: texto, destaques: [] };
     }
+
+    // Função auxiliar para verificar se é letra (incluindo acentuadas)
+    const isLetra = (char) => /[a-zA-Z\u00C0-\u00FF]/.test(char);
     
-    // Se encontrou o início de uma palavra (letra ou número, incluindo acentuadas)
-    if (i < texto.length && /[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) {
-        posicoesDestaque.add(i);
-        // Avançar até o final da palavra (enquanto for letra ou número, incluindo acentuadas)
-        while (i < texto.length && /[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) {
-            i++;
+    // Função auxiliar para verificar se é número
+    const isNumero = (char) => /[0-9]/.test(char);
+
+    // 1. Destacar primeira letra (se ativo)
+    if (primeiraAtivo && texto.length > 0) {
+        const primeiraLetra = texto[0];
+        if (isLetra(primeiraLetra)) { // Apenas letras, ignora números
+            posicoesDestaque.add(0);
         }
     }
-}
-}
 
-// 3. Destacar caracteres especiais (se ativo)
-if (especiaisAtivo) {
-for (let i = 0; i < texto.length; i++) {
-    const char = texto[i];
-    // CORREÇÃO: Caracteres especiais são tudo que NÃO é letra (incluindo acentuadas), número ou espaço
-    if (!/[a-zA-Z0-9\u00C0-\u00FF\s]/.test(char)) {
-        posicoesDestaque.add(i);
+    // 2. Destacar primeiras letras de cada palavra (apenas palavras com 3+ letras)
+    if (primeirasAtivo) {
+        let i = 0;
+        while (i < texto.length) {
+            // Pular caracteres que não são letras
+            while (i < texto.length && !isLetra(texto[i])) {
+                i++;
+            }
+            
+            if (i < texto.length && isLetra(texto[i])) {
+                const inicioPalavra = i;
+                // Contar tamanho da palavra (só letras)
+                let tamanhoPalavra = 0;
+                while (i < texto.length && isLetra(texto[i])) {
+                    tamanhoPalavra++;
+                    i++;
+                }
+                
+                // Só destacar primeira letra se palavra tiver 3 ou mais letras
+                if (tamanhoPalavra >= 3) {
+                    posicoesDestaque.add(inicioPalavra);
+                }
+            }
+        }
     }
-}
-}
 
-// Converter Set para array de objetos
-const destaquesArray = Array.from(posicoesDestaque)
-.sort((a, b) => a - b)
-.map(posicao => ({
-    posicao: posicao,
-    caractere: texto[posicao]
-}));
+    // 3. Destacar caracteres especiais (incluindo números agora)
+    if (especiaisAtivo) {
+        for (let i = 0; i < texto.length; i++) {
+            const char = texto[i];
+            // Caracteres especiais = NÃO é letra E NÃO é espaço
+            // AGORA INCLUI NÚMEROS também!
+            if (!isLetra(char) && !/\s/.test(char)) {
+                posicoesDestaque.add(i);
+            }
+        }
+    }
 
-return { textoPrincipal: texto, destaques: destaquesArray };
-}
+    // Converter Set para array de objetos
+    const destaquesArray = Array.from(posicoesDestaque)
+        .sort((a, b) => a - b)
+        .map(posicao => ({
+            posicao: posicao,
+            caractere: texto[posicao]
+        }));
 
-function criarTextoDestaqueSVG(texto, corPrincipal, corSecundaria) {
-const { destaques } = aplicarDestaquesAoTexto(texto, corPrincipal, corSecundaria);
-
-if (destaques.length === 0) {
-return `<tspan fill="${corPrincipal}" x="400" dy="0">${texto}</tspan>`;
-}
-
-let resultado = '';
-let ultimaPosicao = 0;
-
-destaques.forEach((destaque) => {
-if (destaque.posicao > ultimaPosicao) {
-    resultado += `<tspan fill="${corPrincipal}">${texto.substring(ultimaPosicao, destaque.posicao)}</tspan>`;
+    return { textoPrincipal: texto, destaques: destaquesArray };
 }
 
-resultado += `<tspan fill="${corSecundaria}">${destaque.caractere}</tspan>`;
-ultimaPosicao = destaque.posicao + 1;
-});
+// NOVA FUNÇÃO: Gerar SVG completo com paths
+async function gerarSVGCompleto() {
+    const texto = textoInput.value.trim() || '';
+    const familiaFonte = fonteSelecionada.arquivo.startsWith('url(') ? `'${fonteSelecionada.nome}'` : fonteSelecionada.arquivo;
 
-if (ultimaPosicao < texto.length) {
-resultado += `<tspan fill="${corPrincipal}">${texto.substring(ultimaPosicao)}</tspan>`;
+    if (!texto) {
+        return null;
+    }
+
+    const fontSize = 50;
+    const xCentro = 400;
+    const yBase = 100;
+    
+    let svgString;
+    
+    try {
+        // Extrai o caminho correto da fonte (remove 'url(""' e '")"')
+        let urlFonte = fonteSelecionada.arquivo;
+        
+        // Se for fonte personalizada (com url)
+        if (urlFonte.startsWith('url(')) {
+            urlFonte = urlFonte.replace(/url\(["']?|["']?\)/g, "");
+        } else {
+            // Se for fonte padrão (Arial), não precisa carregar
+            throw new Error('Fonte padrão, não precisa carregar');
+        }
+        
+        console.log('Tentando carregar fonte:', urlFonte); // Para debug
+        
+        const font = await opentype.load(urlFonte);
+        
+        // ===== GERAR PATHS DO TEXTO =====
+        
+        // 1. Calcular posicionamento das letras
+        let largurasAcumuladas = [];
+        let larguraTotal = 0;
+        
+        for (let i = 0; i < texto.length; i++) {
+            largurasAcumuladas.push(larguraTotal);
+            larguraTotal += font.getAdvanceWidth(texto[i], fontSize);
+        }
+        
+        const xInicio = xCentro - (larguraTotal / 2);
+        
+        // 2. Identificar posições de destaque (se ativo)
+        const posicoesDestaque = new Set();
+        if (corSecundariaAtivo) {
+            // Primeira letra
+            if (document.getElementById('destaque-primeira-letra').checked && texto.length > 0) {
+                if (/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[0])) {
+                    posicoesDestaque.add(0);
+                }
+            }
+            
+            // Primeiras letras de cada palavra
+            if (document.getElementById('destaque-primeiras-letras').checked) {
+                let i = 0;
+                while (i < texto.length) {
+                    while (i < texto.length && !/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) i++;
+                    if (i < texto.length) {
+                        posicoesDestaque.add(i);
+                        while (i < texto.length && /[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) i++;
+                    }
+                }
+            }
+            
+            // Caracteres especiais
+            if (document.getElementById('destaque-especiais').checked) {
+                for (let i = 0; i < texto.length; i++) {
+                    if (!/[a-zA-Z0-9\u00C0-\u00FF\s]/.test(texto[i])) {
+                        posicoesDestaque.add(i);
+                    }
+                }
+            }
+        }
+        
+        // 3. Cores e estilos
+        const corPrincipal = corSelecionada.codigo;
+        const corSecundaria = corSecundariaSelecionada.codigo;
+        const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+        const strokeWidth = bordaAtiva ? (grossuraAtual * 2) : 0;
+        const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
+
+        // Determina qual cor usar baseado no destaque
+        const corParaAplicar = (corSecundariaAtivo && destaqueIcone.checked) ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
+        
+        // ===== GERAR ÍCONES PARA O SVG FINAL =====
+        let iconesSVG = '';
+        let iconesPathCompleto = ''; // Para concatenar com a borda
+        if (iconeSelecionado && iconeAtivo) {
+            const posicao = document.querySelector('input[name="posicao-icone"]:checked')?.value || 'inicio';
+            const yIcone = alturaIcone; // Mesma altura do texto no path
+            const espacoEntreIconeETexto = distanciaIcone;
+            
+            // Calcula posições baseado no texto
+            const textWidth = font.getAdvanceWidth(texto, fontSize);
+            const xInicioTexto = xCentro - (textWidth / 2);
+            const xFimTexto = xCentro + (textWidth / 2);
+            
+            // Parse do SVG do ícone para extrair paths
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(iconeSelecionado.svgCompleto, 'image/svg+xml');
+            const svgOriginal = svgDoc.querySelector('svg');
+            
+            if (svgOriginal) {
+                // Descobrir dimensões originais do ícone
+                let viewBox = svgOriginal.getAttribute('viewBox');
+                let iconWidth = 100, iconHeight = 100;
+                let minX = 0, minY = 0;
+                
+                if (viewBox) {
+                    const parts = viewBox.split(' ').map(Number);
+                    if (parts.length === 4) {
+                        minX = parts[0];
+                        minY = parts[1];
+                        iconWidth = parts[2];
+                        iconHeight = parts[3];
+                    }
+                }
+                
+                // Usa o tamanho definido pelo usuário
+                const tamanhoAlvo = tamanhoIcone;
+                
+                // Calcular escala necessária
+                const escala = tamanhoAlvo / Math.max(iconWidth, iconHeight);
+                
+                // Extrair TODOS os valores d dos paths
+                let todosPathsD = [];
+                const pathElements = svgOriginal.querySelectorAll('path');
+                
+                pathElements.forEach(path => {
+                    const d = path.getAttribute('d');
+                    if (d) {
+                        todosPathsD.push(d);
+                    }
+                });
+                
+                // Concatenar todos os valores d
+                const dConcatenado = todosPathsD.join(' ');
+                
+                // Função para transformar o path do ícone (ícone colorido)
+                const transformarPathIcone = (d, x, y) => {
+                    if (!d) return '';
+                    
+                    // Calcula a posição final do ícone
+                    const xFinal = x - (tamanhoAlvo / 2);
+                    const yFinal = y - (tamanhoAlvo / 2);
+                    
+                    // ÍCONE COLORIDO (sem borda)
+                    return `<path 
+                        d="${d}" 
+                        fill="${corParaAplicar}" 
+                        transform="translate(${xFinal}, ${yFinal}) scale(${escala})" 
+                    />`;
+                };
+                
+                // Função para obter o path da borda do ícone
+                const obterPathParaBorda = (d, x, y) => {
+                    if (!d) return '';
+                    
+                    // Calcula a posição final do ícone
+                    const xFinal = x - (tamanhoAlvo / 2);
+                    const yFinal = y - (tamanhoAlvo / 2);
+                    
+                    // COMPENSAÇÃO: aumenta a grossura da borda proporcionalmente à escala
+                    // Se o ícone é reduzido (escala < 1), a borda precisa ser MAIS GROSSA
+                    const strokeWidthCompensado = strokeWidth / escala;
+                    
+                    // BORDA DO ÍCONE com grossura compensada
+                    return `<path 
+                        d="${d}" 
+                        fill="none" 
+                        stroke="${corHexBorda}" 
+                        stroke-width="${strokeWidthCompensado}" 
+                        stroke-linejoin="${lineJoin}" 
+                        stroke-linecap="round" 
+                        transform="translate(${xFinal}, ${yFinal}) scale(${escala})" 
+                    />`;
+                };
+                
+                // Adicionar ícones conforme posição
+                if (posicao === 'inicio' || posicao === 'ambos') {
+                    iconesSVG += transformarPathIcone(dConcatenado, xInicioTexto - espacoEntreIconeETexto, yIcone);
+                    iconesPathCompleto += obterPathParaBorda(dConcatenado, xInicioTexto - espacoEntreIconeETexto, yIcone);
+                }
+                
+                if (posicao === 'final' || posicao === 'ambos') {
+                    iconesSVG += transformarPathIcone(dConcatenado, xFimTexto + espacoEntreIconeETexto, yIcone);
+                    iconesPathCompleto += obterPathParaBorda(dConcatenado, xFimTexto + espacoEntreIconeETexto, yIcone);
+                }
+            }
+        }
+        
+        // 4. GERAR SVG com APENAS PATHS
+        if (posicoesDestaque.size > 0) {
+            // Construir paths para cada grupo de cor
+            let pathsPrincipal = '';
+            let pathsDestaques = '';
+            
+            // Gerar path para cada caractere individualmente
+            for (let i = 0; i < texto.length; i++) {
+                const caractere = texto[i];
+                const xLetra = xInicio + largurasAcumuladas[i];
+                const pathData = font.getPath(caractere, xLetra, yBase, fontSize).toPathData(2);
+                const isDestaque = posicoesDestaque.has(i);
+                
+                if (isDestaque) {
+                    pathsDestaques += pathData;
+                } else {
+                    pathsPrincipal += pathData;
+                }
+            }
+            
+            // Path ÚNICO para borda (texto completo)
+            const pathBorda = bordaAtiva ? 
+                font.getPath(texto, xInicio, yBase, fontSize).toPathData(2) : '';
+            
+            svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
+                <g>
+                    ${bordaAtiva ? `
+                    <!-- Borda do texto -->
+                    <path d="${pathBorda}" 
+                        fill="none" 
+                        stroke="${corHexBorda}" 
+                        stroke-width="${strokeWidth}" 
+                        stroke-linejoin="${lineJoin}" 
+                        stroke-linecap="round" />
+                    <!-- Borda dos ícones -->
+                    ${iconesPathCompleto}` : ''}
+                    <g>
+                        <path d="${pathsPrincipal}" fill="${corPrincipal}" />
+                        <path d="${pathsDestaques}" fill="${corSecundaria}" />
+                        ${iconesSVG}
+                    </g>
+                </g>
+            </svg>`;
+            
+        } else {
+            // Versão SEM destaques
+            const textWidth = font.getAdvanceWidth(texto, fontSize);
+            const xInicioSimples = xCentro - (textWidth / 2);
+            const pathData = font.getPath(texto, xInicioSimples, yBase, fontSize).toPathData(2);
+
+            svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
+                <g>
+                    ${bordaAtiva ? `
+                    <!-- Borda do texto -->
+                    <path d="${pathData}" 
+                        fill="none" 
+                        stroke="${corHexBorda}" 
+                        stroke-width="${strokeWidth}" 
+                        stroke-linejoin="${lineJoin}" 
+                        stroke-linecap="round" />
+                    <!-- Borda dos ícones -->
+                    ${iconesPathCompleto}` : ''}
+                    <!-- Texto principal -->
+                    <path d="${pathData}" fill="${corPrincipal}" />
+                    <!-- Ícones coloridos -->
+                    ${iconesSVG}
+                </g>
+            </svg>`;
+        }
+        
+    } catch (erroFonte) {
+        console.warn('Erro ao carregar fonte, usando fallback:', erroFonte);
+        // Fallback: retorna null ou um SVG simples
+        return null;
+    }
+
+    return svgString;
 }
 
-return `<tspan x="400" dy="0">${resultado}</tspan>`;
-}
-
-function atualizarPrevia(deveRedimensionar = false) {
+// FUNÇÃO MODIFICADA: atualizarPrevia agora usa a lógica de paths
+async function atualizarPrevia(deveRedimensionar = false) {
     const texto = textoInput.value.trim() || '';
     const familiaFonte = fonteSelecionada.arquivo.startsWith('url(') ? `'${fonteSelecionada.nome}'` : fonteSelecionada.arquivo;
 
@@ -1475,120 +2208,136 @@ function atualizarPrevia(deveRedimensionar = false) {
     if (!texto) {
         atualizarFundoPrevia();
         atualizarPrecos();
+        svgCompletoAtual = null;
         return;
     }
 
-    // Configurações base de estilo
-    [svgTextoFrente, svgTextoContorno].forEach(el => {
-        el.style.fontFamily = familiaFonte;
-        el.style.fontSize = "80px";
-        el.style.fontWeight = "bold";
-        el.setAttribute('x', '400');
-        el.setAttribute('y', '100');
-    });
-
-    // Medição para centralização
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    context.font = `bold 80px ${familiaFonte}`;
-
-    let larguras = [];
-    let larguraTotal = 0;
-    for (let char of texto) {
-        let larguraChar = context.measureText(char).width;
-        larguras.push(larguraChar);
-        larguraTotal += larguraChar;
-    }
-
-    let xAtual = 400 - (larguraTotal / 2);
-    const { destaques } = aplicarDestaquesAoTexto(texto, corSelecionada.codigo, corSecundariaSelecionada.codigo);
-
-    // Definimos o estilo de junção baseado no checkbox de arredondamento
-    const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
-
-    // Renderizar de TRÁS PARA FRENTE (Z-index: a primeira letra será a última no DOM)
-    for (let i = texto.length - 1; i >= 0; i--) {
-        const char = texto[i];
-        let xLetra = xAtual;
-        for(let j = 0; j < i; j++) {
-            xLetra += larguras[j];
-        }
-
-        const isDestaque = destaquesAtivo && destaques.some(d => d.posicao === i);
-        const cor = isDestaque ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
-
-        // Frente
-        const tspanF = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        tspanF.textContent = char;
-        tspanF.setAttribute('x', xLetra);
-        tspanF.setAttribute('y', '100');
-        tspanF.setAttribute('fill', cor);
-        tspanF.style.fontFamily = familiaFonte;
-        svgTextoFrente.appendChild(tspanF);
-
-        // Contorno (Borda)
-        if (bordaAtiva) {
-            const tspanC = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-            tspanC.textContent = char;
-            tspanC.setAttribute('x', xLetra);
-            tspanC.setAttribute('y', '100');
-            tspanC.style.fontFamily = familiaFonte;
-            tspanC.setAttribute('stroke-linejoin', lineJoin);
-            tspanC.setAttribute('stroke-linecap', 'round');
-            svgTextoContorno.appendChild(tspanC);
-        }
-    }
-
-        // ===== NOVO: Adicionar ícones com tamanho padronizado =====
-        const grupoPrincipal = document.querySelector('#svg-editor g');
-        if (grupoPrincipal && iconeSelecionado) {
-            // Remove ícones antigos (se houver)
-            const iconesAntigos = grupoPrincipal.querySelectorAll('.icone-decorativo');
-            iconesAntigos.forEach(icone => icone.remove());
-
-            const posicao = document.querySelector('input[name="posicao-icone"]:checked')?.value || 'inicio';
-            const yIcone = 100; // Mesma altura do texto
-            const espacoEntreIconeETexto = 50; // Espaço entre texto e ícone
+    // Gerar o SVG completo usando a nova função
+    try {
+        const svgCompleto = await gerarSVGCompleto();
+        
+        if (svgCompleto) {
+            // Armazenar para uso no carrinho
+            svgCompletoAtual = svgCompleto;
             
-            // Calcula a largura total do texto
-            const canvasTemp = document.createElement("canvas");
-            const contextTemp = canvasTemp.getContext("2d");
-            contextTemp.font = `bold 80px ${familiaFonte}`;
+            // Para visualização, ainda usamos o método antigo (textos SVG)
+            // pois é mais leve e rápido para a interface
+            // Mas podemos manter isso como fallback ou usar o novo método se preferir
             
-            let larguraTotalTexto = 0;
+            // Código original de visualização (mantido para compatibilidade)
+            [svgTextoFrente, svgTextoContorno].forEach(el => {
+                el.style.fontFamily = familiaFonte;
+                el.style.fontSize = "50px";
+                el.setAttribute('x', '400');
+                el.setAttribute('y', '100');
+            });
+
+            // Medição para centralização
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            context.font = ` 50px ${familiaFonte}`;
+
+            let larguras = [];
+            let larguraTotal = 0;
             for (let char of texto) {
-                larguraTotalTexto += contextTemp.measureText(char).width;
+                let larguraChar = context.measureText(char).width;
+                larguras.push(larguraChar);
+                larguraTotal += larguraChar;
             }
-            
-            const xInicioTexto = 400 - (larguraTotalTexto / 2);
-            const xFimTexto = 400 + (larguraTotalTexto / 2);
 
-            // Adiciona ícones baseado na posição selecionada
-            if (posicao === 'inicio' || posicao === 'ambos') {
-                const icone = criarIconeSVG(xInicioTexto - espacoEntreIconeETexto, yIcone);
-                if (icone) {
-                    grupoPrincipal.appendChild(icone);
+            let xAtual = 400 - (larguraTotal / 2);
+            const { destaques } = aplicarDestaquesAoTexto(texto, corSelecionada.codigo, corSecundariaSelecionada.codigo);
+
+            // Definimos o estilo de junção baseado no checkbox de arredondamento
+            const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
+
+            // Renderizar de TRÁS PARA FRENTE (Z-index: a primeira letra será a última no DOM)
+            for (let i = texto.length - 1; i >= 0; i--) {
+                const char = texto[i];
+                let xLetra = xAtual;
+                for(let j = 0; j < i; j++) {
+                    xLetra += larguras[j];
+                }
+
+                const isDestaque = corSecundariaAtivo && destaques.some(d => d.posicao === i);
+                const cor = isDestaque ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
+
+                // Frente
+                const tspanF = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                tspanF.textContent = char;
+                tspanF.setAttribute('x', xLetra);
+                tspanF.setAttribute('y', '100');
+                tspanF.setAttribute('fill', cor);
+                tspanF.style.fontFamily = familiaFonte;
+                svgTextoFrente.appendChild(tspanF);
+
+                // Contorno (Borda)
+                if (bordaAtiva) {
+                    const tspanC = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                    tspanC.textContent = char;
+                    tspanC.setAttribute('x', xLetra);
+                    tspanC.setAttribute('y', '100');
+                    tspanC.style.fontFamily = familiaFonte;
+                    tspanC.setAttribute('stroke-linejoin', lineJoin);
+                    tspanC.setAttribute('stroke-linecap', 'round');
+                    svgTextoContorno.appendChild(tspanC);
                 }
             }
-            
-            if (posicao === 'final' || posicao === 'ambos') {
-                const icone = criarIconeSVG(xFimTexto + espacoEntreIconeETexto, yIcone);
-                if (icone) {
-                    grupoPrincipal.appendChild(icone);
+
+            // Configurar estilos globais da borda
+            if (bordaAtiva) {
+                const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+                svgTextoContorno.setAttribute('fill', 'none');
+                svgTextoContorno.setAttribute('stroke', corHexBorda);
+                svgTextoContorno.setAttribute('stroke-width', grossuraAtual * 2);
+                svgTextoContorno.setAttribute('stroke-linejoin', lineJoin);
+                svgTextoContorno.style.display = 'block';
+            } else {
+                svgTextoContorno.style.display = 'none';
+            }
+
+            // ===== Adicionar ícones com tamanho padronizado (para visualização) =====
+            const grupoPrincipal = document.querySelector('#svg-editor g');
+            if (grupoPrincipal && iconeSelecionado && iconeAtivo) {
+                // Remove ícones antigos (se houver)
+                const iconesAntigos = grupoPrincipal.querySelectorAll('.icone-decorativo');
+                iconesAntigos.forEach(icone => icone.remove());
+
+                const posicao = document.querySelector('input[name="posicao-icone"]:checked')?.value || 'inicio';
+                const yIcone = alturaIcone; // Mesma altura do texto
+                const espacoEntreIconeETexto = distanciaIcone; // Espaço entre texto e ícone
+                
+                // Calcula a largura total do texto
+                const canvasTemp = document.createElement("canvas");
+                const contextTemp = canvasTemp.getContext("2d");
+                contextTemp.font = `50px ${familiaFonte}`;
+                
+                let larguraTotalTexto = 0;
+                for (let char of texto) {
+                    larguraTotalTexto += contextTemp.measureText(char).width;
+                }
+                
+                const xInicioTexto = 400 - (larguraTotalTexto / 2);
+                const xFimTexto = 400 + (larguraTotalTexto / 2);
+
+                // Adiciona ícones baseado na posição selecionada
+                if (posicao === 'inicio' || posicao === 'ambos') {
+                    const icone = criarIconeSVG(xInicioTexto - espacoEntreIconeETexto, yIcone);
+                    if (icone) {
+                        grupoPrincipal.appendChild(icone);
+                    }
+                }
+                
+                if (posicao === 'final' || posicao === 'ambos') {
+                    const icone = criarIconeSVG(xFimTexto + espacoEntreIconeETexto, yIcone);
+                    if (icone) {
+                        grupoPrincipal.appendChild(icone);
+                    }
                 }
             }
         }
-
-    // Configurar estilos globais da borda
-    if (bordaAtiva) {
-        const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
-        svgTextoContorno.setAttribute('fill', 'none');
-        svgTextoContorno.setAttribute('stroke', corHexBorda);
-        svgTextoContorno.setAttribute('stroke-width', grossuraAtual * 2);
-        svgTextoContorno.setAttribute('stroke-linejoin', lineJoin);
-        svgTextoContorno.style.display = 'block';
-    } else {
-        svgTextoContorno.style.display = 'none';
+    } catch (error) {
+        console.error('Erro ao gerar SVG completo:', error);
     }
 
     if (deveRedimensionar) {
@@ -1707,9 +2456,96 @@ async function capturarPreviaComoImagem() {
     }
 }
 
+// NÃO PRECISA NA PROXIMA PÁGINA DE SERVIÇO, É EXCLUSIVA DESSA
+function atualizarDisponibilidadeDestaques() {
+    const texto = textoInput.value.trim();
+    
+    // Elementos das opções
+    const primeiraLetraOption = document.getElementById('destaque-primeira-letra').parentElement;
+    const primeirasLetrasOption = document.getElementById('destaque-primeiras-letras').parentElement;
+    const especiaisOption = document.getElementById('destaque-especiais').parentElement;
+    const iconeOption = document.getElementById('destaque-icone').parentElement;
+    
+    // Elementos checkbox
+    const primeiraLetraCheck = document.getElementById('destaque-primeira-letra');
+    const primeirasLetrasCheck = document.getElementById('destaque-primeiras-letras');
+    const especiaisCheck = document.getElementById('destaque-especiais');
+    const iconeCheck = document.getElementById('destaque-icone');
+    
+    // Verificar disponibilidade
+    const temPrimeiraLetra = texto.length > 0 && /[a-zA-Z\u00C0-\u00FF]/.test(texto[0]);
+    const temPrimeirasLetras = (() => {
+        if (!texto) return false;
+        
+        let palavrasValidas = 0;
+        let i = 0;
+        
+        while (i < texto.length) {
+            // Pular caracteres que não são letras
+            while (i < texto.length && !/[a-zA-Z\u00C0-\u00FF]/.test(texto[i])) i++;
+            
+            if (i < texto.length) {
+                let tamanho = 0;
+                while (i < texto.length && /[a-zA-Z\u00C0-\u00FF]/.test(texto[i])) {
+                    tamanho++;
+                    i++;
+                }
+                // Só contar palavras com 3 ou mais letras
+                if (tamanho >= 3) {
+                    palavrasValidas++;
+                }
+            }
+        }
+        
+        // Habilitar apenas se houver 2 ou mais palavras válidas
+        return palavrasValidas >= 2;
+    })();
+    
+    const temEspeciais = (() => {
+        if (!texto) return false;
+        for (let char of texto) {
+            // Caracteres especiais = não é letra e não é espaço (inclui números)
+            if (!/[a-zA-Z\u00C0-\u00FF\s]/.test(char)) return true;
+        }
+        return false;
+    })();
+    
+    const temIcone = iconeSelecionado !== null;
+    
+    // Função para atualizar estado de uma opção
+    function atualizarOpcao(checkbox, optionElement, disponivel) {
+        if (!disponivel) {
+            // Se não estiver disponível, desabilita e desmarca
+            checkbox.disabled = true;
+            optionElement.style.opacity = '0.5';
+            optionElement.style.pointerEvents = 'none';
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                // Disparar evento de mudança para atualizar a prévia
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        } else {
+            // Se estiver disponível, habilita
+            checkbox.disabled = false;
+            optionElement.style.opacity = '1';
+            optionElement.style.pointerEvents = 'auto';
+        }
+    }
+    
+    // Atualizar cada opção
+    atualizarOpcao(primeiraLetraCheck, primeiraLetraOption, temPrimeiraLetra);
+    atualizarOpcao(primeirasLetrasCheck, primeirasLetrasOption, temPrimeirasLetras);
+    atualizarOpcao(especiaisCheck, especiaisOption, temEspeciais);
+    atualizarOpcao(iconeCheck, iconeOption, temIcone);
+}
+
         // ===== EVENT LISTENERS =====
 function configurarEventListeners() {
-    textoInput.addEventListener('input', () => atualizarPrevia(true));
+    textoInput.addEventListener('input', () => {
+        atualizarPrevia(true);
+        atualizarDisponibilidadeDestaques();
+        atualizarDisplayLargura();
+    });
 
     corContainer.addEventListener('click', (e) => {
         const corDiv = e.target.closest('.cor-opcao');
@@ -1723,6 +2559,7 @@ function configurarEventListeners() {
         atualizarPrevia(false);
         atualizarFundoPrevia();
         atualizarPrecos();
+        atualizarDisplayLargura();
     });
 
     corSecundariaContainer.addEventListener('click', (e) => {
@@ -1734,23 +2571,32 @@ function configurarEventListeners() {
             nome: corDiv.dataset.nome,
             codigo: corDiv.dataset.cor
         };
-        if (destaquesAtivo) {
+        if (corSecundariaAtivo) {
             atualizarPrevia(false);
+            atualizarDisplayLargura();
         }
     });
 
-    fonteSelect.addEventListener('change', (e) => {
-        const fonteNome = e.target.value;
-        fonteSelecionada = FONTES_DISPONIVEIS.find(f => f.nome === fonteNome);
-        atualizarPrevia(true);
-        atualizarPrecos();
-    });
+    // Controle de largura do adesivo
+    const diminuirLargura = document.getElementById('diminuir-largura');
+    const aumentarLargura = document.getElementById('aumentar-largura');
+    const larguraInput = document.getElementById('largura-personalizado');
+
+    if (diminuirLargura) {
+        diminuirLargura.addEventListener('click', () => {
+            alterarLarguraPersonalizado(-1); // -1 passo = -5cm
+        });
+    }
+
+    if (aumentarLargura) {
+        aumentarLargura.addEventListener('click', () => {
+            alterarLarguraPersonalizado(1); // +1 passo = +5cm
+        });
+    }
 
     bordaCheckbox.addEventListener('change', (e) => {
         bordaAtiva = e.target.checked;
         controlesFilete.style.display = bordaAtiva ? 'block' : 'none';
-        
-        atualizarFundoPrevia();
         atualizarPrevia(false);
         atualizarPrecos();
     });
@@ -1759,21 +2605,15 @@ function configurarEventListeners() {
         grossuraAtual = parseInt(e.target.value);
         grossuraValor.textContent = grossuraAtual;
         atualizarPrevia(false);
+        atualizarDisplayLargura();
     });
 
-    if (arredondamentoCheckbox) {
-        arredondamentoCheckbox.addEventListener('change', (e) => {
-            arredondamentoAtual = e.target.checked ? 1 : 0;
-            atualizarPrevia(false);
-        });
-    }
 
     bordaPretaRadio.addEventListener('change', (e) => {
         if (e.target.checked) {
             corBorda = 'preta';
             atualizarPrevia(false);
             atualizarPrecos();
-            atualizarFundoPrevia();
         }
     });
 
@@ -1782,7 +2622,6 @@ function configurarEventListeners() {
             corBorda = 'branca';
             atualizarPrevia(false);
             atualizarPrecos();
-            atualizarFundoPrevia();
         }
     });
 
@@ -1793,45 +2632,114 @@ function configurarEventListeners() {
         atualizarPrecos();
     });
 
-    destaquesCheckbox.addEventListener('change', (e) => {
-        destaquesAtivo = e.target.checked;
-        controlesDestaques.style.display = destaquesAtivo ? 'block' : 'none';
+    corSecundariaCheckbox.addEventListener('change', (e) => {
+        corSecundariaAtivo = e.target.checked;
+        controlesCorSecundaria.style.display = corSecundariaAtivo ? 'block' : 'none';
         atualizarPrevia(false);
         atualizarPrecos();
     });
 
-    tipoSecundarioSelect.addEventListener('change', (e) => {
-        tipoSecundarioSelecionado = e.target.value;
-        renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer);
-        if (destaquesAtivo) {
-            atualizarPrevia(false);
+    iconeCheckbox.addEventListener('change', (e) => {
+        iconeAtivo = e.target.checked;
+        controlesIcone.style.display = iconeAtivo ? 'block' : 'none';
+
+        if (!iconeAtivo){
+            iconeSelecionado = null;
         }
-    });
-
-    destaquePrimeiraLetra.addEventListener('change', () => {
-        if (destaquesAtivo) atualizarPrevia(false);
-    });
-
-    destaquePrimeirasLetras.addEventListener('change', () => {
-        if (destaquesAtivo) atualizarPrevia(false);
-    });
-
-    destaqueEspeciais.addEventListener('change', () => {
-        if (destaquesAtivo) atualizarPrevia(false);
-    });
-
-    document.getElementById('adicionar-carrinho').addEventListener('click', adicionarAoCarrinho);
-    document.getElementById('limpar-icone').addEventListener('click', () => {
-        iconeSelecionado = null;
-        document.getElementById('limpar-icone').style.display = 'none';
         const grupoPrincipal = document.querySelector('#svg-editor g');
             if (grupoPrincipal) {
                 const iconesAntigos = grupoPrincipal.querySelectorAll('.icone-decorativo');
                 iconesAntigos.forEach(icone => icone.remove());
             }
-        renderizarGridIcones(); // Atualiza o grid
+        atualizarDisponibilidadeDestaques();
         atualizarPrevia(true);
+        atualizarDisplayLargura();
+        atualizarPrecos();
     });
+
+    // Controle de tamanho do ícone
+    const tamanhoIconeSlider = document.getElementById('tamanho-icone');
+    const tamanhoIconeValor = document.getElementById('tamanho-icone-valor');
+    if (tamanhoIconeSlider && tamanhoIconeValor) {
+        tamanhoIconeSlider.addEventListener('input', (e) => {
+            tamanhoIcone = parseInt(e.target.value);
+            tamanhoIconeValor.textContent = tamanhoIcone;
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+                atualizarDisplayLargura();
+            }
+        });
+    }
+
+
+    const distanciaIconeSlider = document.getElementById('distancia-icone');
+    const distanciaIconeValor = document.getElementById('distancia-icone-valor');
+    if (distanciaIconeSlider && distanciaIconeValor) {
+        distanciaIconeSlider.addEventListener('input', (e) => {
+            distanciaIcone = parseInt(e.target.value);
+            distanciaIconeValor.textContent = distanciaIcone;
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+            }
+        });
+    }
+
+    // Controle de altura do ícone
+    const alturaIconeSlider = document.getElementById('altura-icone');
+    const alturaIconeValor = document.getElementById('altura-icone-valor');
+    if (alturaIconeSlider && alturaIconeValor) {
+        alturaIconeSlider.addEventListener('input', (e) => {
+            alturaIcone = parseInt(e.target.value);
+            alturaIconeValor.textContent = alturaIcone;
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+            }
+        });
+    }
+
+    tipoSecundarioSelect.addEventListener('change', (e) => {
+        tipoSecundarioSelecionado = e.target.value;
+        renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer);
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+        }
+    });
+
+    destaqueIcone.addEventListener('change', () => {
+        if (iconeSelecionado) {
+            atualizarPrevia(false);
+            atualizarDisplayLargura();
+        }
+    });
+
+    destaquePrimeirasLetras.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            destaquePrimeiraLetra.checked = false;
+        }
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+            atualizarDisplayLargura();
+        }
+    });
+
+    destaquePrimeiraLetra.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            destaquePrimeirasLetras.checked = false;
+        }
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+            atualizarDisplayLargura();
+        }
+    });
+
+    destaqueEspeciais.addEventListener('change', () => {
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+            atualizarDisplayLargura();
+        }
+    });
+
+    document.getElementById('adicionar-carrinho').addEventListener('click', adicionarAoCarrinho);
 
     // Adicione evento para mudança de posição do ícone
     document.querySelectorAll('input[name="posicao-icone"]').forEach(radio => {
@@ -1844,7 +2752,7 @@ function configurarEventListeners() {
 
 }
 
-// ADICIONAR AO CARRINHO
+// FUNÇÃO MODIFICADA: adicionarAoCarrinho agora usa o SVG gerado pelo atualizarPrevia
 async function adicionarAoCarrinho() {
     const btn = document.querySelector('.btn-adicionar');
     const originalHtml = btn.innerHTML;
@@ -1861,279 +2769,18 @@ async function adicionarAoCarrinho() {
             return;
         }
 
+        // Forçar uma atualização da prévia para garantir que o SVG completo seja gerado
+        await atualizarPrevia(false);
+
+        // Verificar se o SVG completo foi gerado
+        if (!svgCompletoAtual) {
+            mostrarNotificacao('❌ Erro ao gerar o SVG do adesivo');
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            return;
+        }
+
         const imagemPrevia = await capturarPreviaComoImagem();
-
-        const fontSize = 80;
-        const xCentro = 400;
-        const yBase = 120;
-        
-        let svgString;
-        
-        // Tenta carregar a fonte, se falhar usa a prévia
-        try {
-            // Extrai o caminho correto da fonte (remove 'url("' e '")')
-            let urlFonte = fonteSelecionada.arquivo;
-            
-            // Se for fonte personalizada (com url)
-            if (urlFonte.startsWith('url(')) {
-                urlFonte = urlFonte.replace(/url\(["']?|["']?\)/g, "");
-            } else {
-                // Se for fonte padrão (Arial), não precisa carregar
-                throw new Error('Fonte padrão, não precisa carregar');
-            }
-            
-            console.log('Tentando carregar fonte:', urlFonte); // Para debug
-            
-            const font = await opentype.load(urlFonte);
-            
-            // ===== GERAR PATHS DO TEXTO =====
-            
-            // 1. Calcular posicionamento das letras
-            let largurasAcumuladas = [];
-            let larguraTotal = 0;
-            
-            for (let i = 0; i < texto.length; i++) {
-                largurasAcumuladas.push(larguraTotal);
-                larguraTotal += font.getAdvanceWidth(texto[i], fontSize);
-            }
-            
-            const xInicio = xCentro - (larguraTotal / 2);
-            
-            // 2. Identificar posições de destaque (se ativo)
-            const posicoesDestaque = new Set();
-            if (destaquesAtivo) {
-                // Primeira letra
-                if (document.getElementById('destaque-primeira-letra').checked && texto.length > 0) {
-                    if (/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[0])) {
-                        posicoesDestaque.add(0);
-                    }
-                }
-                
-                // Primeiras letras de cada palavra
-                if (document.getElementById('destaque-primeiras-letras').checked) {
-                    let i = 0;
-                    while (i < texto.length) {
-                        while (i < texto.length && !/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) i++;
-                        if (i < texto.length) {
-                            posicoesDestaque.add(i);
-                            while (i < texto.length && /[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) i++;
-                        }
-                    }
-                }
-                
-                // Caracteres especiais
-                if (document.getElementById('destaque-especiais').checked) {
-                    for (let i = 0; i < texto.length; i++) {
-                        if (!/[a-zA-Z0-9\u00C0-\u00FF\s]/.test(texto[i])) {
-                            posicoesDestaque.add(i);
-                        }
-                    }
-                }
-            }
-            
-            // 3. Cores e estilos
-            const corPrincipal = corSelecionada.codigo;
-            const corSecundaria = corSecundariaSelecionada.codigo;
-            const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
-            const strokeWidth = bordaAtiva ? (grossuraAtual * 2) : 0;
-            const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
-            
-            // ===== GERAR ÍCONES PARA O SVG FINAL =====
-let iconesSVG = '';
-let iconesPathCompleto = ''; // Para concatenar com a borda
-if (iconeSelecionado) {
-    const posicao = document.querySelector('input[name="posicao-icone"]:checked')?.value || 'inicio';
-    const yIcone = 120; // Mesma altura do texto no path
-    const espacoEntreIconeETexto = 50;
-    
-    // Calcula posições baseado no texto
-    const textWidth = font.getAdvanceWidth(texto, fontSize);
-    const xInicioTexto = xCentro - (textWidth / 2);
-    const xFimTexto = xCentro + (textWidth / 2);
-    
-    // Parse do SVG do ícone para extrair paths
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(iconeSelecionado.svgCompleto, 'image/svg+xml');
-    const svgOriginal = svgDoc.querySelector('svg');
-    
-    if (svgOriginal) {
-        // Descobrir dimensões originais do ícone
-        let viewBox = svgOriginal.getAttribute('viewBox');
-        let iconWidth = 100, iconHeight = 100;
-        let minX = 0, minY = 0;
-        
-        if (viewBox) {
-            const parts = viewBox.split(' ').map(Number);
-            if (parts.length === 4) {
-                minX = parts[0];
-                minY = parts[1];
-                iconWidth = parts[2];
-                iconHeight = parts[3];
-            }
-        }
-        
-        // Tamanho desejado para o ícone (40px)
-        const tamanhoAlvo = 40;
-        
-        // Calcular escala necessária
-        const escala = tamanhoAlvo / Math.max(iconWidth, iconHeight);
-        
-        // Extrair TODOS os valores d dos paths
-        let todosPathsD = [];
-        const pathElements = svgOriginal.querySelectorAll('path');
-        
-        pathElements.forEach(path => {
-            const d = path.getAttribute('d');
-            if (d) {
-                todosPathsD.push(d);
-            }
-        });
-        
-        // Concatenar todos os valores d
-        const dConcatenado = todosPathsD.join(' ');
-        
-        // Função para transformar o path do ícone (ícone colorido)
-        const transformarPathIcone = (d, x, y) => {
-            if (!d) return '';
-            
-            // Calcula a posição final do ícone
-            const xFinal = x - (tamanhoAlvo / 2);
-            const yFinal = y - (tamanhoAlvo / 2);
-            
-            // ÍCONE COLORIDO (sem borda)
-            return `<path 
-                d="${d}" 
-                fill="${corSecundaria}" 
-                transform="translate(${xFinal}, ${yFinal}) scale(${escala})" 
-            />`;
-        };
-        
-        // Função para obter o path da borda do ícone
-        const obterPathParaBorda = (d, x, y) => {
-            if (!d) return '';
-            
-            // Calcula a posição final do ícone
-            const xFinal = x - (tamanhoAlvo / 2);
-            const yFinal = y - (tamanhoAlvo / 2);
-            
-            // COMPENSAÇÃO: aumenta a grossura da borda proporcionalmente à escala
-            // Se o ícone é reduzido (escala < 1), a borda precisa ser MAIS GROSSA
-            const strokeWidthCompensado = strokeWidth / escala;
-            
-            // BORDA DO ÍCONE com grossura compensada
-            return `<path 
-                d="${d}" 
-                fill="none" 
-                stroke="${corHexBorda}" 
-                stroke-width="${strokeWidthCompensado}" 
-                stroke-linejoin="${lineJoin}" 
-                stroke-linecap="round" 
-                transform="translate(${xFinal}, ${yFinal}) scale(${escala})" 
-            />`;
-        };
-        
-        // Adicionar ícones conforme posição
-        if (posicao === 'inicio' || posicao === 'ambos') {
-            iconesSVG += transformarPathIcone(dConcatenado, xInicioTexto - espacoEntreIconeETexto, yIcone);
-            iconesPathCompleto += obterPathParaBorda(dConcatenado, xInicioTexto - espacoEntreIconeETexto, yIcone);
-        }
-        
-        if (posicao === 'final' || posicao === 'ambos') {
-            iconesSVG += transformarPathIcone(dConcatenado, xFimTexto + espacoEntreIconeETexto, yIcone);
-            iconesPathCompleto += obterPathParaBorda(dConcatenado, xFimTexto + espacoEntreIconeETexto, yIcone);
-        }
-    }
-}
-            
-            // 4. GERAR SVG com APENAS PATHS
-            if (destaquesAtivo && posicoesDestaque.size > 0) {
-                // Construir paths para cada grupo de cor
-                let pathsPrincipal = '';
-                let pathsDestaques = '';
-                
-                // Gerar path para cada caractere individualmente
-                for (let i = 0; i < texto.length; i++) {
-                    const caractere = texto[i];
-                    const xLetra = xInicio + largurasAcumuladas[i];
-                    const pathData = font.getPath(caractere, xLetra, yBase, fontSize).toPathData(2);
-                    const isDestaque = posicoesDestaque.has(i);
-                    
-                    if (isDestaque) {
-                        pathsDestaques += pathData;
-                    } else {
-                        pathsPrincipal += pathData;
-                    }
-                }
-                
-                // Path ÚNICO para borda (texto completo)
-                const pathBorda = bordaAtiva ? 
-                    font.getPath(texto, xInicio, yBase, fontSize).toPathData(2) : '';
-                
-                svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
-    <g>
-        ${bordaAtiva ? `
-        <!-- Borda do texto -->
-        <path d="${pathBorda}" 
-            fill="none" 
-            stroke="${corHexBorda}" 
-            stroke-width="${strokeWidth}" 
-            stroke-linejoin="${lineJoin}" 
-            stroke-linecap="round" />
-        <!-- Borda dos ícones -->
-        ${iconesPathCompleto}` : ''}
-        <g>
-            <path d="${pathsPrincipal}" fill="${corPrincipal}" />
-            <path d="${pathsDestaques}" fill="${corSecundaria}" />
-            ${iconesSVG}
-        </g>
-    </g>
-</svg>`;
-                
-            } else {
-                // Versão SEM destaques
-                const textWidth = font.getAdvanceWidth(texto, fontSize);
-                const xInicioSimples = xCentro - (textWidth / 2);
-                const pathData = font.getPath(texto, xInicioSimples, yBase, fontSize).toPathData(2);
-
-                svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
-                    <g>
-                        ${bordaAtiva ? `
-                        <!-- Borda do texto -->
-                        <path d="${pathData}"  <!-- CORRIGIDO: usando pathData, não pathBorda -->
-                            fill="none" 
-                            stroke="${corHexBorda}" 
-                            stroke-width="${strokeWidth}" 
-                            stroke-linejoin="${lineJoin}" 
-                            stroke-linecap="round" />
-                        <!-- Borda dos ícones -->
-                        ${iconesPathCompleto}` : ''}
-                        <!-- Texto principal -->
-                        <path d="${pathData}" fill="${corPrincipal}" />
-                        <!-- Ícones coloridos -->
-                        ${iconesSVG}
-                    </g>
-                </svg>`;
-            }
-            
-        } catch (erroFonte) {
-            console.warn('Erro ao carregar fonte, usando fallback:', erroFonte);
-            
-            // Fallback: usa a prévia como imagem
-            svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
-    <g filter="url(#dropShadow)">
-        <text x="400" y="100" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="${corSelecionada.codigo}">${texto}</text>
-    </g>
-</svg>`;
-        }
-
-        // 5. Converter para Base64
-        const svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
 
         // 6. Criar item do carrinho
         const novoItem = {
@@ -2146,16 +2793,20 @@ if (iconeSelecionado) {
             imagem: imagemPrevia,
             tipo: tipoSelecionado,
             cor: corSelecionada.nome,
-            destaquesAtivo: destaquesAtivo,
+            corSecundariaAtivo: corSecundariaAtivo,
             tipoDestaque: tipoDestaqueSelecionado,
-            corSecundaria: destaquesAtivo ? corSecundariaSelecionada.nome : null,
+            corSecundaria: corSecundariaAtivo ? corSecundariaSelecionada.nome : null,
             iconeSelecionado: iconeSelecionado ? iconeSelecionado.nome : null,
             posicaoIcone: iconeSelecionado ? document.querySelector('input[name="posicao-icone"]:checked')?.value : null,
+            largura: larguraAdesivo,
+            alturaProporcional: calcularAlturaProporcional(),
             servico: 'Nome_personalizado',
             dataCriacao: new Date().toISOString()
         };
 
-        if (svgBase64 && typeof svgBase64 === 'string' && svgBase64 !== 'undefined') {
+        // Usar o SVG completo gerado pela função atualizarPrevia
+        if (svgCompletoAtual && typeof svgCompletoAtual === 'string') {
+            const svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgCompletoAtual)));
             novoItem.svgRaw = svgBase64;
         }
 
@@ -2189,14 +2840,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     setTimeout(() => {
         loadingOverlay.classList.add('loading-hidden');
+        atualizarPrevia(true);
         setTimeout(() => loadingOverlay.remove(), 500);
     }, 1500);
 
     inicializarOpcoes();
     configurarEventListeners();
     configurarMenuLateral();
-    carregarIcones(); // <-- NOVO: Carrega os ícones
-    atualizarPrevia(true);
+    carregarIcones();
 
     window.atualizarContadorCarrinho = function() {
         const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
@@ -2204,9 +2855,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const carrinhoCount = document.getElementById('carrinho-count');
         if (carrinhoCount) carrinhoCount.textContent = totalItens;
     };
+    atualizarDisponibilidadeDestaques();
     atualizarContadorCarrinho();
     atualizarPrecos();
-    atualizarFundoPrevia();
+    atualizarDisplayLargura();
     window.atualizarContadorCarrinho = atualizarContadorCarrinho;
 });
     </script>
