@@ -1255,61 +1255,44 @@
     <script>
         // ===== CONFIGURAÇÕES =====
         const CATEGORIAS_ADESIVO = {
-        vinil: {
-            nome: 'Vinil Brilho (Padrão)',
-            precoAdicional: 1,
-            tipo: 'cor', // 'cor' para cores sólidas
-            cores: [
-                { nome: 'Preto', codigo: '#000000' },
-                { nome: 'Branco', codigo: '#FFFFFF' },
-                { nome: 'Vermelho', codigo: '#D91108' },
-                { nome: 'Laranja', codigo: '#E47429' },
-                { nome: 'Amarelo', codigo: '#EDCB08' },
-                { nome: 'Azul escuro', codigo: '#0840D7' },
-                { nome: 'Azul claro', codigo: '#08C8ED' },
-                { nome: 'Verde escuro', codigo: '#087636' },
-                { nome: 'Verde claro', codigo: '#36BF36' },
-                { nome: 'Roxo', codigo: '#B456CC' },
-                { nome: 'Rosa', codigo: '#ED91ED' },
-                { nome: 'Pele', codigo: '#EDBFBF' },
-            ]
-        },
-        refletivo: {
-            nome: 'Refletivo (Segurança)',
-            precoAdicional: 1.05,
-            tipo: 'textura',
-            cores: [
-                { nome: 'Branco Refletivo', codigo: '#E6E6E6', textura: true },
-                { nome: 'Vermelho Refletivo', codigo: '#FF0000', textura: true },
-                { nome: 'Laranja Refletivo', codigo: '#FF571A', textura: true },
-                { nome: 'Amarelo Refletivo', codigo: '#FFF000', textura: true },
-                { nome: 'Azul Refletivo', codigo: '#0000FF', textura: true },
-                { nome: 'Verde Refletivo', codigo: '#00CE4F', textura: true }
-            ]
-        },
-        metalico: {
-            nome: 'Metálico / Cromado',
-            precoAdicional: 1.10,
-            tipo: 'textura',
-            cores: [
-                { nome: 'Cromado', codigo: '#E0E0E0', textura: true }
-            ]
-        },
-        fluorescente: {
-            nome: 'Fluorescente (Neon)',
-            precoAdicional: 1.08,
-            tipo: 'textura',
-            cores: [
-                { nome: 'Amarelo Neon', codigo: '#FFFF33', textura: true },
-                { nome: 'Verde Neon', codigo: '#39FF14', textura: true },
-                { nome: 'Laranja Neon', codigo: '#FF5F1F', textura: true },
-                { nome: 'Rosa Neon', codigo: '#FF10F0', textura: true },
-                { nome: 'Vermelho Neon', codigo: '#FF3131', textura: true },
-                { nome: 'Azul Neon', codigo: '#4D4DFF', textura: true }
-            ]
-        }
-        // Se quiser adicionar holográfico e glitter depois
-    };
+            vinil: {
+                nome: 'Vinil Brilho (Padrão)',
+                precoAdicional: 1,
+                cores: [
+                    { nome: 'Preto', codigo: '#000000' },
+                    { nome: 'Branco', codigo: '#FFFFFF' },
+                    { nome: 'Vermelho', codigo: '#D91108' },
+                    { nome: 'Laranja', codigo: '#E47429' },
+                    { nome: 'Amarelo', codigo: '#EDCB08' },
+                    { nome: 'Azul escuro', codigo: '#0840D7' },
+                    { nome: 'Azul claro', codigo: '#08C8ED' },
+                    { nome: 'Verde escuro', codigo: '#087636' },
+                    { nome: 'Verde claro', codigo: '#36BF36' },
+                    { nome: 'Roxo', codigo: '#B456CC' },
+                    { nome: 'Rosa', codigo: '#ED91ED' },
+                    { nome: 'Pele', codigo: '#EDBFBF' },
+                ]
+            },
+            refletivo: {
+                nome: 'Refletivo (Segurança)',
+                precoAdicional: 1.05,
+                cores: [
+                    { nome: 'Branco Refletivo', codigo: '#E6E6E6' },
+                    { nome: 'Vermelho Refletivo', codigo: '#FF0000' },
+                    { nome: 'Laranja Refletivo', codigo: '#FF571A' },
+                    { nome: 'Amarelo Refletivo', codigo: '#FFF000' },
+                    { nome: 'Azul Refletivo', codigo: '#0000FF' },
+                    { nome: 'Verde Refletivo', codigo: '#00CE4F' }
+                ]
+            },
+            especiais: {
+                nome: 'Metálico / Cromado',
+                precoAdicional: 1.10,
+                cores: [
+                    
+                ]
+            },
+        };
 
         const FONTES_DISPONIVEIS = [
             { nome: 'arialbd', arquivo: 'url("../fontes/arialbd.ttf")' },
@@ -1768,104 +1751,12 @@ function renderizarCores(tipoId, container) {
     categoria.cores.forEach((cor, index) => {
         const corDiv = document.createElement('div');
         corDiv.className = `cor-opcao ${index === 0 ? 'selecionada' : ''}`;
-        
-        // Se for uma categoria com textura
-        if (categoria.tipo === 'textura') {
-            // Cria um canvas para gerar a textura
-            const canvas = document.createElement('canvas');
-            canvas.width = 45;
-            canvas.height = 45;
-            const ctx = canvas.getContext('2d');
-            
-            // Passo 1: Preenche com a cor base
-            ctx.fillStyle = cor.codigo;
-            ctx.fillRect(0, 0, 45, 45);
-            
-            // Passo 2: Adiciona a textura específica do material
-            if (tipoId === 'refletivo') {
-                // Padrão de micropontos para material refletivo
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                for (let i = 0; i < 30; i++) {
-                    ctx.beginPath();
-                    ctx.arc(
-                        Math.random() * 45, 
-                        Math.random() * 45, 
-                        1 + Math.random() * 3, 
-                        0, Math.PI * 2
-                    );
-                    ctx.fill();
-                }
-            } 
-
-        
-else if (tipoId === 'metalico') {
-    // Efeito holográfico colorido
-    
-    // Múltiplos gradientes sobrepostos
-    for (let i = 0; i < 5; i++) {
-        const gradient = ctx.createLinearGradient(
-            Math.random() * 45, Math.random() * 45,
-            Math.random() * 45, Math.random() * 45
-        );
-        gradient.addColorStop(0, 'rgba(255, 0, 255, 0.10)');
-        gradient.addColorStop(0.3, 'rgba(0, 255, 255, 0.10)');
-        gradient.addColorStop(0.6, 'rgba(255, 255, 0, 0.10)');
-        gradient.addColorStop(1, 'rgba(255, 0, 0, 0.10)');
-        
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 45, 45);
-    }
-    
-    // Brilhos pontuais
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.10)';
-    for (let i = 0; i < 10; i++) {
-        ctx.beginPath();
-        ctx.arc(
-            Math.random() * 45,
-            Math.random() * 45,
-            1.0,
-            0, Math.PI * 2
-        );
-        ctx.fill();
-    }
-}
-            
-            else if (tipoId === 'fluorescente') {
-                // Efeito de brilho neon
-                // Primeiro, escurece um pouco as bordas
-                const gradient = ctx.createRadialGradient(22, 22, 5, 22, 22, 30);
-                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, 45, 45);
-                
-                // Depois, adiciona um brilho externo
-                ctx.shadowColor = cor.codigo;
-                ctx.shadowBlur = 10;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                ctx.fillRect(0, 0, 45, 45);
-                ctx.shadowBlur = 0;
-            }
-            
-            // Converte o canvas para URL e aplica como background
-            corDiv.style.backgroundImage = `url(${canvas.toDataURL()})`;
-            corDiv.style.backgroundSize = 'cover';
-            corDiv.style.backgroundColor = 'transparent';
-            
-        } else {
-            // Cores sólidas normais
-            corDiv.style.backgroundColor = cor.codigo;
-            corDiv.style.backgroundImage = 'none';
-        }
-        
-        // Armazena os dados da cor
+        corDiv.style.backgroundColor = cor.codigo;
         corDiv.dataset.cor = cor.codigo;
         corDiv.dataset.nome = cor.nome;
         corDiv.title = cor.nome;
-        
         container.appendChild(corDiv);
         
-        // Seleciona a primeira cor por padrão
         if(index === 0 && container === corContainer) {
             corSelecionada = cor;
         } else if(index === 0 && container === corSecundariaContainer) {
@@ -1964,11 +1855,11 @@ function inicializarDropdownFontes() {
 
 
 function inicializarOpcoes() {
-    // Renderiza as cores com suporte a texturas
     renderizarCores('vinil', corContainer);
     renderizarCores('vinil', corSecundariaContainer);
 
-    // Configuração das fontes (mantém igual)
+    // Fontes - AGORA USA O DROPDOWN CUSTOMIZADO
+    // Não precisa mais do loop para criar options no select
     FONTES_DISPONIVEIS.forEach((fonte, index) => {
         if (fonte.arquivo.startsWith('url(')) {
             const fontFace = `
@@ -1981,6 +1872,7 @@ function inicializarOpcoes() {
         }
     });
     
+    // Inicializar dropdown customizado
     inicializarDropdownFontes();
 }
 
@@ -2819,23 +2711,6 @@ function configurarEventListeners() {
     document.getElementById('selecao-tipo-adesivo').addEventListener('change', (e) => {
         tipoSelecionado = e.target.value;
         renderizarCores(tipoSelecionado, corContainer);
-        
-        // Reconfigurar os eventos de clique nas novas cores
-        document.querySelectorAll('#selecao-cor .cor-opcao').forEach(corDiv => {
-            corDiv.addEventListener('click', (e) => {
-                document.querySelectorAll('#selecao-cor .cor-opcao').forEach(c => c.classList.remove('selecionada'));
-                corDiv.classList.add('selecionada');
-                corSelecionada = {
-                    nome: corDiv.dataset.nome,
-                    codigo: corDiv.dataset.cor
-                };
-                atualizarPrevia(false);
-                atualizarFundoPrevia();
-                atualizarPrecos();
-                atualizarDisplayLargura();
-            });
-        });
-        
         atualizarPrevia(false);
         atualizarPrecos();
     });
@@ -2910,23 +2785,6 @@ function configurarEventListeners() {
     tipoSecundarioSelect.addEventListener('change', (e) => {
         tipoSecundarioSelecionado = e.target.value;
         renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer);
-        
-        // Reconfigurar eventos
-        document.querySelectorAll('#selecao-cor-secundaria .cor-opcao').forEach(corDiv => {
-            corDiv.addEventListener('click', (e) => {
-                document.querySelectorAll('#selecao-cor-secundaria .cor-opcao').forEach(c => c.classList.remove('selecionada'));
-                corDiv.classList.add('selecionada');
-                corSecundariaSelecionada = {
-                    nome: corDiv.dataset.nome,
-                    codigo: corDiv.dataset.cor
-                };
-                if (corSecundariaAtivo) {
-                    atualizarPrevia(false);
-                    atualizarDisplayLargura();
-                }
-            });
-        });
-        
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
         }
