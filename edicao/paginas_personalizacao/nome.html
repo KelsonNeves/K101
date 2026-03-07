@@ -1138,7 +1138,7 @@
 
 
                             <p style="margin-top: 10px; margin-bottom: 25px; color: #818181; font-size: 0.85rem; font-style: italic;">
-                                <i class="fas fa-info-circle"></i> Adesivo a mais que vai no fundo FUNDO do principal. É sobreposição de adesivos, dando aspecto de relevo.
+                                <i class="fas fa-info-circle"></i> Adesivo a mais que vai no FUNDO do principal. É sobreposição de adesivos, dando aspecto de relevo.
                             </p>
                         
                             <div class="card-titulo" style="margin-top: 10px;">
@@ -1255,44 +1255,61 @@
     <script>
         // ===== CONFIGURAÇÕES =====
         const CATEGORIAS_ADESIVO = {
-            vinil: {
-                nome: 'Vinil Brilho (Padrão)',
-                precoAdicional: 1,
-                cores: [
-                    { nome: 'Preto', codigo: '#000000' },
-                    { nome: 'Branco', codigo: '#FFFFFF' },
-                    { nome: 'Vermelho', codigo: '#D91108' },
-                    { nome: 'Laranja', codigo: '#E47429' },
-                    { nome: 'Amarelo', codigo: '#EDCB08' },
-                    { nome: 'Azul escuro', codigo: '#0840D7' },
-                    { nome: 'Azul claro', codigo: '#08C8ED' },
-                    { nome: 'Verde escuro', codigo: '#087636' },
-                    { nome: 'Verde claro', codigo: '#36BF36' },
-                    { nome: 'Roxo', codigo: '#B456CC' },
-                    { nome: 'Rosa', codigo: '#ED91ED' },
-                    { nome: 'Pele', codigo: '#EDBFBF' },
-                ]
-            },
-            refletivo: {
-                nome: 'Refletivo (Segurança)',
-                precoAdicional: 1.05,
-                cores: [
-                    { nome: 'Branco Refletivo', codigo: '#E6E6E6' },
-                    { nome: 'Vermelho Refletivo', codigo: '#FF0000' },
-                    { nome: 'Laranja Refletivo', codigo: '#FF571A' },
-                    { nome: 'Amarelo Refletivo', codigo: '#FFF000' },
-                    { nome: 'Azul Refletivo', codigo: '#0000FF' },
-                    { nome: 'Verde Refletivo', codigo: '#00CE4F' }
-                ]
-            },
-            especiais: {
-                nome: 'Metálico / Cromado',
-                precoAdicional: 1.10,
-                cores: [
-                    
-                ]
-            },
-        };
+        vinil: {
+            nome: 'Vinil Brilho (Padrão)',
+            precoAdicional: 1,
+            tipo: 'cor', // 'cor' para cores sólidas
+            cores: [
+                { nome: 'Preto', codigo: '#000000' },
+                { nome: 'Branco', codigo: '#FFFFFF' },
+                { nome: 'Vermelho', codigo: '#D91108' },
+                { nome: 'Laranja', codigo: '#E47429' },
+                { nome: 'Amarelo', codigo: '#EDCB08' },
+                { nome: 'Azul escuro', codigo: '#0840D7' },
+                { nome: 'Azul claro', codigo: '#08C8ED' },
+                { nome: 'Verde escuro', codigo: '#087636' },
+                { nome: 'Verde claro', codigo: '#36BF36' },
+                { nome: 'Roxo', codigo: '#B456CC' },
+                { nome: 'Rosa', codigo: '#ED91ED' },
+                { nome: 'Pele', codigo: '#EDBFBF' },
+            ]
+        },
+        refletivo: {
+            nome: 'Refletivo (Segurança)',
+            precoAdicional: 1.05,
+            tipo: 'textura',
+            cores: [
+                { nome: 'Branco Refletivo', codigo: '#E6E6E6', textura: true },
+                { nome: 'Vermelho Refletivo', codigo: '#FF0000', textura: true },
+                { nome: 'Laranja Refletivo', codigo: '#FF571A', textura: true },
+                { nome: 'Amarelo Refletivo', codigo: '#FFF000', textura: true },
+                { nome: 'Azul Refletivo', codigo: '#0000FF', textura: true },
+                { nome: 'Verde Refletivo', codigo: '#00CE4F', textura: true }
+            ]
+        },
+        metalico: {
+            nome: 'Metálico / Cromado',
+            precoAdicional: 1.10,
+            tipo: 'textura',
+            cores: [
+                { nome: 'Cromado', codigo: '#E0E0E0', textura: true }
+            ]
+        },
+        fluorescente: {
+            nome: 'Fluorescente (Neon)',
+            precoAdicional: 1.08,
+            tipo: 'textura',
+            cores: [
+                { nome: 'Amarelo Neon', codigo: '#FFFF33', textura: true },
+                { nome: 'Verde Neon', codigo: '#39FF14', textura: true },
+                { nome: 'Laranja Neon', codigo: '#FF5F1F', textura: true },
+                { nome: 'Rosa Neon', codigo: '#FF10F0', textura: true },
+                { nome: 'Vermelho Neon', codigo: '#FF3131', textura: true },
+                { nome: 'Azul Neon', codigo: '#4D4DFF', textura: true }
+            ]
+        }
+        // Se quiser adicionar holográfico e glitter depois
+    };
 
         const FONTES_DISPONIVEIS = [
             { nome: 'arialbd', arquivo: 'url("../fontes/arialbd.ttf")' },
@@ -1596,9 +1613,9 @@ function calcularPrecoUnitario() {
 
     // Tabela de preços
     if (larguraAdesivo<=15) precoBase = 20.00;
-    else if (larguraAdesivo<=20) precoBase = 22.50;
+    else if (larguraAdesivo<=20) precoBase = 20.00;
     else if (larguraAdesivo<=25) precoBase = 25.00;
-    else if (larguraAdesivo<=35) precoBase = 27.50;
+    else if (larguraAdesivo<=35) precoBase = 30.00;
     else if (larguraAdesivo<=45) precoBase = 30.00;
     else if (larguraAdesivo<=50) precoBase = 35.00;
     else if (larguraAdesivo<=60) precoBase = 40.00;
@@ -1626,48 +1643,49 @@ function calcularPrecoUnitario() {
     return precoBase;
 }
 
-function calcularAlturaProporcional() {
-    const texto = textoInput.value.trim() || '';
-    
-    // Se não tiver texto, retorna 0
-    if (!texto && !iconeSelecionado) return '0.0';
-    
-    // Pega o elemento SVG e seu grupo
-    const svgEditor = document.getElementById('svg-editor');
-    const grupoSvg = svgEditor.querySelector('g');
-    
-    if (!grupoSvg) return '0.0';
-    
-    // Obtém o bounding box do grupo (dimensões reais do conteúdo)
-    const bbox = grupoSvg.getBBox();
-    
-    if (bbox.width === 0) return '0.0';
-    
-    // FATOR DE CORREÇÃO - ajuste este valor conforme necessário
-    // Se a altura está aparecendo maior que o real, diminua este valor
-    // Se está aparecendo menor que o real, aumente este valor
-    const fatorCorrecao = 0.65; // Comece com 0.8 e ajuste conforme necessário
-    
-    // Largura real do conteúdo em pixels
-    const larguraRealPixels = bbox.width;
-    
-    // Altura real do conteúdo em pixels
-    const alturaRealPixels = bbox.height;
-    
-    // Largura do adesivo em cm (desejada pelo usuário)
-    const larguraDesejadaCm = larguraAdesivo;
-    
-    // Calcular quantos pixels por cm na escala atual
-    const pixelsPorCmNaEscala = larguraRealPixels / larguraDesejadaCm;
-    
-    // Altura em cm = altura em pixels / pixels por cm na escala * fator de correção
-    const alturaProporcional = (alturaRealPixels / pixelsPorCmNaEscala) * fatorCorrecao;
-    
-    // Retornar com 1 casa decimal
-    return alturaProporcional.toFixed(1);
+function calcularAlturaRealDoSVG(svgString, larguraDesejadaCm) {
+
+    // cria um container invisível
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.visibility = "hidden";
+    container.style.pointerEvents = "none";
+    container.style.left = "-9999px";
+
+    document.body.appendChild(container);
+
+    // insere o SVG real
+    container.innerHTML = svgString;
+
+    const svg = container.querySelector("svg");
+
+    if (!svg) {
+        container.remove();
+        return 0;
+    }
+
+    const bbox = svg.getBBox();
+
+    const larguraReal = bbox.width;
+    const alturaReal = bbox.height;
+
+    container.remove();
+
+    if (larguraReal === 0) return 0;
+
+    const proporcao = alturaReal / larguraReal;
+
+    const alturaCm = larguraDesejadaCm * proporcao;
+
+    return alturaCm.toFixed(1);
 }
 
+
+
 function atualizarDisplayLargura() {
+
+    
+
     const larguraInput = document.getElementById('largura-personalizado');
     const larguraValor = document.getElementById('largura-valor');
     const larguraFinal = document.getElementById('largura-final');
@@ -1677,11 +1695,16 @@ function atualizarDisplayLargura() {
     if (larguraValor) larguraValor.textContent = larguraAdesivo;
     if (larguraFinal) larguraFinal.textContent = larguraAdesivo;
     
-    // Calcular e mostrar altura proporcional
-    if (alturaProporcional) {
-        const altura = calcularAlturaProporcional();
-        alturaProporcional.textContent = altura;
-    }
+    // Pequeno delay para garantir que o SVG foi renderizado
+    setTimeout(() => {
+        // Calcular e mostrar altura proporcional
+        if (alturaProporcional) {
+            const altura = calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo);
+            alturaProporcional.textContent = altura;
+        }
+    }, 50);
+
+    
 }
 
 function alterarLarguraPersonalizado(delta) {
@@ -1745,12 +1768,104 @@ function renderizarCores(tipoId, container) {
     categoria.cores.forEach((cor, index) => {
         const corDiv = document.createElement('div');
         corDiv.className = `cor-opcao ${index === 0 ? 'selecionada' : ''}`;
-        corDiv.style.backgroundColor = cor.codigo;
+        
+        // Se for uma categoria com textura
+        if (categoria.tipo === 'textura') {
+            // Cria um canvas para gerar a textura
+            const canvas = document.createElement('canvas');
+            canvas.width = 45;
+            canvas.height = 45;
+            const ctx = canvas.getContext('2d');
+            
+            // Passo 1: Preenche com a cor base
+            ctx.fillStyle = cor.codigo;
+            ctx.fillRect(0, 0, 45, 45);
+            
+            // Passo 2: Adiciona a textura específica do material
+            if (tipoId === 'refletivo') {
+                // Padrão de micropontos para material refletivo
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                for (let i = 0; i < 30; i++) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.random() * 45, 
+                        Math.random() * 45, 
+                        1 + Math.random() * 3, 
+                        0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            } 
+
+        
+else if (tipoId === 'metalico') {
+    // Efeito holográfico colorido
+    
+    // Múltiplos gradientes sobrepostos
+    for (let i = 0; i < 5; i++) {
+        const gradient = ctx.createLinearGradient(
+            Math.random() * 45, Math.random() * 45,
+            Math.random() * 45, Math.random() * 45
+        );
+        gradient.addColorStop(0, 'rgba(255, 0, 255, 0.10)');
+        gradient.addColorStop(0.3, 'rgba(0, 255, 255, 0.10)');
+        gradient.addColorStop(0.6, 'rgba(255, 255, 0, 0.10)');
+        gradient.addColorStop(1, 'rgba(255, 0, 0, 0.10)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 45, 45);
+    }
+    
+    // Brilhos pontuais
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.10)';
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.arc(
+            Math.random() * 45,
+            Math.random() * 45,
+            1.0,
+            0, Math.PI * 2
+        );
+        ctx.fill();
+    }
+}
+            
+            else if (tipoId === 'fluorescente') {
+                // Efeito de brilho neon
+                // Primeiro, escurece um pouco as bordas
+                const gradient = ctx.createRadialGradient(22, 22, 5, 22, 22, 30);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 45, 45);
+                
+                // Depois, adiciona um brilho externo
+                ctx.shadowColor = cor.codigo;
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(0, 0, 45, 45);
+                ctx.shadowBlur = 0;
+            }
+            
+            // Converte o canvas para URL e aplica como background
+            corDiv.style.backgroundImage = `url(${canvas.toDataURL()})`;
+            corDiv.style.backgroundSize = 'cover';
+            corDiv.style.backgroundColor = 'transparent';
+            
+        } else {
+            // Cores sólidas normais
+            corDiv.style.backgroundColor = cor.codigo;
+            corDiv.style.backgroundImage = 'none';
+        }
+        
+        // Armazena os dados da cor
         corDiv.dataset.cor = cor.codigo;
         corDiv.dataset.nome = cor.nome;
         corDiv.title = cor.nome;
+        
         container.appendChild(corDiv);
         
+        // Seleciona a primeira cor por padrão
         if(index === 0 && container === corContainer) {
             corSelecionada = cor;
         } else if(index === 0 && container === corSecundariaContainer) {
@@ -1815,6 +1930,7 @@ function inicializarDropdownFontes() {
             // Atualizar prévia
             atualizarPrevia(true);
             atualizarPrecos();
+            atualizarDisplayLargura();
         });
         
         opcoesContainer.appendChild(opcao);
@@ -1848,11 +1964,11 @@ function inicializarDropdownFontes() {
 
 
 function inicializarOpcoes() {
+    // Renderiza as cores com suporte a texturas
     renderizarCores('vinil', corContainer);
     renderizarCores('vinil', corSecundariaContainer);
 
-    // Fontes - AGORA USA O DROPDOWN CUSTOMIZADO
-    // Não precisa mais do loop para criar options no select
+    // Configuração das fontes (mantém igual)
     FONTES_DISPONIVEIS.forEach((fonte, index) => {
         if (fonte.arquivo.startsWith('url(')) {
             const fontFace = `
@@ -1865,7 +1981,6 @@ function inicializarOpcoes() {
         }
     });
     
-    // Inicializar dropdown customizado
     inicializarDropdownFontes();
 }
 
@@ -2422,6 +2537,10 @@ async function atualizarPrevia(deveRedimensionar = false) {
         }, 50); // Pequeno delay de 50ms para acumular múltiplas mudanças
     }
 
+    requestAnimationFrame(() => {
+        const altura = calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo);
+        document.getElementById("altura-proporcional").textContent = altura;
+    });
     atualizarFundoPrevia();
     atualizarPrecos();
 }
@@ -2700,6 +2819,23 @@ function configurarEventListeners() {
     document.getElementById('selecao-tipo-adesivo').addEventListener('change', (e) => {
         tipoSelecionado = e.target.value;
         renderizarCores(tipoSelecionado, corContainer);
+        
+        // Reconfigurar os eventos de clique nas novas cores
+        document.querySelectorAll('#selecao-cor .cor-opcao').forEach(corDiv => {
+            corDiv.addEventListener('click', (e) => {
+                document.querySelectorAll('#selecao-cor .cor-opcao').forEach(c => c.classList.remove('selecionada'));
+                corDiv.classList.add('selecionada');
+                corSelecionada = {
+                    nome: corDiv.dataset.nome,
+                    codigo: corDiv.dataset.cor
+                };
+                atualizarPrevia(false);
+                atualizarFundoPrevia();
+                atualizarPrecos();
+                atualizarDisplayLargura();
+            });
+        });
+        
         atualizarPrevia(false);
         atualizarPrecos();
     });
@@ -2752,6 +2888,7 @@ function configurarEventListeners() {
             distanciaIconeValor.textContent = distanciaIcone;
             if (iconeSelecionado) {
                 atualizarPrevia(true);
+                atualizarDisplayLargura();
             }
         });
     }
@@ -2765,6 +2902,7 @@ function configurarEventListeners() {
             alturaIconeValor.textContent = alturaIcone;
             if (iconeSelecionado) {
                 atualizarPrevia(true);
+                atualizarDisplayLargura();
             }
         });
     }
@@ -2772,6 +2910,23 @@ function configurarEventListeners() {
     tipoSecundarioSelect.addEventListener('change', (e) => {
         tipoSecundarioSelecionado = e.target.value;
         renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer);
+        
+        // Reconfigurar eventos
+        document.querySelectorAll('#selecao-cor-secundaria .cor-opcao').forEach(corDiv => {
+            corDiv.addEventListener('click', (e) => {
+                document.querySelectorAll('#selecao-cor-secundaria .cor-opcao').forEach(c => c.classList.remove('selecionada'));
+                corDiv.classList.add('selecionada');
+                corSecundariaSelecionada = {
+                    nome: corDiv.dataset.nome,
+                    codigo: corDiv.dataset.cor
+                };
+                if (corSecundariaAtivo) {
+                    atualizarPrevia(false);
+                    atualizarDisplayLargura();
+                }
+            });
+        });
+        
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
         }
@@ -2780,7 +2935,6 @@ function configurarEventListeners() {
     destaqueIcone.addEventListener('change', () => {
         if (iconeSelecionado) {
             atualizarPrevia(false);
-            atualizarDisplayLargura();
         }
     });
 
@@ -2790,7 +2944,6 @@ function configurarEventListeners() {
         }
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
-            atualizarDisplayLargura();
         }
     });
 
@@ -2800,14 +2953,12 @@ function configurarEventListeners() {
         }
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
-            atualizarDisplayLargura();
         }
     });
 
     destaqueEspeciais.addEventListener('change', () => {
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
-            atualizarDisplayLargura();
         }
     });
 
@@ -2871,9 +3022,10 @@ async function adicionarAoCarrinho() {
             iconeSelecionado: iconeSelecionado ? iconeSelecionado.nome : null,
             posicaoIcone: iconeSelecionado ? document.querySelector('input[name="posicao-icone"]:checked')?.value : null,
             largura: larguraAdesivo,
-            alturaProporcional: calcularAlturaProporcional(),
+            alturaProporcional: calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo),
             servico: 'Nome_personalizado',
             dataCriacao: new Date().toISOString()
+
         };
 
         // Usar o SVG completo gerado pela função atualizarPrevia
