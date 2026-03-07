@@ -38,7 +38,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #fafafa;
+            background-color: #ffffff;
             overflow-x: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
@@ -114,17 +114,20 @@
             border: 1px solid var(--primary-color);
             z-index: 950;
             margin-bottom: 10px;
+            transition: all 0.5s ease;
         }
 
         .conteudo-wrapper {
             width: 100%;
             margin: 0 auto;
+            transition: all 0.5s ease;
         }
 
         .controles-edicao {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            transition: all 0.5s ease;
         }
 
         /* CARDS */
@@ -136,8 +139,10 @@
             border: 1px solid var(--border-color);
             transition: all 0.2s ease;
             position: relative;
+            transition: all 0.5s ease;
 
         }
+
         .card-seletor {
             position: absolute;
             width: 30px;
@@ -163,8 +168,39 @@
             font-weight: 600;
             color: var(--text-color);
         }
+/* Botão desativar no final do card */
+.btn-desativar-card {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: transparent;
+  border: 2px solid #ff4444;
+  color: #ff4444;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-desativar-card:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.btn-desativar-card i {
+  font-size: 0.9rem;
+}
 
 
+@keyframes highlightCard {
+  0% { background-color: rgba(var(--primary-color-rgb), 0.1); }
+  100% { background-color: white; }
+}
         .card-titulo input[type="checkbox"] {
 
             -webkit-appearance: none;
@@ -172,7 +208,7 @@
             
             width: 35px;
             height: 35px;
-            border: 3px solid #9b9b9b;
+            border: 2px solid #bbbbbb;
             border-radius: 50%;
             background-color: var(--background-color);
             cursor: pointer;
@@ -181,8 +217,10 @@
         }
 
         .card-titulo input[type="checkbox"]:checked {
-            background-color: var(--primary-color);
-            border: 3px solid #646464;
+            background-color: #dfdfdf;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 5px #33333369;
+
         }
 
         .card-titulo i {
@@ -258,6 +296,24 @@
         .cor-opcao.selecionada {
             border-color: #333;
             box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .visualizacao-de-material {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            width: 100%;
+            height: 40px;
+            background-color: #dfdfdf;
+            border-radius: 15px;
+            box-shadow: 0 0 10px #33333360;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: all 0.5s ease;
+
         }
 
         .checkbox-borda {
@@ -986,10 +1042,13 @@
                             <select id="selecao-tipo-adesivo" class="campo-texto">
                                 <option value="vinil">Vinil Brilho</option>
                                 <option value="refletivo">Refletivo</option>
-                                <option value="metalico">Metálico / Cromado</option>
-                                <option value="fluorescente">Fluorescente (Neon)</option>
+                                <option value="especiais">Especiais</option>
                             </select>
                             <div class="selecao-cor" id="selecao-cor"></div>
+                            <p style="margin-top: 20px; color: #666; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> Imagem real do adesivo
+                            </p>
+                            <div class="visualizacao-de-material" id="visualizacao-de-material-primario"></div>
                         </div>
                         
                         
@@ -1090,18 +1149,8 @@
                     </div>
                     <div class="card-conteudo" id="controles-cor-secundaria" style="display: none;">
                         
-                        <p class="legenda-funcao">Cor Secondária</p>
-                        <div class="card-conteudo">
-                            
-                            <select id="selecao-tipo-secundario" class="campo-texto">
-                                <option value="vinil">Vinil Brilho</option>
-                                <option value="refletivo">Refletivo</option>
-                                <option value="metalico">Metálico / Cromado</option>
-                                <option value="fluorescente">Fluorescente (Neon)</option>
-                            </select>
-                            <div class="selecao-cor" id="selecao-cor-secundaria"></div>
-                        </div>
-                        <hr>
+                        
+                        
                         <p class="legenda-funcao" >Utilização da cor secundária</p>
                         <div>
                             <div class="checkbox-group">
@@ -1121,6 +1170,25 @@
                                     <span>Icone</span>
                                 </label>
                             </div>
+
+                            <p style="margin-top: 10px; margin-bottom: 25px; color: #818181; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> VARIAÇÃO DE PREÇO - Adição de mais de um tipo de adesivo de cor diferente.
+                            </p>
+                        </div>
+                        <hr style="margin-top: 20px;">
+                        <p class="legenda-funcao">Cor Secondária</p>
+                        <div class="card-conteudo">
+                            
+                            <select id="selecao-tipo-secundario" class="campo-texto">
+                                <option value="vinil">Vinil Brilho</option>
+                                <option value="refletivo">Refletivo</option>
+                                <option value="especiais">Especiais</option>
+                            </select>
+                            <div class="selecao-cor" id="selecao-cor-secundaria"></div>
+                            <p style="margin-top: 20px; color: #666; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> Imagem real do adesivo
+                            </p>
+                                <div class="visualizacao-de-material" id="visualizacao-de-material-secundario"></div>
                         </div>
                     </div>
                 </div>
@@ -1138,7 +1206,7 @@
 
 
                             <p style="margin-top: 10px; margin-bottom: 25px; color: #818181; font-size: 0.85rem; font-style: italic;">
-                                <i class="fas fa-info-circle"></i> Adesivo a mais que vai no FUNDO do principal. É sobreposição de adesivos, dando aspecto de relevo.
+                                <i class="fas fa-info-circle"></i> VARIAÇÃO DE PREÇO - Adesivo a mais que vai no FUNDO do principal. É sobreposição de adesivos, dando aspecto de relevo.
                             </p>
                         
                             <div class="card-titulo" style="margin-top: 10px;">
@@ -1259,36 +1327,39 @@
                 nome: 'Vinil Brilho (Padrão)',
                 precoAdicional: 1,
                 cores: [
-                    { nome: 'Preto', codigo: '#000000' },
-                    { nome: 'Branco', codigo: '#FFFFFF' },
-                    { nome: 'Vermelho', codigo: '#D91108' },
-                    { nome: 'Laranja', codigo: '#E47429' },
-                    { nome: 'Amarelo', codigo: '#EDCB08' },
-                    { nome: 'Azul escuro', codigo: '#0840D7' },
-                    { nome: 'Azul claro', codigo: '#08C8ED' },
-                    { nome: 'Verde escuro', codigo: '#087636' },
-                    { nome: 'Verde claro', codigo: '#36BF36' },
-                    { nome: 'Roxo', codigo: '#B456CC' },
-                    { nome: 'Rosa', codigo: '#ED91ED' },
-                    { nome: 'Pele', codigo: '#EDBFBF' },
+                    { nome: 'Preto', codigo: '#000000', arquivo: 'url("../../imagens/textura/Preto-vinil.png")' },
+                    { nome: 'Branco', codigo: '#FFFFFF', arquivo: 'url("../../imagens/textura/Branco-vinil.png")' },
+                    { nome: 'Prata', codigo: '#D1D1D1', arquivo: 'url("../../imagens/textura/Prata-vinil.png")' },
+                    { nome: 'Vermelho', codigo: '#D91108', arquivo: 'url("../../imagens/textura/Vermelho-vinil.png")' },
+                    { nome: 'Laranja', codigo: '#E47429', arquivo: 'url("../../imagens/textura/Laranja-vinil.png")' },
+                    { nome: 'Amarelo', codigo: '#FBB716', arquivo: 'url("../../imagens/textura/Amarelo-vinil.png")' },
+                    { nome: 'Azul escuro', codigo: '#0840D7', arquivo: 'url("../../imagens/textura/Azul-escuro-vinil.png")' },
+                    { nome: 'Azul claro', codigo: '#08C8ED', arquivo: 'url("../../imagens/textura/Azul-claro-vinil.png")' },
+                    { nome: 'Verde escuro', codigo: '#087636', arquivo: 'url("../../imagens/textura/Verde-escuro-vinil.png")' },
+                    { nome: 'Verde claro', codigo: '#36BF36', arquivo: 'url("../../imagens/textura/Verde-claro-vinil.png")' },
+                    { nome: 'Verde florescente', codigo: '#c7f000', arquivo: 'url("../../imagens/textura/Verde-florescente-vinil.png")' },
+                    { nome: 'Roxo', codigo: '#6B2690', arquivo: 'url("../../imagens/textura/Roxo-vinil.png")' },
+                    { nome: 'Rosa', codigo: 'df1a9a', arquivo: 'url("../../imagens/textura/Rosa-vinil.png")' },
+                    { nome: 'Pele', codigo: '#EDBFBF', arquivo: 'url("../../imagens/textura/Pele-vinil.png")' },
                 ]
             },
             refletivo: {
                 nome: 'Refletivo (Segurança)',
                 precoAdicional: 1.05,
                 cores: [
-                    { nome: 'Branco Refletivo', codigo: '#E6E6E6' },
-                    { nome: 'Vermelho Refletivo', codigo: '#FF0000' },
-                    { nome: 'Laranja Refletivo', codigo: '#FF571A' },
-                    { nome: 'Amarelo Refletivo', codigo: '#FFF000' },
-                    { nome: 'Azul Refletivo', codigo: '#0000FF' },
-                    { nome: 'Verde Refletivo', codigo: '#00CE4F' }
+                    { nome: 'Branco Refletivo', codigo: '#E6E6E6', arquivo: 'url("../../imagens/textura/Branco-refletivo.png")' },
+                    { nome: 'Vermelho Refletivo', codigo: '#FF0000', arquivo: 'url("../../imagens/textura/Vermelho-refletivo.png")' },
+                    { nome: 'Laranja Refletivo', codigo: '#FF571A', arquivo: 'url("../../imagens/textura/Laranja-refletivo.png")' },
+                    { nome: 'Amarelo Refletivo', codigo: '#FFF000', arquivo: 'url("../../imagens/textura/Amarelo-refletivo.png")' },
+                    { nome: 'Azul Refletivo', codigo: '#0000FF', arquivo: 'url("../../imagens/textura/Azul-refletivo.png")' },
+                    { nome: 'Verde Refletivo', codigo: '#00CE4F',arquivo: 'url("../../imagens/textura/Verde-refletivo.png")' },
                 ]
             },
             especiais: {
-                nome: 'Metálico / Cromado',
-                precoAdicional: 1.10,
+                nome: 'Especiais',
+                precoAdicional: 1.05,
                 cores: [
+                    { nome: 'Holografico', codigo: '#EDCBE4', arquivo: 'url("../../imagens/textura/holografico.png")' },
                     
                 ]
             },
@@ -1313,6 +1384,11 @@
             { nome: 'Street Wars Demo', arquivo: 'url("../fontes/Street Wars Demo.otf")' },
             { nome: 'Vandals Puppies', arquivo: 'url("../fontes/Vandals Puppies.ttf")' },
         ];
+
+        const MATERIAIS_TEXTURA = [
+            { nome: 'Branco Refletivo', arquivo: 'url("../fontes/Retângulo1.png")' },
+
+        ]
 
         // ===== ELEMENTOS DOM =====
         const previaElement = document.getElementById('previa-adesivo');
@@ -1378,7 +1454,6 @@
         let corIconeSelecionado = false;
         let tipoSecundarioSelecionado = 'vinil';
         let corSecundariaSelecionada = CATEGORIAS_ADESIVO.vinil.cores[0];
-        let tipoDestaqueSelecionado = 'primeira';
 
         let iconesDisponiveis = [];
         let iconeSelecionado = null;
@@ -1620,8 +1695,15 @@ function calcularPrecoUnitario() {
     // Soma o adicional do material
     precoBase *= CATEGORIAS_ADESIVO[tipoSelecionado].precoAdicional;
     
+    const Pl = document.getElementById("destaque-primeira-letra");
+    const In = document.getElementById("destaque-primeiras-letras");
+    const Ce = document.getElementById("destaque-especiais");
+    const Ic = document.getElementById("destaque-icone");
+
+
+
     if (bordaAtiva) precoBase *= 1.1 * ((larguraAdesivo/(larguraAdesivo*quantidade*10))+1);
-    if (corSecundariaAtivo) precoBase *= 1.1;
+    if (Pl.checked === true || In.checked === true || Ce.checked === true || Ic.checked === true) precoBase *= 1.1;
     
     return precoBase;
 }
@@ -1744,7 +1826,31 @@ function alterarQuantidadePersonalizado(delta) {
     atualizarPrecos();
 }
 
-function renderizarCores(tipoId, container) {
+function atualizarVisualizacaoMaterial(tipoId, corSelecionada, elementoId) {
+    const elemento = document.getElementById(elementoId);
+    if (!elemento) return;
+    
+    const categoria = CATEGORIAS_ADESIVO[tipoId];
+    
+    // Encontra a cor selecionada na categoria atual
+    const cor = categoria.cores.find(c => c.codigo === corSelecionada.codigo) || categoria.cores[0];
+    
+    if (cor && cor.arquivo) {
+        // Aplica a imagem de fundo com blend mode para simular a cor
+        elemento.style.background = `
+            
+            ${cor.arquivo}
+        `;
+        elemento.style.backgroundSize = 'cover';
+        elemento.style.backgroundPosition = 'center';
+        elemento.style.backgroundRepeat = 'no-repeat';
+    } else {
+        // Fallback: apenas a cor sólida
+        elemento.style.background = cor.codigo;
+    }
+}
+
+function renderizarCores(tipoId, container, isSecundario = false) {
     container.innerHTML = '';
     const categoria = CATEGORIAS_ADESIVO[tipoId];
     
@@ -1754,13 +1860,18 @@ function renderizarCores(tipoId, container) {
         corDiv.style.backgroundColor = cor.codigo;
         corDiv.dataset.cor = cor.codigo;
         corDiv.dataset.nome = cor.nome;
+        corDiv.dataset.arquivo = cor.arquivo;
         corDiv.title = cor.nome;
         container.appendChild(corDiv);
         
-        if(index === 0 && container === corContainer) {
-            corSelecionada = cor;
-        } else if(index === 0 && container === corSecundariaContainer) {
-            corSecundariaSelecionada = cor;
+        if(index === 0) {
+            if (!isSecundario) {
+                corSelecionada = cor;
+                atualizarVisualizacaoMaterial(tipoId, cor, 'visualizacao-de-material-primario');
+            } else {
+                corSecundariaSelecionada = cor;
+                atualizarVisualizacaoMaterial(tipoId, cor, 'visualizacao-de-material-secundario');
+            }
         }
     });
 }
@@ -1855,10 +1966,9 @@ function inicializarDropdownFontes() {
 
 
 function inicializarOpcoes() {
-    renderizarCores('vinil', corContainer);
-    renderizarCores('vinil', corSecundariaContainer);
+    renderizarCores('vinil', corContainer, false);
+    renderizarCores('vinil', corSecundariaContainer, true);
 
-    // Fontes - AGORA USA O DROPDOWN CUSTOMIZADO
     // Não precisa mais do loop para criar options no select
     FONTES_DISPONIVEIS.forEach((fonte, index) => {
         if (fonte.arquivo.startsWith('url(')) {
@@ -2261,7 +2371,97 @@ async function gerarSVGCompleto() {
     return svgString;
 }
 
+// Função para adicionar botões de desativar nos cards
+function adicionarBotoesDesativar() {
+  const configCards = [
+    { 
+      checkboxId: 'icone-ativo', 
+      containerId: 'controles-icone',
+      texto: 'Remover ícones',
+      tituloSelector: '.card-titulo' // Pega o título do card
+    },
+    { 
+      checkboxId: 'destaques-ativo', 
+      containerId: 'controles-cor-secundaria',
+      texto: 'Desativar cor secundária',
+      tituloSelector: '.card-titulo'
+    },
+    { 
+      checkboxId: 'borda-ativa', 
+      containerId: 'controles-filete',
+      texto: 'Remover borda',
+      tituloSelector: '.card-titulo'
+    }
+  ];
+  
+  configCards.forEach(config => {
+    const checkbox = document.getElementById(config.checkboxId);
+    const container = document.getElementById(config.containerId);
+    const card = checkbox?.closest('.card-editor');
+    
+    if (!checkbox || !container || !card) return;
+    
+    const btnExistente = card.querySelector('.btn-desativar-card');
+    if (btnExistente) btnExistente.remove();
+    
+    if (checkbox.checked) {
+      const btnDesativar = document.createElement('button');
+      btnDesativar.className = 'btn-desativar-card';
+      btnDesativar.innerHTML = `<i class="fas fa-power-off"></i> ${config.texto}`;
+      
+      btnDesativar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        // Pega o título do card para scroll
+        const tituloCard = card.querySelector(config.tituloSelector);
+        const tituloTop = tituloCard?.getBoundingClientRect().top + window.scrollY;
+        
+        // Desmarca o checkbox
+        checkbox.checked = false;
+        
+        // Esconde os controles
+        container.style.display = 'none';
+        
+        // Dispara o evento change para atualizar tudo
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Remove o botão
+        btnDesativar.remove();
+        
+        // Scroll suave para o título do card
+          if (tituloTop) {
+            window.scrollTo({
+              top: tituloTop - 350, // Ajuste para compensar o header fixo
+              behavior: 'smooth'
+            });
+            
+            // Opcional: destaque temporário
+            card.style.transition = 'background-color 0.5s';
+            card.style.backgroundColor = 'rgba(18, 172, 159, 0.1)';
+            setTimeout(() => {
+              card.style.backgroundColor = '';
+            }, 1000);
+          }
 
+      });
+      
+      container.appendChild(btnDesativar);
+    }
+  });
+}
+// Modifique os event listeners dos checkboxes
+function configurarCheckboxesComBotoes() {
+  const checkboxes = ['icone-ativo', 'destaques-ativo', 'borda-ativa'];
+  
+  checkboxes.forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.addEventListener('change', () => {
+        setTimeout(adicionarBotoesDesativar, 50);
+      });
+    }
+  });
+}
 
 // FUNÇÃO MODIFICADA: atualizarPrevia (apenas com a correção do debounce)
 async function atualizarPrevia(deveRedimensionar = false) {
@@ -2620,23 +2820,40 @@ function atualizarDisponibilidadeDestaques() {
     atualizarOpcao(iconeCheck, iconeOption, temIcone);
 }
 
-        // ===== EVENT LISTENERS =====
+// ===== EVENT LISTENERS =====
 function configurarEventListeners() {
+    // Variável para controlar o debounce do texto
+    let timeoutTexto = null;
+    
     textoInput.addEventListener('input', () => {
-        atualizarPrevia(true);
-        atualizarDisponibilidadeDestaques();
-        atualizarDisplayLargura();
+        // Cancela o timeout anterior se existir
+        if (timeoutTexto) {
+            clearTimeout(timeoutTexto);
+        }
+        
+        // Cria um novo timeout para atualizar após 150ms
+        timeoutTexto = setTimeout(() => {
+            atualizarPrevia(true);
+            atualizarDisponibilidadeDestaques();
+            atualizarDisplayLargura();
+            timeoutTexto = null;
+        }, 150);
     });
 
     corContainer.addEventListener('click', (e) => {
         const corDiv = e.target.closest('.cor-opcao');
         if (!corDiv) return;
+        
         document.querySelectorAll('#selecao-cor .cor-opcao').forEach(c => c.classList.remove('selecionada'));
         corDiv.classList.add('selecionada');
+        
         corSelecionada = {
             nome: corDiv.dataset.nome,
-            codigo: corDiv.dataset.cor
+            codigo: corDiv.dataset.cor,
+            arquivo: corDiv.dataset.arquivo
         };
+        
+        atualizarVisualizacaoMaterial(tipoSelecionado, corSelecionada, 'visualizacao-de-material-primario');
         atualizarPrevia(false);
         atualizarFundoPrevia();
         atualizarPrecos();
@@ -2646,12 +2863,18 @@ function configurarEventListeners() {
     corSecundariaContainer.addEventListener('click', (e) => {
         const corDiv = e.target.closest('.cor-opcao');
         if (!corDiv) return;
+        
         document.querySelectorAll('#selecao-cor-secundaria .cor-opcao').forEach(c => c.classList.remove('selecionada'));
         corDiv.classList.add('selecionada');
+        
         corSecundariaSelecionada = {
             nome: corDiv.dataset.nome,
-            codigo: corDiv.dataset.cor
+            codigo: corDiv.dataset.cor,
+            arquivo: corDiv.dataset.arquivo
         };
+        
+        atualizarVisualizacaoMaterial(tipoSecundarioSelecionado, corSecundariaSelecionada, 'visualizacao-de-material-secundario');
+        
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
             atualizarDisplayLargura();
@@ -2710,7 +2933,10 @@ function configurarEventListeners() {
 
     document.getElementById('selecao-tipo-adesivo').addEventListener('change', (e) => {
         tipoSelecionado = e.target.value;
-        renderizarCores(tipoSelecionado, corContainer);
+        renderizarCores(tipoSelecionado, corContainer, false);
+        // Atualiza a visualização com a primeira cor da nova categoria
+        const primeiraCor = CATEGORIAS_ADESIVO[tipoSelecionado].cores[0];
+        atualizarVisualizacaoMaterial(tipoSelecionado, primeiraCor, 'visualizacao-de-material-primario');
         atualizarPrevia(false);
         atualizarPrecos();
     });
@@ -2784,7 +3010,10 @@ function configurarEventListeners() {
 
     tipoSecundarioSelect.addEventListener('change', (e) => {
         tipoSecundarioSelecionado = e.target.value;
-        renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer);
+        renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer, true);
+        // Atualiza a visualização com a primeira cor da nova categoria
+        const primeiraCor = CATEGORIAS_ADESIVO[tipoSecundarioSelecionado].cores[0];
+        atualizarVisualizacaoMaterial(tipoSecundarioSelecionado, primeiraCor, 'visualizacao-de-material-secundario');
         if (corSecundariaAtivo) {
             atualizarPrevia(false);
         }
@@ -2832,7 +3061,6 @@ function configurarEventListeners() {
     });
 
 }
-
 // FUNÇÃO MODIFICADA: adicionarAoCarrinho agora usa o SVG gerado pelo atualizarPrevia
 async function adicionarAoCarrinho() {
     const btn = document.querySelector('.btn-adicionar');
@@ -2875,7 +3103,6 @@ async function adicionarAoCarrinho() {
             tipo: tipoSelecionado,
             cor: corSelecionada.nome,
             corSecundariaAtivo: corSecundariaAtivo,
-            tipoDestaque: tipoDestaqueSelecionado,
             corSecundaria: corSecundariaAtivo ? corSecundariaSelecionada.nome : null,
             iconeSelecionado: iconeSelecionado ? iconeSelecionado.nome : null,
             posicaoIcone: iconeSelecionado ? document.querySelector('input[name="posicao-icone"]:checked')?.value : null,
@@ -2923,6 +3150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         loadingOverlay.classList.add('loading-hidden');
         atualizarPrevia(true);
+        adicionarBotoesDesativar();
+        configurarCheckboxesComBotoes();
         setTimeout(() => loadingOverlay.remove(), 500);
     }, 1500);
 
