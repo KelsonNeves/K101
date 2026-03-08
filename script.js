@@ -57,6 +57,23 @@ async function carregarProdutos() {
     }
 }
 
+// Função para mostrar loading skeleton
+function showLoadingSkeleton() {
+    const produtosGrid = document.getElementById('produtos-grid');
+    const skeletonHTML = `
+        <div class="loading-skeleton">
+            ${Array(6).fill(`
+                <div class="skeleton-item">
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-price"></div>
+                </div>
+                
+            `).join('')}
+        </div>
+    `;
+    produtosGrid.innerHTML = skeletonHTML;
+}
 // Função para carregar e renderizar o banner
 function renderizarBanner() {
     // Obter coleções únicas

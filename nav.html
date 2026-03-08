@@ -84,8 +84,17 @@
 
         <!-- GRADE DE PRODUTOS -->
         <div class="produtos-grid" id="produtos-grid">
-            <!-- Os produtos serão carregados aqui via JavaScript -->
-            <div class="loading">Carregando produtos...</div>
+            <!-- Loading skeleton será mostrado inicialmente -->
+            <div class="loading-skeleton">
+                <!-- Repetir isso 6 vezes para criar um efeito de skeleton -->
+                <div class="skeleton-item">
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-price"></div>
+                </div>
+                
+                <!-- Mais 5 itens similares -->
+            </div>
         </div>
     </main>
 

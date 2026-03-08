@@ -405,7 +405,7 @@ body {
     border-radius: 15px;
     width: 90%;
     max-width: 800px;
-    max-height: 90vh;
+    max-height: 100vh;
     overflow: hidden !important;
     position: relative;
     z-index: 1001;
@@ -440,7 +440,7 @@ body {
 .modal-body {
     padding: 20px 0;
     overflow-y: auto;
-    max-height: calc(110vh - 100px);
+    max-height: calc(100vh - 50px);
     position: relative;
     z-index: 1;
 }
@@ -1220,4 +1220,90 @@ body {
         padding: 12px 15px;
         font-size: 0.95rem;
     }
+}
+
+
+/* Skeleton Loading */
+.loading-skeleton {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+
+.skeleton-item {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.skeleton-image {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.skeleton-title {
+    height: 20px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    width: 80%;
+}
+
+.skeleton-price {
+    height: 24px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    width: 60%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Fallback para imagens que não carregaram */
+.produto-img {
+    position: relative;
+    background-color: #f5f5f5;
+    min-height: 150px;
+}
+
+.produto-img.error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    color: #999;
+    font-size: 14px;
+}
+
+.produto-img.error::after {
+    content: "🖼️ Imagem não disponível";
+    text-align: center;
+    padding: 20px;
+}
+
+/* Transição suave */
+.produto-img.loaded {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

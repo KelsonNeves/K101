@@ -1384,11 +1384,6 @@
             { nome: 'Vandals Puppies', arquivo: 'url("../fontes/Vandals Puppies.ttf")' },
         ];
 
-        const MATERIAIS_TEXTURA = [
-            { nome: 'Branco Refletivo', arquivo: 'url("../fontes/Retângulo1.png")' },
-
-        ]
-
         // ===== ELEMENTOS DOM =====
         const previaElement = document.getElementById('previa-adesivo');
         const textoInput = document.getElementById('texto-adesivo');
@@ -1533,6 +1528,50 @@ async function carregarIcones() {
         console.error('Erro ao carregar ícones:', erro);
         document.getElementById('icones-grid').innerHTML = 
             '<div style="grid-column: span 5; text-align: center; color: red;">Erro ao carregar ícones</div>';
+    }
+}
+
+// ===== PRÉ-CARREGAMENTO DE TEXTURAS =====
+async function preCarregarTexturas() {
+    console.log('Iniciando pré-carregamento das texturas...');
+    
+    // Coletar todas as URLs de textura de todas as categorias
+    const texturasParaCarregar = new Set();
+    
+    Object.values(CATEGORIAS_ADESIVO).forEach(categoria => {
+        categoria.cores.forEach(cor => {
+            if (cor.arquivo && cor.arquivo.startsWith('url(')) {
+                // Extrair a URL real do formato url("...")
+                const url = cor.arquivo.replace(/url\(["']?|["']?\)/g, "");
+                texturasParaCarregar.add(url);
+            }
+        });
+    });
+    
+    console.log(`Pré-carregando ${texturasParaCarregar.size} texturas...`);
+    
+    // Criar promessas para carregar cada imagem
+    const promessasCarregamento = Array.from(texturasParaCarregar).map(url => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                console.log(`✅ Textura carregada: ${url.split('/').pop()}`);
+                resolve(url);
+            };
+            img.onerror = () => {
+                console.warn(`❌ Erro ao carregar textura: ${url}`);
+                reject(url);
+            };
+            img.src = url;
+        });
+    });
+    
+    try {
+        // Aguardar todas as imagens carregarem (ou falharem)
+        await Promise.allSettled(promessasCarregamento);
+        console.log('✅ Todas as texturas foram processadas!');
+    } catch (error) {
+        console.warn('Algumas texturas falharam ao carregar:', error);
     }
 }
 
@@ -3143,32 +3182,49 @@ async function adicionarAoCarrinho() {
 }
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const loadingOverlay = document.getElementById('loading-overlay');
     
-    setTimeout(() => {
+    try {
+        // PRÉ-CARREGAR TEXTURAS DURANTE O LOADING
+        await preCarregarTexturas();
+        
+        // Inicializar opções (agora as texturas já estão em cache)
+        inicializarOpcoes();
+        configurarEventListeners();
+        configurarMenuLateral();
+        carregarIcones();
+        
+        // Pequeno delay para garantir que tudo está pronto
+        setTimeout(() => {
+            loadingOverlay.classList.add('loading-hidden');
+            atualizarPrevia(true);
+            adicionarBotoesDesativar();
+            
+            // Atualizar visualizações com as texturas já carregadas
+            atualizarVisualizacaoMaterial(tipoSelecionado, corSelecionada, 'visualizacao-de-material-primario');
+            atualizarVisualizacaoMaterial(tipoSecundarioSelecionado, corSecundariaSelecionada, 'visualizacao-de-material-secundario');
+            window.atualizarContadorCarrinho = function() {
+                const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+                const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+                const carrinhoCount = document.getElementById('carrinho-count');
+                if (carrinhoCount) carrinhoCount.textContent = totalItens;
+            };
+            atualizarDisponibilidadeDestaques();
+            atualizarContadorCarrinho();
+            atualizarPrecos();
+            atualizarDisplayLargura();
+            window.atualizarContadorCarrinho = atualizarContadorCarrinho;
+            
+            setTimeout(() => loadingOverlay.remove(), 500);
+        }, 500); // Reduzido para 500ms já que as imagens já carregaram
+        
+    } catch (error) {
+        console.error('Erro na inicialização:', error);
+        // Mesmo com erro, tentamos carregar a página
         loadingOverlay.classList.add('loading-hidden');
-        atualizarPrevia(true);
-        adicionarBotoesDesativar();
         setTimeout(() => loadingOverlay.remove(), 500);
-    }, 1500);
-
-    inicializarOpcoes();
-    configurarEventListeners();
-    configurarMenuLateral();
-    carregarIcones();
-
-    window.atualizarContadorCarrinho = function() {
-        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-        const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
-        const carrinhoCount = document.getElementById('carrinho-count');
-        if (carrinhoCount) carrinhoCount.textContent = totalItens;
-    };
-    atualizarDisponibilidadeDestaques();
-    atualizarContadorCarrinho();
-    atualizarPrecos();
-    atualizarDisplayLargura();
-    window.atualizarContadorCarrinho = atualizarContadorCarrinho;
+    }
 });
     </script>
 </body>
