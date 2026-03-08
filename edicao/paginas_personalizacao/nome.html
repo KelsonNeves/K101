@@ -1339,7 +1339,7 @@
                     { nome: 'Verde claro', codigo: '#36BF36', arquivo: 'url("../../imagens/textura/Verde-claro-vinil.png")' },
                     { nome: 'Verde florescente', codigo: '#c7f000', arquivo: 'url("../../imagens/textura/Verde-florescente-vinil.png")' },
                     { nome: 'Roxo', codigo: '#6B2690', arquivo: 'url("../../imagens/textura/Roxo-vinil.png")' },
-                    { nome: 'Rosa', codigo: 'df1a9a', arquivo: 'url("../../imagens/textura/Rosa-vinil.png")' },
+                    { nome: 'Rosa', codigo: '#df1a9a', arquivo: 'url("../../imagens/textura/Rosa-vinil.png")' },
                     { nome: 'Pele', codigo: '#EDBFBF', arquivo: 'url("../../imagens/textura/Pele-vinil.png")' },
                 ]
             },
@@ -1703,10 +1703,20 @@ function calcularPrecoUnitario() {
 
 
     if (bordaAtiva) precoBase *= 1.1 * ((larguraAdesivo/(larguraAdesivo*quantidade*10))+1);
-    if (Pl.checked === true || In.checked === true || Ce.checked === true || Ic.checked === true) precoBase *= 1.1;
+    if ((Pl.checked === true || In.checked === true || Ce.checked === true || Ic.checked === true) && corSecundariaAtivo) precoBase *= 1.1;
     
     return precoBase;
 }
+
+function atualizarPrecos() {
+    const precoUnitario = calcularPrecoUnitario();
+    const quantidade = parseInt(document.getElementById('quantidade-personalizado').value) || 1;
+    const precoTotal = precoUnitario * quantidade;
+    
+    document.getElementById('preco-unitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
+    document.getElementById('preco-total').textContent = `Total: R$ ${precoTotal.toFixed(2)}`;
+}
+
 
 function calcularAlturaRealDoSVG(svgString, larguraDesejadaCm) {
 
@@ -1744,6 +1754,7 @@ function calcularAlturaRealDoSVG(svgString, larguraDesejadaCm) {
 
     return alturaCm.toFixed(1);
 }
+
 
 
 
@@ -1786,14 +1797,6 @@ function alterarLarguraPersonalizado(delta) {
     // A largura não precisa atualizar a prévia, apenas os cálculos de altura
 }
 
-function atualizarPrecos() {
-    const precoUnitario = calcularPrecoUnitario();
-    const quantidade = parseInt(document.getElementById('quantidade-personalizado').value) || 1;
-    const precoTotal = precoUnitario * quantidade;
-    
-    document.getElementById('preco-unitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
-    document.getElementById('preco-total').textContent = `Total: R$ ${precoTotal.toFixed(2)}`;
-}
 
 function alterarQuantidadePersonalizado(delta) {
     const input = document.getElementById('quantidade-personalizado');
@@ -2378,12 +2381,12 @@ function adicionarBotoesDesativar() {
       checkboxId: 'icone-ativo', 
       containerId: 'controles-icone',
       texto: 'Remover ícones',
-      tituloSelector: '.card-titulo' // Pega o título do card
+      tituloSelector: '.card-titulo'
     },
     { 
       checkboxId: 'destaques-ativo', 
       containerId: 'controles-cor-secundaria',
-      texto: 'Desativar cor secundária',
+      texto: 'Remover cor secundária',
       tituloSelector: '.card-titulo'
     },
     { 
@@ -2446,19 +2449,6 @@ function adicionarBotoesDesativar() {
       });
       
       container.appendChild(btnDesativar);
-    }
-  });
-}
-// Modifique os event listeners dos checkboxes
-function configurarCheckboxesComBotoes() {
-  const checkboxes = ['icone-ativo', 'destaques-ativo', 'borda-ativa'];
-  
-  checkboxes.forEach(id => {
-    const checkbox = document.getElementById(id);
-    if (checkbox) {
-      checkbox.addEventListener('change', () => {
-        setTimeout(adicionarBotoesDesativar, 50);
-      });
     }
   });
 }
@@ -2931,6 +2921,16 @@ function configurarEventListeners() {
         }
     });
 
+    const checkboxes = ['icone-ativo', 'destaques-ativo', 'borda-ativa'];
+    checkboxes.forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+        checkbox.addEventListener('change', () => {
+            setTimeout(adicionarBotoesDesativar, 50);
+        }); 
+        }
+    });
+
     document.getElementById('selecao-tipo-adesivo').addEventListener('change', (e) => {
         tipoSelecionado = e.target.value;
         renderizarCores(tipoSelecionado, corContainer, false);
@@ -3151,7 +3151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.add('loading-hidden');
         atualizarPrevia(true);
         adicionarBotoesDesativar();
-        configurarCheckboxesComBotoes();
         setTimeout(() => loadingOverlay.remove(), 500);
     }, 1500);
 
@@ -3174,6 +3173,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
     </script>
 </body>
-
 </html>
-

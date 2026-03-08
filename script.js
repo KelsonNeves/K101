@@ -401,8 +401,6 @@ function renderizarColecoes() {
     });
 }
 
-// ===== NOVO: Funções de paginação =====
-
 // Função auxiliar para obter produtos filtrados
 function getProdutosFiltrados() {
     let produtosFiltrados = produtos;
@@ -722,6 +720,7 @@ function adicionarEstilosPaginacao() {
     document.head.appendChild(style);
 }
 
+
 // Abrir modal com detalhes do produto
 function abrirModalProduto(produtoId) {
     const produto = produtos.find(p => p.id === produtoId);
@@ -729,17 +728,32 @@ function abrirModalProduto(produtoId) {
     
     modalBody.innerHTML = `
         <div class="modal-produto">
-            <img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: 10px;" onerror="this.src='imagens/produtos/default.jpg'">
+            <!-- Container da imagem com zoom -->
+            <div class="imagem-container" id="imagem-zoom-container">
+                <img src="${produto.imagem}" alt="${produto.nome}" id="modal-imagem" onerror="this.src='imagens/produtos/default.jpg'">
+                
+                <!-- Overlay indicador de zoom (visível apenas em desktop) -->
+                <div class="zoom-overlay desktop-only">
+                    <i class="fas fa-search-plus"></i>
+                    <span>Clique para zoom</span>
+                </div>
+                
+                <!-- Controles de zoom para mobile -->
+                <div class="zoom-controls mobile-only">
+                    <button class="zoom-btn" onclick="zoomIn(event)">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="zoom-btn zoom-out" onclick="zoomOut(event)">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                </div>
+            </div>
+            
             <h2 style="margin: 20px 0 10px; font-size: 1.1rem;">${produto.nome}</h2>
             <p style="color: #666; margin-bottom: 15px; font-size: 0.8rem;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
             <div class="modal-preco-quantidade">
                 <div class="modal-preco">
-                    <span class="preco-label">Preço:</span>
                     <span class="preco-valor">R$ ${produto.preco.toFixed(2)}</span>
-                </div>
-                
-                <div class="modal-quantidade">
-                    <span class="quantidade-label">Qtd</span>
                     <div class="quantidade-controles">
                         <button class="quantidade-btn-modal" onclick="alterarQuantidadeModal(-1)">
                             <i class="fas fa-minus"></i>
@@ -750,23 +764,312 @@ function abrirModalProduto(produtoId) {
                         </button>
                     </div>
                 </div>
+
                 
             </div>
-            <div class="modal-total" id="modal-total" style="text-align: center;">
+            <div class="modal-total" id="modal-total">
                 Total: R$ ${produto.preco.toFixed(2)}
             </div>
             <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinho(${produto.id})">
                 <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
             </button>
             <p style="margin-bottom: 20px; margin-top: 20px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
-            
-            
-            
         </div>
     `;
     
     modal.style.display = 'block';
+    
+    // NOVO: Bloquear scroll da página
+    bloquearScroll();
+    
+    // Configurar eventos de zoom após o modal ser aberto
+    setTimeout(configurarZoom, 100);
 }
+
+// ===== FUNÇÕES DE ZOOM =====
+
+// Configurar eventos de zoom
+function configurarZoom() {
+    const imagemContainer = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!imagemContainer || !imagem) return;
+    
+    // Remover eventos anteriores
+    imagemContainer.removeEventListener('click', toggleZoom);
+    imagem.removeEventListener('mousemove', moverZoom);
+    imagem.removeEventListener('mouseleave', resetZoom);
+    
+    // Adicionar eventos baseado no dispositivo
+    if (window.innerWidth <= 768) {
+        // Mobile: usa os botões de controle
+        console.log('Modo mobile: botões de zoom e arrasto ativados');
+        
+        // Resetar qualquer transformação ao configurar
+        imagem.style.transform = '';
+        imagem.style.transformOrigin = 'center center';
+        isZoomDragging = false;
+        
+        // Configurar arrasto
+        configurarArrastoZoom();
+    } else {
+        // Desktop: clique para zoom e mouse move para navegação
+        imagemContainer.addEventListener('click', toggleZoom);
+        
+        // Eventos de mouse move apenas quando estiver com zoom
+        imagem.addEventListener('mousemove', moverZoom);
+        imagem.addEventListener('mouseleave', resetZoom);
+    }
+}
+// Alternar zoom (para desktop)
+function toggleZoom(e) {
+    e.stopPropagation();
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem) return;
+    
+    container.classList.toggle('zoomed');
+    
+    // Resetar posição do zoom
+    if (!container.classList.contains('zoomed')) {
+        imagem.style.transformOrigin = 'center center';
+    }
+}
+
+// Mover o zoom com o mouse
+function moverZoom(e) {
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem || !container.classList.contains('zoomed')) return;
+    
+    // Calcular posição do mouse relativa à imagem
+    const rect = imagem.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    // Limitar entre 0% e 100%
+    const limitedX = Math.max(0, Math.min(100, x));
+    const limitedY = Math.max(0, Math.min(100, y));
+    
+    // Aplicar transform origin
+    imagem.style.transformOrigin = `${limitedX}% ${limitedY}%`;
+}
+
+// ===== FUNÇÕES DE ARRASTO PARA ZOOM (MOBILE) =====
+
+let isZoomDragging = false;
+let startDragX = 0;
+let startDragY = 0;
+let currentTransformX = 0;
+let currentTransformY = 0;
+let startTransformX = 0;
+let startTransformY = 0;
+
+// Configurar eventos de arrasto para zoom
+function configurarArrastoZoom() {
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem) return;
+    
+    // Remover eventos anteriores
+    imagem.removeEventListener('touchstart', iniciarArrastoZoom);
+    imagem.removeEventListener('touchmove', duranteArrastoZoom);
+    imagem.removeEventListener('touchend', finalizarArrastoZoom);
+    imagem.removeEventListener('touchcancel', cancelarArrastoZoom);
+    
+    // Adicionar eventos apenas se estiver no mobile
+    if (window.innerWidth <= 768) {
+        imagem.addEventListener('touchstart', iniciarArrastoZoom, { passive: false });
+        imagem.addEventListener('touchmove', duranteArrastoZoom, { passive: false });
+        imagem.addEventListener('touchend', finalizarArrastoZoom);
+        imagem.addEventListener('touchcancel', cancelarArrastoZoom);
+    }
+}
+
+function iniciarArrastoZoom(e) {
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    // Só permite arrastar se estiver com zoom
+    if (!container || !container.classList.contains('zoomed')) return;
+    
+    e.preventDefault();
+    
+    isZoomDragging = true;
+    startDragX = e.touches[0].clientX;
+    startDragY = e.touches[0].clientY;
+    
+    // Capturar a transformação atual
+    const transform = imagem.style.transform;
+    if (transform && transform.includes('translate')) {
+        const matches = transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+        if (matches) {
+            startTransformX = parseFloat(matches[1]) || 0;
+            startTransformY = parseFloat(matches[2]) || 0;
+        } else {
+            startTransformX = 0;
+            startTransformY = 0;
+        }
+    } else {
+        startTransformX = 0;
+        startTransformY = 0;
+    }
+    
+    // Mudar o cursor para "grabbing"
+    imagem.style.cursor = 'grabbing';
+}
+
+function duranteArrastoZoom(e) {
+    if (!isZoomDragging) return;
+    e.preventDefault();
+    
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem) return;
+    
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    
+    // Calcular diferença do arrasto
+    const deltaX = currentX - startDragX;
+    const deltaY = currentY - startDragY;
+    
+    // Calcular nova posição
+    let newX = startTransformX + deltaX;
+    let newY = startTransformY + deltaY;
+    
+    // Calcular limites de arrasto baseado no zoom
+    const zoomScale = 2.5; // Mesmo valor do zoom no CSS
+    const containerRect = container.getBoundingClientRect();
+    const imageRect = imagem.getBoundingClientRect();
+    
+    // Calcular quanto a imagem aumentou
+    const imageWidth = imageRect.width;
+    const containerWidth = containerRect.width;
+    const extraWidth = imageWidth - containerWidth;
+    
+    // Limites horizontais (metade do extra para cada lado)
+    const maxX = extraWidth / 2;
+    const minX = -maxX;
+    
+    // Limites verticais
+    const imageHeight = imageRect.height;
+    const containerHeight = containerRect.height;
+    const extraHeight = imageHeight - containerHeight;
+    const maxY = extraHeight / 2;
+    const minY = -maxY;
+    
+    // Aplicar limites
+    newX = Math.max(minX, Math.min(maxX, newX));
+    newY = Math.max(minY, Math.min(maxY, newY));
+    
+    // Aplicar transformação
+    imagem.style.transform = `translate(${newX}px, ${newY}px) scale(2.5)`;
+}
+
+function finalizarArrastoZoom(e) {
+    if (!isZoomDragging) return;
+    e.preventDefault();
+    
+    const imagem = document.getElementById('modal-imagem');
+    if (imagem) {
+        imagem.style.cursor = '';
+    }
+    
+    isZoomDragging = false;
+}
+
+function cancelarArrastoZoom(e) {
+    if (!isZoomDragging) return;
+    
+    const imagem = document.getElementById('modal-imagem');
+    if (imagem) {
+        imagem.style.cursor = '';
+    }
+    
+    isZoomDragging = false;
+}
+
+// Resetar zoom quando o mouse sai da imagem
+function resetZoom() {
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem) return;
+    
+    // Se estiver com zoom, remove
+    if (container.classList.contains('zoomed')) {
+        container.classList.remove('zoomed');
+        imagem.style.transformOrigin = 'center center';
+    }
+}
+
+// Funções para os botões de zoom (mobile)
+function zoomIn(e) {
+    e.stopPropagation();
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem) return;
+    
+    container.classList.add('zoomed');
+    
+    // Resetar transformação ao dar zoom in
+    imagem.style.transform = 'scale(2.5)';
+    imagem.style.transformOrigin = 'center center';
+    
+    // Configurar arrasto após o zoom
+    setTimeout(configurarArrastoZoom, 100);
+}
+
+function zoomOut(e) {
+    e.stopPropagation();
+    const container = document.getElementById('imagem-zoom-container');
+    const imagem = document.getElementById('modal-imagem');
+    
+    if (!container || !imagem) return;
+    
+    container.classList.remove('zoomed');
+    
+    // Resetar transformação ao tirar zoom
+    imagem.style.transform = '';
+    imagem.style.transformOrigin = 'center center';
+    isZoomDragging = false;
+}
+
+// Função para bloquear scroll da página
+function bloquearScroll() {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${window.scrollY}px`; // Mantém a posição do scroll
+}
+
+// Função para liberar scroll da página
+function liberarScroll() {
+    const scrollY = document.body.style.top;
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.style.top = '';
+    
+    // Restaura a posição do scroll
+    if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+}
+
+// Detectar mudança de tamanho da tela para reconfigurar zoom
+window.addEventListener('resize', function() {
+    // Se o modal estiver aberto, reconfigurar zoom
+    if (modal.style.display === 'block') {
+        configurarZoom();
+    }
+});
 
 // Alterar quantidade no modal
 function alterarQuantidadeModal(delta) {
@@ -825,19 +1128,23 @@ function adicionarAoCarrinho(produtoId) {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     
     modal.style.display = 'none';
+    liberarScroll();
     
     mostrarNotificacao(`✅ ${quantidade} x ${produto.nome} adicionado ao carrinho!`);
     atualizarContadorCarrinho();
 }
 
-// Fechar modal
+// Fechar modal pelo botão X
 closeBtn.onclick = () => {
     modal.style.display = 'none';
+    liberarScroll(); // NOVO: Liberar scroll
 };
 
+// Fechar modal clicando fora
 window.onclick = (event) => {
     if (event.target === modal) {
         modal.style.display = 'none';
+        liberarScroll(); // NOVO: Liberar scroll
     }
 };
 

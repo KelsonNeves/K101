@@ -406,8 +406,9 @@ body {
     width: 90%;
     max-width: 800px;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: visible !important;
     position: relative;
+    z-index: 1001;
 }
 
 .close {
@@ -425,6 +426,9 @@ body {
     align-items: center;
     justify-content: center;
     display: flex;
+    z-index: 1100; /* Z-index mais alto que tudo no modal */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Sombra para destacar */
+
 }
 
 .close:hover {
@@ -435,7 +439,10 @@ body {
 
 .modal-body {
     padding: 20px 0;
-    
+    overflow-y: auto;
+    max-height: calc(90vh - 100px);
+    position: relative;
+    z-index: 1;
 }
 
 .modal-preco-quantidade {
@@ -471,7 +478,154 @@ body {
 
 
 
+/* ===== ZOOM DA IMAGEM NO MODAL ===== */
+.modal-produto {
+    position: relative;
+    z-index: 1;
+}
 
+.imagem-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: zoom-in;
+    margin-bottom: 15px;
+    z-index: 1; /* Z-index menor que o close */
+}
+
+.imagem-container.zoomed {
+    cursor: zoom-out;
+}
+
+.imagem-container img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    display: block;
+    border-radius: 10px;
+}
+
+.imagem-container.zoomed img {
+    transform: scale(2.5);
+    cursor: zoom-out;
+}
+
+/* Overlay de zoom para desktop */
+.zoom-overlay {
+    position: absolute;
+    top: 30px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.301);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    z-index: 5;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Controles de zoom para mobile */
+.zoom-controls {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+.zoom-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(252, 252, 252, 0.63);
+    border: 2px solid #4d4d4d9a;
+    color: #4d4d4d9a;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
+    z-index: 5;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+    .zoom-controls {
+        display: flex !important;
+    }
+    
+    /* Ajustes para o arrasto no mobile */
+    .imagem-container.zoomed {
+        cursor: grab;
+        touch-action: none;
+    }
+    
+    .imagem-container.zoomed:active {
+        cursor: grabbing;
+    }
+    
+    .imagem-container.zoomed img {
+        transform: scale(2.5);
+        transition: none; 
+        pointer-events: auto;
+        touch-action: none;
+    }
+    
+    .zoom-overlay {
+        display: none !important;
+    }
+}
+
+/* No PC, manter exatamente como estava */
+@media (min-width: 769px) {
+    .zoom-controls {
+        display: none !important;
+    }
+    
+    .zoom-overlay {
+        display: flex !important;
+    }
+    
+    .imagem-container {
+        cursor: zoom-in;
+    }
+    
+    .imagem-container.zoomed {
+        cursor: crosshair;
+    }
+}
+
+
+/* Adicione ao final do seu style.css */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: flex;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
 
 
 
@@ -494,6 +648,8 @@ body {
     background: #f8f9fa;
     padding: 5px;
     border-radius: 40px;
+    right: 0px;
+    position: absolute;
 }
 
 .quantidade-btn-modal {
@@ -544,6 +700,7 @@ body {
     margin: 15px 0;
     padding: 10px;
     border-top: 2px dashed var(--border-color);
+    text-align: center;
 }
 .btn-add-carrinho-modal {
             width: 100%;
