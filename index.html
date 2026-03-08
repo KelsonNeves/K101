@@ -3,26 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Minha Loja de Adesivos</title>
+    <title>Escolha o Tipo - K101 Personalizados</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Permite seleção de texto apenas em inputs e áreas de texto */
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        /* Estilos específicos para a página de seleção */
+        .selecao-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .cabecalho-selecao {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .cabecalho-selecao h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cabecalho-selecao p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .tipos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .tipo-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .tipo-card.disponivel {
+            cursor: pointer;
+        }
+
+        .tipo-card.disponivel:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 40px rgba(18, 172, 159, 0.2);
+        }
+
+        .tipo-card.indisponivel {
+            opacity: 0.7;
+            filter: grayscale(0.7);
+            cursor: not-allowed;
+        }
+
+        .tipo-card.indisponivel:hover {
+            transform: none;
+            border-color: transparent;
+        }
+
+        .tipo-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .tipo-badge.em-breve {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .tipo-imagem {
+            height: 200px;
+            background-size: cover; /* Faz a imagem cobrir todo o espaço */
+            background-position: center; /* Centraliza a imagem */
+            background-repeat: no-repeat; /* Não repete a imagem */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tipo-imagem i {
+            font-size: 5rem;
+            color: white;
+            z-index: 2;
+        }
+
+        .tipo-imagem::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: rgba(0, 0, 0, 0.3);
+            transform: rotate(45deg) translateY(30%);
+            transition: transform 0.5s ease;
+        }
+
+        .tipo-card:hover .tipo-imagem::after {
+            transform: rotate(45deg) translateY(-30%);
+        }
+
+        .tipo-info {
+            padding: 1.5rem;
+        }
+
+        .tipo-info h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .tipo-descricao {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        .tipo-preco {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .tipo-preco small {
+            font-size: 0.9rem;
+            font-weight: normal;
+            color: #999;
+        }
+
+
+        .btn-selecionar {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+
+        .tipo-card.disponivel:hover .btn-selecionar {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-selecionar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .cabecalho-selecao h1 {
+                font-size: 2rem;
+            }
+            
+            .cabecalho-selecao p {
+                font-size: 1rem;
+            }
+            
+            .tipos-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .tipo-imagem {
+                height: 150px;
+            }
+            
+            .tipo-imagem i {
+                font-size: 4rem;
+            }
+            
+            .tipo-info h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- HEADER COM LOGO -->
     <header class="header">
         <div class="container">
             <div class="header-left">
-                <!-- BOTÃO DO MENU LATERAL - FALTAVA ISSO! -->
                 <button class="menu-toggle" id="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="logo-container" id="logo-container" onclick="window.location.href='nav.html'"style="cursor: pointer;">
-                    <img src="imagens/logo.png" alt="Minha Logo" class="logo" id="logo-img">
+                <div class="logo-container" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                    <img src="imagens/logo.png" alt="K101" class="logo">
                     <h1>K101</h1>
                 </div>
             </div>
-            
-            <!-- ÍCONE DO CARRINHO -->
             <div class="carrinho-icon">
                 <a href="carrinho.html">
                     <i class="fas fa-shopping-cart"></i>
@@ -43,73 +256,130 @@
         </div>
         <div class="sidebar-content">
             <ul class="sidebar-menu">
-                <li><a href="nav.html"><i class="fas fa-home"></i>Todos os Serviços</a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i>Todos os Serviços</a></li>
                 <li><a href="#"><i class="fas fa-question-circle"></i> Em manutenção</a></li>
             </ul>
         </div>
     </div>
 
-    <!-- BARRA DE PESQUISA E FILTROS -->
-    <main class="main-container">
-        <div class="pesquisa-container">
-            <input type="text" id="pesquisa" placeholder="Pesquisar adesivos..." class="pesquisa-input">
-            <i class="fas fa-search pesquisa-icon"></i>
+    <main class="selecao-container">
+        <div class="cabecalho-selecao">
+            <h1>Serviços</h1>
+            <p>Selecione o tipo de serviço que a K101 oferece</p>
         </div>
         
-        <!-- BANNER DE COLEÇÕES -->
-        <div class="banner-container" id="banner-container">
-            <div class="banner-wrapper" id="banner-wrapper">
-                <!-- Os banners serão carregados aqui via JavaScript -->
-            </div>
-            
-            <div class="banner-nav">
-                <div class="banner-nav-left">
-                    <button class="banner-nav-btn" id="banner-prev"></button>
-                </div>
-                <div class="banner-nav-right">
-                    <button class="banner-nav-btn" id="banner-next"></button>
-                </div>
-            </div>
-            
-            <div class="banner-indicators" id="banner-indicators">
-                <!-- Indicadores serão carregados aqui -->
-            </div>
-        </div>
+        <div class="tipos-grid">
 
-        <!-- FILTRO POR COLEÇÕES -->
-        <div class="colecoes-container" id="colecoes-container">
-            <button class="colecao-btn ativa" data-colecao="todos">Todos</button>
-            <!-- As coleções serão carregadas aqui via JavaScript -->
-        </div>
+            <!-- Adesivos prontos -->
+            <div class="tipo-card disponivel" onclick="window.location.href='nav.html'">
+                <div class="tipo-badge">Disponível</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/Capa_personalizado_nome.jpg');">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <div class="tipo-info">
+                    <h2>Adesivos prontos</h2>
+                    <p class="tipo-descricao">
+                        Todos os adesivos da nossa loja!<br>
+                        Aproveite para explorar todos os modelos de adesivos disponiveis na K101.
+                    </p>
+                    <button class="btn-selecionar">Personalizar Nome</button>
+                </div>
+            </div>
 
-        <!-- GRADE DE PRODUTOS -->
-        <div class="produtos-grid" id="produtos-grid">
-            <!-- Os produtos serão carregados aqui via JavaScript -->
-            <div class="loading">Carregando produtos...</div>
+            <!-- Card Nome -->
+            <div class="tipo-card disponivel" onclick="window.location.href='edicao/paginas_personalizacao/nome.html'">
+                <div class="tipo-badge">Disponível</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/Capa_personalizado_nome.jpg');">
+                    <i class="fas fa-signature"></i>
+                </div>
+                <div class="tipo-info">
+                    <h2>Nome</h2>
+                    <p class="tipo-descricao">
+                        Crie um adesivo com qualquer nome!<br>
+                        Perfeito para nomes de namorado(a), parentes e muito mais.
+                    </p>
+                    <button class="btn-selecionar">Personalizar Nome</button>
+                </div>
+            </div>
+
+            <!-- Card Instagram -->
+            <div class="tipo-card disponivel" onclick="window.location.href='edicao/paginas_personalizacao/instagram.html'">
+                <div class="tipo-badge">Disponível</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/Capa_personalizado_nome.jpg');">
+                    <i class="fab fa-instagram"></i>
+                </div>
+                <div class="tipo-info">
+                    <h2>@ Instagram</h2>
+                    <p class="tipo-descricao">
+                        Seu @ do Instagram em um adesivo exclusivo!<br>
+                        Escolha o ícone e personalize do seu jeito.
+                    </p>
+                    <button class="btn-selecionar">Personalizar @</button>
+                </div>
+            </div>
+
+            <!-- Card Casal (Futuro) -->
+            <div class="tipo-card indisponivel">
+                <div class="tipo-badge em-breve">Em breve</div>
+                <div class="tipo-imagem" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="tipo-info">
+                    <h2>Em Breve</h2>
+                    <p class="tipo-descricao">
+                        Adesivos personalizados em breve.<br>
+                        Em desenvolvimento.
+                    </p>
+                    <button class="btn-selecionar" disabled>Em desenvolvimento</button>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- MODAL DO PRODUTO -->
-    <div id="produto-modal" class="modal">
-        <div class="modal-content">
-            <span class="close"><i class="fas fa-times"></i></span>
-            <div class="modal-body" id="modal-body">
-                <!-- Conteúdo do modal será carregado aqui -->
-            </div>
-        </div>
-    </div>
-
-    <!-- NOTIFICAÇÕES -->
     <div id="notificacao" class="notificacao"></div>
 
-    <script src="script.js"></script>
-    <!-- BOTÃO FLUTUANTE DO CARRINHO -->
-    <div id="floating-cart" class="floating-cart" style="display: none;">
-        <a href="carrinho.html" class="floating-cart-btn">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Ir para o carrinho</span>
-            <span class="floating-cart-count" id="floating-cart-count">0</span>
-        </a>
-    </div>
+    <script>
+        // Atualizar contador do carrinho
+        function atualizarContadorCarrinho() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+            
+            const carrinhoCount = document.getElementById('carrinho-count');
+            if (carrinhoCount) {
+                carrinhoCount.textContent = totalItens;
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarContadorCarrinho();
+            
+            // Menu lateral
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarClose = document.getElementById('sidebar-close');
+            
+            if (menuToggle && sidebar && sidebarOverlay && sidebarClose) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                sidebarClose.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+                
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -526,8 +526,7 @@
 
         .quantidade-controles {
             display: flex;
-            align-items: center;
-            gap: 5px;
+            position: relative;
             background: #f8f9fa;
             padding: 5px;
             border-radius: 40px;
@@ -1248,8 +1247,8 @@
                             </div>
                             
                             <div class="quantidade-container">
-                                <span class="quantidade-label">Qtd</span>
-                                <div class="quantidade-controles">
+                                <span class="preco-label">Qtd</span>
+                                <div class="quantidade-controles" style="position: absolute; right: 40px;">
                                     <button class="quantidade-btn" id="diminuir-qtd" onclick="alterarQuantidadePersonalizado(-1)">
                                         <i class="fas fa-minus"></i>
                                     </button>
@@ -1262,45 +1261,45 @@
                         </div>
                         
                         <!-- NOVO: Controle de largura do adesivo (em cm) - com mesma aparência da quantidade -->
-<div style="margin: 20px 0; padding-top: 15px; border-top: 1px dashed var(--border-color);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <span class="preco-label">Largura do adesivo</span>
-        <!-- Controles no MESMO ESTILO da quantidade -->
-        <div class="quantidade-controles" style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #f8f9fa; padding: 5px; border-radius: 40px;">
-            <button class="quantidade-btn" id="diminuir-largura" style="width: 38px; height: 38px;">
-                <i class="fas fa-minus"></i>
-            </button>
-            
-            <input type="number" id="largura-personalizado" class="quantidade-input" value="15" min="15" max="70" step="5" readonly style="width: 60px; height: 38px; font-size: 1rem;">
-            
-            <button class="quantidade-btn" id="aumentar-largura" style="width: 38px; height: 38px;">
-                <i class="fas fa-plus"></i>
-            </button>
-        </div>
-    </div>
-    
-    <!-- Informações de dimensão proporcional (mantém o estilo atual) -->
-    <div class="dimensoes-info" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 16px; text-align: center;">
-        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div>
-                <span style="color: #666; font-size: 0.9rem; display: block;">Largura</span>
-                <span id="largura-final" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">15</span>
-                <span style="color: #666;">cm</span>
-            </div>
-            <div>
-                <i class="fas fa-times" style="color: #999; font-size: 1.1rem;"></i>
-            </div>
-            <div>
-                <span style="color: #666; font-size: 0.9rem; display: block;">Altura</span>
-                <span id="altura-proporcional" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">--</span>
-                <span style="color: #666;">cm</span>
-            </div>
-        </div>
-        <p style="margin-top: 10px; color: #666; font-size: 0.85rem; font-style: italic;">
-            <i class="fas fa-info-circle"></i> Altura calculada proporcionalmente ao texto e ícones
-        </p>
-    </div>
-</div>
+                        <div style="margin: 20px 0; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span class="preco-label">Largura do adesivo</span>
+                                <!-- Controles no MESMO ESTILO da quantidade -->
+                                <div class="quantidade-controles">
+                                    <button class="quantidade-btn" id="diminuir-largura" style="width: 38px; height: 38px;">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    
+                                    <input type="number" id="largura-personalizado" class="quantidade-input" value="15" min="15" max="70" step="5" readonly style="width: 60px; height: 38px; font-size: 1rem;">
+                                    
+                                    <button class="quantidade-btn" id="aumentar-largura" style="width: 38px; height: 38px;">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Informações de dimensão proporcional (mantém o estilo atual) -->
+                            <div class="dimensoes-info" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 16px; text-align: center;">
+                                <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                    <div>
+                                        <span style="color: #666; font-size: 0.9rem; display: block;">Largura</span>
+                                        <span id="largura-final" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">15</span>
+                                        <span style="color: #666;">cm</span>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-times" style="color: #999; font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div>
+                                        <span style="color: #666; font-size: 0.9rem; display: block;">Altura</span>
+                                        <span id="altura-proporcional" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">--</span>
+                                        <span style="color: #666;">cm</span>
+                                    </div>
+                                </div>
+                                <p style="margin-top: 10px; color: #666; font-size: 0.85rem; font-style: italic;">
+                                    <i class="fas fa-info-circle"></i> Altura calculada proporcionalmente ao texto e ícones
+                                </p>
+                            </div>
+                        </div>
                         
                         <div class="preco-total-container" id="preco-total">
                             Total: R$ 10,00

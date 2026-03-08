@@ -42,9 +42,9 @@ select {
 .item-remove {
     color: var(--danger-color);
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: transform 0.3s;
-    justify-self: end; /* Alinha à direita */
+    justify-self: end;
 }
 
 .item-imagem {
@@ -57,6 +57,7 @@ select {
 .item-info h3 {
     margin-bottom: 0.5rem;
     color: var(--text-color);
+    font-size: 1.1rem;
 }
 
 .item-preco {
@@ -78,6 +79,7 @@ select {
 
         .quantidade-controles {
             display: flex;
+            position: relative;
             align-items: center;
             gap: 5px;
             background: #f8f9fa;
@@ -158,16 +160,14 @@ select {
 .resumo-linha {
     display: flex;
     justify-content: space-between;
+    margin-top: 1rem;
     margin-bottom: 1rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.resumo-total {
     font-size: 1.3rem;
     font-weight: bold;
     color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px dashed var(--primary-color);
+    
 }
 
 
@@ -247,7 +247,7 @@ select {
     color: var(--primary-color);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .carrinho-container {
         grid-template-columns: 1fr;
     }
@@ -272,6 +272,7 @@ select {
     
     .item-total {
         grid-column: 2;
-        grid-row: 3;
+        grid-row: 2;
+        margin-left: 120px;
     }
 }

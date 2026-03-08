@@ -401,22 +401,22 @@ body {
 .modal-content {
     background-color: white;
     margin: 5% auto;
-    padding: 20px;
+    padding: 0px 20px;
     border-radius: 15px;
     width: 90%;
     max-width: 800px;
     max-height: 90vh;
-    overflow: visible !important;
+    overflow: hidden !important;
     position: relative;
     z-index: 1001;
 }
 
-.close {
-    position: absolute;
+.close { 
     background-color: var(--danger-color);
     width: 50px;
     height: 50px;
     border-radius: 50%;
+    position: absolute;
     right: 25px;
     top: 15px;
     font-size: 25px;
@@ -440,7 +440,7 @@ body {
 .modal-body {
     padding: 20px 0;
     overflow-y: auto;
-    max-height: calc(90vh - 100px);
+    max-height: calc(110vh - 100px);
     position: relative;
     z-index: 1;
 }
@@ -626,9 +626,6 @@ body {
         display: none;
     }
 }
-
-
-
 
 
 

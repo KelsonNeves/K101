@@ -25,7 +25,7 @@ function renderizarCarrinho() {
                 <i class="fas fa-shopping-cart"></i>
                 <h2>Seu carrinho está vazio</h2>
                 <p> Adicione alguns produtos para continuar </p>
-                <a href="nav.html" style="color: var(--primary-color);">Voltar a comprar</a>
+                <a href="index.html" style="color: var(--primary-color);">Voltar a comprar</a>
             </div>
         `;
         carrinhoResumo.innerHTML = '';
@@ -55,7 +55,7 @@ function renderizarItensCarrinho(carrinho) {
                     <p class="item-preco">R$ ${item.preco.toFixed(2)}</p>
                 </div>
                 <div class="quantidade-container">
-                <i class="fas fa-trash item-remove" onclick="removerItem('${item.id}')"></i>
+                    <i class="fas fa-trash item-remove" onclick="removerItem('${item.id}')"></i>
                     <span class="quantidade-label">Qtd</span>
                     <div class="quantidade-controles">
                         <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', -1)">
@@ -94,11 +94,8 @@ function renderizarResumo(carrinho) {
                 Preencha nome e telefone válidos
             </div>
         </div>
-        <h2>Resumo do Pedido</h2>
-        <div class="resumo-linha">
-            <span>Subtotal:</span>
-            <span>R$ ${subtotal.toFixed(2)}</span>
-        </div>
+    
+        
         <div class="resumo-linha resumo-total">
             <span>Total:</span>
             <span>R$ ${subtotal.toFixed(2)}</span>
@@ -363,7 +360,7 @@ window.finalizarCompra = async () => {
         alert(`✅ Pedido enviado com sucesso, ${nomeCliente}! Você será redirecionado para a página inicial.`);
         
         setTimeout(() => {
-            window.location.href = 'nav.html';
+            window.location.href = 'index.html';
         }, 2000);
 
     } catch (e) {

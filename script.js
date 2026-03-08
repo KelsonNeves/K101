@@ -728,15 +728,16 @@ function abrirModalProduto(produtoId) {
     
     modalBody.innerHTML = `
         <div class="modal-produto">
+            <div class="zoom-overlay desktop-only">
+                <i class="fas fa-search-plus"></i>
+                <span>Clique para zoom</span>
+            </div>
             <!-- Container da imagem com zoom -->
             <div class="imagem-container" id="imagem-zoom-container">
                 <img src="${produto.imagem}" alt="${produto.nome}" id="modal-imagem" onerror="this.src='imagens/produtos/default.jpg'">
                 
                 <!-- Overlay indicador de zoom (visível apenas em desktop) -->
-                <div class="zoom-overlay desktop-only">
-                    <i class="fas fa-search-plus"></i>
-                    <span>Clique para zoom</span>
-                </div>
+                
                 
                 <!-- Controles de zoom para mobile -->
                 <div class="zoom-controls mobile-only">
@@ -773,7 +774,7 @@ function abrirModalProduto(produtoId) {
             <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinho(${produto.id})">
                 <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
             </button>
-            <p style="margin-bottom: 20px; margin-top: 20px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
+            <p style="margin-bottom: 50px; margin-top: 20px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
         </div>
     `;
     
