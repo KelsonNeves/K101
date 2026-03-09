@@ -895,6 +895,22 @@
         height: 40px;
     }
 }
+
+
+/* CORREÇÃO: Ajustar a largura da caixa de cores secundária */
+#controles-cor-secundaria .card-conteudo {
+    padding: 0;
+    background: transparent;
+    margin-bottom: 0;
+}
+
+#selecao-cor-secundaria {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 15px;
+}
     </style>
 </head>
 <body>
@@ -964,7 +980,7 @@
     <div class="main-wrapper">
         <!-- CABEÇALHO -->
         <div class="cabecalho-editor">
-            <button class="btn-voltar" onclick="window.location.href='../../nav.html'">
+            <button class="btn-voltar" onclick="window.location.href='../../index.html'">
                 <i class="fas fa-arrow-left"></i> Voltar
             </button>
             <h1>Personalização de adesivos</h1>
@@ -1470,6 +1486,8 @@ async function carregarIcones() {
             'chama.svg',
             'coracao1.svg',
             'coracao2.svg',
+            'flor1.svg',
+            'cifrao.svg',
             'grau.svg',
             'faca1.svg',
             'faca2.svg',
@@ -1477,7 +1495,7 @@ async function carregarIcones() {
             'forte.svg',
             'jogador.svg',
             'arma1.svg',
-            'flor1.svg',
+            
             
 
             
@@ -2367,12 +2385,13 @@ async function gerarSVGCompleto() {
                         stroke-linecap="round" />
                     <!-- Borda dos ícones -->
                     ${iconesPathCompleto}` : ''}
-                    <g>
-                        <path d="${pathsPrincipal}" fill="${corPrincipal}" />
-                        <path d="${pathsDestaques}" fill="${corSecundaria}" />
-                        ${iconesSVG}
-                    </g>
                 </g>
+                <g>
+                    <path d="${pathsPrincipal}" fill="${corPrincipal}" />
+                    <path d="${pathsDestaques}" fill="${corSecundaria}" />
+                    ${iconesSVG}
+                </g>
+                
             </svg>`;
             
         } else {
@@ -2400,6 +2419,7 @@ async function gerarSVGCompleto() {
                     <!-- Ícones coloridos -->
                     ${iconesSVG}
                 </g>
+                
             </svg>`;
         }
         
@@ -3099,6 +3119,7 @@ function configurarEventListeners() {
     });
 
 }
+
 // FUNÇÃO MODIFICADA: adicionarAoCarrinho agora usa o SVG gerado pelo atualizarPrevia
 async function adicionarAoCarrinho() {
     const btn = document.querySelector('.btn-adicionar');
@@ -3132,23 +3153,17 @@ async function adicionarAoCarrinho() {
         // 6. Criar item do carrinho
         const novoItem = {
             icone_produto: 'fa-paint-brush',
-            id: Date.now().toString(),
-            nome: "Adesivo: " + texto,
-            texto: texto,
+            nome: texto,
             preco: calcularPrecoUnitario(),
             quantidade: parseInt(document.getElementById('quantidade-personalizado')?.value || 1),
             imagem: imagemPrevia,
-            tipo: tipoSelecionado,
+            tipoMaterial: tipoSelecionado,
             cor: corSelecionada.nome,
-            corSecundariaAtivo: corSecundariaAtivo,
+            tipoMaterialSecundario: corSecundariaAtivo ? tipoSecundarioSelecionado : null,
             corSecundaria: corSecundariaAtivo ? corSecundariaSelecionada.nome : null,
-            iconeSelecionado: iconeSelecionado ? iconeSelecionado.nome : null,
-            posicaoIcone: iconeSelecionado ? document.querySelector('input[name="posicao-icone"]:checked')?.value : null,
             largura: larguraAdesivo,
-            alturaProporcional: calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo),
+            altura: calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo),
             servico: 'Nome_personalizado',
-            dataCriacao: new Date().toISOString()
-
         };
 
         // Usar o SVG completo gerado pela função atualizarPrevia

@@ -85,14 +85,18 @@ function renderizarResumo(carrinho) {
     carrinhoResumo.innerHTML = `
         <div class="cliente-info">
             <h3><i class="fas fa-user-circle"></i> Identificação</h3>
-            <input type="text" id="nome-cliente" class="campo-nome" placeholder="Seu nome completo *" value="${nomeCliente}" onkeyup="validarCamposCliente()">
+            <input type="text" id="nome-cliente" class="campo-nome" placeholder="* Seu nome completo" value="${nomeCliente}" onkeyup="validarCamposCliente()">
             
-            <input type="tel" id="telefone-cliente" class="campo-nome" style="margin-top: 10px;" placeholder="WhatsApp (DDD + Número) *" onkeyup="mascaraTelefone(this); validarCamposCliente()" maxlength="15">
+            <input type="tel" id="telefone-cliente" class="campo-nome" style="margin-top: 10px;" placeholder="* WhatsApp (DDD + Número)" onkeyup="mascaraTelefone(this); validarCamposCliente()" maxlength="15">
             
             <div class="mensagem-erro" id="erro-cliente">
                 <i class="fas fa-exclamation-circle"></i>
                 Preencha nome e telefone válidos
             </div>
+        </div>
+        <div id="cliente-info2">
+            <textarea style="display:none; resize: none; background-color: #ffffffbd;" type="text" id="observacao-cliente" class="campo-nome" placeholder="Escreva suas observações aqui..." value="${nomeCliente}"></textarea>
+            <button id="btn-observacoes"> Observações </button>
         </div>
     
         
@@ -113,6 +117,8 @@ function renderizarResumo(carrinho) {
         document.getElementById('btn-finalizar').disabled = false;
     }
 }
+
+
 
 // Validar nome do cliente
 window.validarNomeCliente = () => {
@@ -206,6 +212,24 @@ window.addEventListener('storage', (e) => {
     }
 });
 
+document.addEventListener('DOMContentLoaded', (e) => {
+    e.preventDefault();
+    const btnObs = document.querySelector('#btn-observacoes');
+    const abaObservacoes = document.getElementById("cliente-info2");
+    const inputObs = document.getElementById('observacao-cliente');
+    abaObservacoes.style.height = "70px";
+    btnObs.addEventListener('click', () =>{
+        if (abaObservacoes.style.height === "70px"){
+            abaObservacoes.style.height = "200px";
+            inputObs.style.display = "block";
+        } else {
+            abaObservacoes.style.height = "70px";
+            inputObs.style.display = "none";
+        }
+        
+    });
+});
+
 // Limpar carrinho completamente
 window.limparCarrinho = () => {
     if (confirm('Tem certeza que deseja limpar todo o carrinho?')) {
@@ -214,9 +238,11 @@ window.limparCarrinho = () => {
     }
 };
 
-// Finalizar compra via WhatsApp (CORRIGIDO)
+// Finalizar compra via WhatsApp
 window.finalizarCompra = async () => {
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    const observacaoInput = document.getElementById('observacao-cliente');
+    const observacaoText = observacaoInput ? observacaoInput.value.trim() : '';
     
     // Captura o telefone
     const telefoneInput = document.getElementById('telefone-cliente');
@@ -242,7 +268,6 @@ window.finalizarCompra = async () => {
         return;
     }
 
-    // VALIDAÇÃO DO TELEFONE (OBRIGATÓRIO)
     // Verifica se tem pelo menos 10 dígitos (DDD + número)
     const telefoneLimpo = telefoneCliente.replace(/\D/g, "");
     if (telefoneLimpo.length < 10) {
@@ -273,27 +298,55 @@ window.finalizarCompra = async () => {
 
         // CORREÇÃO: Mapear os itens e garantir que não haja undefined
         const itensParaSalvar = carrinho.map(item => {
-            // Criar objeto base com campos obrigatórios
+            // Criar objeto base com campos obrigatórios e garantir que nenhum seja undefined
             const itemBase = {
-                icone_produto: item.icone_produto || 'fa-box', // Fallback se não existir
+                icone_produto: item.icone_produto || 'fa-box',
                 nome: item.nome || 'Produto',
                 preco: Number(item.preco) || 0,
                 quantidade: Number(item.quantidade) || 1,
-                tipo: item.tipo || 'padrao',
-                servico: item.servico || 'adesivo',
+                tipoMaterial: item.tipoMaterial || 'Padrão',
+                servico: item.servico || 'Adesivo',
                 temSVG: !!(item.svgRaw && typeof item.svgRaw === 'string' && item.svgRaw !== 'undefined')
             };
-
-            // Adicionar campos opcionais APENAS se existirem e não forem undefined
-            if (item.texto) itemBase.texto = item.texto;
-            if (item.cor) itemBase.cor = item.cor;
-            if (item.imagem) itemBase.imagem = item.imagem;
             
-            // Só adicionar svgRaw se existir e NÃO for undefined
+            // IMPORTANTE: Sempre adicionar cor, mesmo que seja null (nunca undefined)
+            itemBase.cor = item.cor && item.cor !== 'undefined' ? item.cor : null;
+            
+            // Adicionar largura e altura se existirem
+            if (item.largura !== undefined && item.largura !== null) {
+                itemBase.largura = Number(item.largura) || 0;
+            }
+            
+            if (item.altura !== undefined && item.altura !== null) {
+                itemBase.altura = Number(item.altura) || 0;
+            }
+            
+            // Campos opcionais - verificar explicitamente se existem e não são undefined
+            if (item.tipoMaterialSecundario && item.tipoMaterialSecundario !== 'undefined') {
+                itemBase.tipoMaterialSecundario = item.tipoMaterialSecundario;
+            }
+            
+            if (item.corSecundaria && item.corSecundaria !== 'undefined') {
+                itemBase.corSecundaria = item.corSecundaria;
+            }
+            
+            if (item.imagem && item.imagem !== 'undefined') {
+                itemBase.imagem = item.imagem;
+            }
+            
+            // Só adicionar svgRaw se existir e não for undefined
             if (item.svgRaw && typeof item.svgRaw === 'string' && item.svgRaw !== 'undefined') {
                 itemBase.svgRaw = item.svgRaw;
             }
-
+            
+            // Verificar se algum campo ficou undefined (para debug)
+            Object.keys(itemBase).forEach(key => {
+                if (itemBase[key] === undefined) {
+                    console.warn(`Campo ${key} está undefined no item`, item);
+                    itemBase[key] = null; // Substituir undefined por null
+                }
+            });
+            
             return itemBase;
         });
 
@@ -307,6 +360,7 @@ window.finalizarCompra = async () => {
                 email: ''
             },
             itens: itensParaSalvar,
+            observacao: observacaoText,
             status: 'EM ABERTO',
             total: carrinho.reduce((total, item) => total + (Number(item.preco) * Number(item.quantidade)), 0)
         });
