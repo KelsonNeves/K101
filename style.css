@@ -32,6 +32,9 @@ select {
 
 body {
     background-color: var(--background-color);
+    
+    align-items: center;
+    justify-content: center;
 }
 
 /* ===== HEADER ===== */
@@ -388,27 +391,46 @@ body {
 
 /* ===== MODAL ===== */
 .modal {
-    display: none;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.25s ease, opacity 0.5s ease;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.modal.ativo {
+    visibility: visible;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
 }
 
 .modal-content {
     background-color: white;
-    margin: 5% auto;
     padding: 0px 20px;
     border-radius: 15px;
     width: 90%;
     max-width: 800px;
-    max-height: 100vh;
-    overflow: hidden !important;
+    max-height: 90vh;
     position: relative;
     z-index: 1001;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+}
+
+.modal.ativo .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
 }
 
 .close { 
@@ -426,9 +448,8 @@ body {
     align-items: center;
     justify-content: center;
     display: flex;
-    z-index: 1100; /* Z-index mais alto que tudo no modal */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Sombra para destacar */
-
+    z-index: 1100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 .close:hover {
@@ -436,11 +457,10 @@ body {
     transform: rotate(90deg);
 }
 
-
 .modal-body {
     padding: 20px 0;
     overflow-y: auto;
-    max-height: calc(100vh - 50px);
+    max-height: calc(90vh);
     position: relative;
     z-index: 1;
 }
@@ -450,8 +470,8 @@ body {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0;
-    padding: 15px;
+    margin: 10px 0;
+    padding: 10px;
     background: #f8f9fa;
     border-radius: 10px;
 }
@@ -469,7 +489,7 @@ body {
 }
 
 .preco-valor {
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     color: var(--primary-color);
 }
@@ -490,7 +510,6 @@ body {
     overflow: hidden;
     border-radius: 10px;
     cursor: zoom-in;
-    margin-bottom: 15px;
     z-index: 1; 
 }
 
@@ -513,23 +532,7 @@ body {
     cursor: zoom-out;
 }
 
-/* Overlay de zoom para desktop */
-.zoom-overlay {
-    position: absolute;
-    top: 30px;
-    right: 0px;
-    background: rgba(0, 0, 0, 0.301);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    pointer-events: none;
-    z-index: 5;
-    border: 1px solid rgba(255,255,255,0.2);
-}
+
 
 /* Controles de zoom para mobile */
 .zoom-controls {
@@ -582,9 +585,7 @@ body {
         touch-action: none;
     }
     
-    .zoom-overlay {
-        display: none !important;
-    }
+    
 }
 
 /* No PC, manter exatamente como estava */
@@ -593,9 +594,7 @@ body {
         display: none !important;
     }
     
-    .zoom-overlay {
-        display: flex !important;
-    }
+    
     
     .imagem-container {
         cursor: zoom-in;
@@ -649,8 +648,8 @@ body {
 }
 
 .quantidade-btn-modal {
-    width: 38px;
-    height: 38px;
+    width: 30px;
+    height: 30px;
     border: 2px solid var(--border-color);
     background: white;
     border-radius: 30px;
@@ -671,7 +670,7 @@ body {
 
 .quantidade-input-modal {
     width: 50px;
-    height: 38px;
+    height: 30px;
     text-align: center;
     border: 2px solid var(--border-color);
     border-radius: 30px;
@@ -689,14 +688,14 @@ body {
 
 
 .modal-total {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: bold;
     color: var(--primary-color);
     text-align: right;
-    margin: 15px 0;
-    padding: 10px;
-    border-top: 2px dashed var(--border-color);
     text-align: center;
+    padding: 5px;
+    margin-top: 15px;
+    border-top: 1px  dashed #c0c0c0;
 }
 .btn-add-carrinho-modal {
             width: 100%;
@@ -712,7 +711,6 @@ body {
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 1rem;
             transition: all 0.3s;
         }
 

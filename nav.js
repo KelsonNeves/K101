@@ -430,11 +430,28 @@ function getProdutosFiltrados() {
     // Filtrar por pesquisa
     if (termoPesquisa.trim() !== '') {
         const termo = termoPesquisa.toLowerCase().trim();
-        produtosFiltrados = produtosFiltrados.filter(p => 
-            p.nome.toLowerCase().includes(termo) || 
-            (p.descricao && p.descricao.toLowerCase().includes(termo)) ||
-            (p.tags && p.tags.some(tag => tag.toLowerCase().includes(termo)))
-        );
+        
+        produtosFiltrados = produtosFiltrados.filter(p => {
+            // Nome do produto
+            const nomeMatch = p.nome.toLowerCase().includes(termo);
+            
+            // Descrição do produto
+            const descricaoMatch = p.descricao && p.descricao.toLowerCase().includes(termo);
+            
+            // Tags do produto
+            const tagsMatch = p.tags && p.tags.some(tag => tag.toLowerCase().includes(termo));
+            
+            // Preço (converte para string e remove R$ e pontos para busca mais flexível)
+            const precoString = p.preco ? p.preco.toFixed(2).replace('.', ',') : '';
+            const precoMatch = precoString.includes(termo) || 
+                              p.preco.toString().includes(termo) ||
+                              (termo.replace(',', '.') && p.preco === parseFloat(termo.replace(',', '.')));
+            
+            // Código do produto (se existir)
+            const codigoMatch = p.cod && p.cod.toLowerCase().includes(termo);
+            
+            return nomeMatch || descricaoMatch || tagsMatch || precoMatch || codigoMatch;
+        });
     }
     
     return produtosFiltrados;
@@ -745,16 +762,9 @@ function abrirModalProduto(produtoId) {
     
     modalBody.innerHTML = `
         <div class="modal-produto">
-            <div class="zoom-overlay desktop-only">
-                <i class="fas fa-search-plus"></i>
-                <span>Clique para zoom</span>
-            </div>
             <!-- Container da imagem com zoom -->
             <div class="imagem-container" id="imagem-zoom-container">
                 <img src="${produto.imagem}" alt="${produto.nome}" id="modal-imagem" onerror="this.src='imagens/produtos/default.jpg'">
-                
-                <!-- Overlay indicador de zoom (visível apenas em desktop) -->
-                
                 
                 <!-- Controles de zoom para mobile -->
                 <div class="zoom-controls mobile-only">
@@ -767,8 +777,12 @@ function abrirModalProduto(produtoId) {
                 </div>
             </div>
             
-            <h2 style="margin: 20px 0 10px; font-size: 1.1rem;">${produto.nome}</h2>
-            <p style="color: #666; margin-bottom: 15px; font-size: 0.8rem;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
+            <h2 style="margin-top: 5px; margin-bottom: -5px; font-size: 1.1rem; text-align: center; ">${produto.nome}</h2>
+            
+            <div class="modal-preco-quantidade">
+                <p style="color: #666; margin-bottom: 10px; font-size: 0.7rem;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
+                <p style="color: #666; margin-left: 10px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
+            </div>
             <div class="modal-preco-quantidade">
                 <div class="modal-preco">
                     <span class="preco-valor">R$ ${produto.preco.toFixed(2)}</span>
@@ -782,8 +796,6 @@ function abrirModalProduto(produtoId) {
                         </button>
                     </div>
                 </div>
-
-                
             </div>
             <div class="modal-total" id="modal-total">
                 Total: R$ ${produto.preco.toFixed(2)}
@@ -791,13 +803,13 @@ function abrirModalProduto(produtoId) {
             <button class="btn-add-carrinho-modal" onclick="adicionarAoCarrinho(${produto.id})">
                 <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
             </button>
-            <p style="margin-bottom: 50px; margin-top: 20px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
         </div>
     `;
     
-    modal.style.display = 'block';
+    // Adiciona a classe ativo para iniciar a animação
+    modal.classList.add("ativo");
     
-    // NOVO: Bloquear scroll da página
+    // Bloquear scroll da página
     bloquearScroll();
     
     // Configurar eventos de zoom após o modal ser aberto
@@ -1059,32 +1071,52 @@ function zoomOut(e) {
     isZoomDragging = false;
 }
 
-// Função para bloquear scroll da página
+// Função para bloquear scroll da página (versão melhorada)
 function bloquearScroll() {
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.top = `-${window.scrollY}px`; // Mantém a posição do scroll
+    // Salva a posição atual
+    const scrollY = window.scrollY;
+    
+    // Primeiro, guarda a posição
+    document.body.dataset.scrollY = scrollY;
+    
+    // Usa requestAnimationFrame para garantir que as mudanças sejam aplicadas
+    // antes do próximo repaint
+    requestAnimationFrame(() => {
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = `-${scrollY}px`;
+    });
 }
 
-// Função para liberar scroll da página
+// Função para liberar scroll da página (versão melhorada)
 function liberarScroll() {
-    const scrollY = document.body.style.top;
+    // Recupera a posição salva
+    const scrollY = parseInt(document.body.dataset.scrollY || '0');
+    
+    // Remove as propriedades CSS
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.width = '';
     document.body.style.top = '';
     
-    // Restaura a posição do scroll
-    if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-    }
+    // Limpa o atributo data
+    delete document.body.dataset.scrollY;
+    
+    // Usa requestAnimationFrame para garantir que o scroll seja restaurado
+    // após o CSS ser removido
+    requestAnimationFrame(() => {
+        window.scrollTo({
+            top: scrollY,
+            behavior: 'auto' // Use 'smooth' se quiser animação suave
+        });
+    });
 }
 
 // Detectar mudança de tamanho da tela para reconfigurar zoom
 window.addEventListener('resize', function() {
     // Se o modal estiver aberto, reconfigurar zoom
-    if (modal.style.display === 'block') {
+    if (modal.classList.contains('ativo')) {
         configurarZoom();
     }
 });
@@ -1136,7 +1168,7 @@ function adicionarAoCarrinho(produtoId) {
     } else {
         carrinho.push({
             id: produto.id.toString(),
-            nome: produto.nome,
+            nome: produto.cod + " | " + produto.nome,
             preco: produto.preco,
             imagem: produto.imagem,
             quantidade: quantidade
@@ -1145,7 +1177,7 @@ function adicionarAoCarrinho(produtoId) {
     
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     
-    modal.style.display = 'none';
+    modal.classList.remove('ativo');
     liberarScroll();
     
     mostrarNotificacao(`✅ ${quantidade} x ${produto.nome} adicionado ao carrinho!`);
@@ -1154,15 +1186,20 @@ function adicionarAoCarrinho(produtoId) {
 
 // Fechar modal pelo botão X
 closeBtn.onclick = () => {
-    modal.style.display = 'none';
-    liberarScroll(); // NOVO: Liberar scroll
+    modal.classList.remove('ativo');
+    // Pequeno delay para a animação de fechamento acontecer antes de liberar o scroll
+    setTimeout(() => {
+        liberarScroll();
+    }, 250);
 };
 
 // Fechar modal clicando fora
 window.onclick = (event) => {
     if (event.target === modal) {
-        modal.style.display = 'none';
-        liberarScroll(); // NOVO: Liberar scroll
+        modal.classList.remove('ativo');
+        setTimeout(() => {
+            liberarScroll();
+        }, 250);
     }
 };
 
