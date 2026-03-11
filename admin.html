@@ -2221,7 +2221,7 @@ tr:hover {
             if (svgContent.startsWith('data:')) {
                 const link = document.createElement('a');
                 link.href = svgContent;
-                const textoArquivo = (item.texto || 'adesivo').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+                const textoArquivo = (item.nome || 'adesivo').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
                 link.download = `K101_${idPedido}_${textoArquivo}.svg`;
                 document.body.appendChild(link);
                 link.click();

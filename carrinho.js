@@ -13,11 +13,45 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Renderizar carrinho
+// Modifique a função renderizarCarrinho():
+
+function podeAlterarQuantidade(servico) {
+    // Serviços que NÃO podem ter quantidade alterada
+    const servicosBloqueados = [
+        'Nome_personalizado',
+        'adesivo-personalizado-com-texto',
+        'arte-personalizada'
+        // Adicione outros serviços que não devem ser alterados
+    ];
+    
+    // Serviços que PODEM ter quantidade alterada (opcional, só para clareza)
+    const servicosPermitidos = [
+        'Adesivo',
+        'adesivo-normal',
+        'produto-simples'
+        // Adicione outros serviços permitidos
+    ];
+    
+    // Retorna false se o serviço estiver na lista de bloqueados
+    if (servicosBloqueados.includes(servico)) {
+        return false;
+    }
+    
+    // Por padrão, permite alteração
+    return true;
+}
+
 function renderizarCarrinho() {
+    // SALVAR valores atuais dos campos ANTES de renderizar
+    const nomeAtual = document.getElementById('nome-cliente')?.value || '';
+    const telefoneAtual = document.getElementById('telefone-cliente')?.value || '';
+    const observacaoAtual = document.getElementById('observacao-cliente')?.value || '';
+    const obsVisivel = document.getElementById('observacao-cliente')?.style.display !== 'none';
+    
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     
-    // Tentar recuperar nome da sessionStorage
-    nomeCliente = sessionStorage.getItem('nomeClienteTemp') || '';
+    // Tentar recuperar nome da sessionStorage (fallback)
+    nomeCliente = sessionStorage.getItem('nomeClienteTemp') || nomeAtual || '';
     
     if (carrinho.length === 0) {
         carrinhoItems.innerHTML = `
@@ -34,6 +68,25 @@ function renderizarCarrinho() {
     
     renderizarItensCarrinho(carrinho);
     renderizarResumo(carrinho);
+    
+    // RESTAURAR valores após renderizar
+    setTimeout(() => {
+        const nomeInput = document.getElementById('nome-cliente');
+        const telefoneInput = document.getElementById('telefone-cliente');
+        const obsInput = document.getElementById('observacao-cliente');
+        const abaObs = document.getElementById('cliente-info2');
+        
+        if (nomeInput && nomeAtual) nomeInput.value = nomeAtual;
+        if (telefoneInput && telefoneAtual) telefoneInput.value = telefoneAtual;
+        if (obsInput && observacaoAtual) obsInput.value = observacaoAtual;
+        
+        
+        
+        // Revalidar campos
+        if (typeof window.validarCamposCliente === 'function') {
+            window.validarCamposCliente();
+        }
+    }, 0);
 }
 
 // Renderizar itens do carrinho - CORRIGIDO
@@ -44,6 +97,9 @@ function renderizarItensCarrinho(carrinho) {
     carrinho.forEach(item => {
         const totalItem = item.preco * item.quantidade;
         subtotal += totalItem;
+        
+        // Verificar se pode alterar quantidade
+        const podeAlterar = podeAlterarQuantidade(item.servico);
         
         html += `
             <div class="carrinho-item">
@@ -58,24 +114,64 @@ function renderizarItensCarrinho(carrinho) {
                     <i class="fas fa-trash item-remove" onclick="removerItem('${item.id}')"></i>
                     <span class="quantidade-label">Qtd</span>
                     <div class="quantidade-controles">
-                        <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', -1)">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <input type="number" class="quantidade-input" value="${item.quantidade}" min="1" max="99" readonly>
-                        <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', 1)">
-                            <i class="fas fa-plus"></i>
-                        </button>
+                        ${podeAlterar ? `
+                            <!-- Controles ativos para serviços permitidos -->
+                            <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="quantidade-input" value="${item.quantidade}" min="1" max="99" readonly>
+                            <button class="quantidade-btn" onclick="alterarQuantidade('${item.id}', 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        ` : `
+                            <!-- Controles desabilitados para serviços bloqueados -->
+                            <button class="quantidade-btn" disabled style="opacity: 0.3; cursor: not-allowed;">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="quantidade-input" value="${item.quantidade}" disabled style="background: #f0f0f0;">
+                            <button class="quantidade-btn" disabled style="opacity: 0.3; cursor: not-allowed;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        `}
                     </div>
                 </div>
                 <div class="item-total">
                     R$ ${totalItem.toFixed(2)}
                 </div>
-                
             </div>
         `;
     });
     
     carrinhoItems.innerHTML = html;
+}
+
+function configurarBotaoObservacoes() {
+    const btnObs = document.getElementById('btn-observacoes');
+    const abaObservacoes = document.getElementById('cliente-info2');
+    const inputObs = document.getElementById('observacao-cliente');
+    
+    if (!btnObs || !abaObservacoes || !inputObs) return;
+    
+    // Remover eventos antigos (para evitar múltiplos listeners)
+    btnObs.replaceWith(btnObs.cloneNode(true));
+    const novoBtnObs = document.getElementById('btn-observacoes');
+    
+    // Configurar estado inicial
+    if (inputObs.style.display !== 'block') {
+        abaObservacoes.style.height = "70px";
+        inputObs.style.display = "none";
+    }
+    
+    // Adicionar novo evento
+    novoBtnObs.addEventListener('click', () => {
+        if (abaObservacoes.style.height === "70px" || !abaObservacoes.style.height) {
+            abaObservacoes.style.height = "200px";
+            inputObs.style.display = "block";
+        } else {
+            abaObservacoes.style.height = "70px";
+            inputObs.style.display = "none";
+        }
+    });
 }
 
 // Renderizar resumo do carrinho
@@ -111,7 +207,17 @@ function renderizarResumo(carrinho) {
             <i class="fas fa-trash"></i> Limpar Carrinho
         </button>
     `;
+
+    // Configurar o botão de observações após criar o HTML
+    configurarBotaoObservacoes();
     
+    // Validar campos inicialmente
+    setTimeout(() => {
+        if (typeof window.validarCamposCliente === 'function') {
+            window.validarCamposCliente();
+        }
+    }, 0);
+
     // Verificar se já tem nome salvo para habilitar botão
     if (nomeCliente.trim().length >= 3) {
         document.getElementById('btn-finalizar').disabled = false;
@@ -212,24 +318,6 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', (e) => {
-    e.preventDefault();
-    const btnObs = document.querySelector('#btn-observacoes');
-    const abaObservacoes = document.getElementById("cliente-info2");
-    const inputObs = document.getElementById('observacao-cliente');
-    abaObservacoes.style.height = "70px";
-    btnObs.addEventListener('click', () =>{
-        if (abaObservacoes.style.height === "70px"){
-            abaObservacoes.style.height = "200px";
-            inputObs.style.display = "block";
-        } else {
-            abaObservacoes.style.height = "70px";
-            inputObs.style.display = "none";
-        }
-        
-    });
-});
-
 // Limpar carrinho completamente
 window.limparCarrinho = () => {
     if (confirm('Tem certeza que deseja limpar todo o carrinho?')) {
@@ -305,7 +393,7 @@ window.finalizarCompra = async () => {
                 preco: Number(item.preco) || 0,
                 quantidade: Number(item.quantidade) || 1,
                 tipoMaterial: item.tipoMaterial || 'Padrão',
-                servico: item.servico || 'Adesivo',
+                servico: item.servico || '-',
                 temSVG: !!(item.svgRaw && typeof item.svgRaw === 'string' && item.svgRaw !== 'undefined')
             };
             
@@ -386,6 +474,12 @@ window.finalizarCompra = async () => {
             // Informações específicas baseadas no tipo de produto
             switch(tipoProduto) {
                 case 'adesivo-personalizado':
+                    if (item.tipo) mensagem += `Material: ${item.tipo}\n`;
+                    if (item.cor) mensagem += `Cor: ${item.cor}\n`;
+                    if (item.texto) mensagem += `Texto: "${item.texto}"\n`;
+                    break;
+
+                case 'adesivo':
                     if (item.tipo) mensagem += `Material: ${item.tipo}\n`;
                     if (item.cor) mensagem += `Cor: ${item.cor}\n`;
                     if (item.texto) mensagem += `Texto: "${item.texto}"\n`;

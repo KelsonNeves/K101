@@ -27,12 +27,14 @@
         .selecao-container {
             max-width: 1200px;
             margin: 2rem auto;
-            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+
         }
 
         .cabecalho-selecao {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 0.5rem;
         }
 
         .cabecalho-selecao h1 {
@@ -43,14 +45,14 @@
 
         .cabecalho-selecao p {
             color: #666;
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
         .tipos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
         }
 
         .tipo-card {
@@ -61,6 +63,7 @@
             transition: all 0.3s ease;
             position: relative;
             border: 2px solid transparent;
+            margin: 0px 10px;
         }
 
         .tipo-card.disponivel {
@@ -68,15 +71,19 @@
         }
 
         .tipo-card.disponivel:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
             border-color: var(--primary-color);
-            box-shadow: 0 20px 40px rgba(18, 172, 159, 0.2);
+            box-shadow: 0 0px 25px rgba(0, 0, 0, 0.151);
         }
 
-        .tipo-card.indisponivel {
+        .tipo-card.indisponivel{
             opacity: 0.7;
             filter: grayscale(0.7);
             cursor: not-allowed;
+        }
+        .tipo-card.indisponivel button{
+            cursor: not-allowed;
+            background: #666;
         }
 
         .tipo-card.indisponivel:hover {
@@ -98,15 +105,15 @@
         }
 
         .tipo-badge.em-breve {
-            background: #ffc107;
+            background: #7c7c7c;
             color: #333;
         }
 
         .tipo-imagem {
             height: 200px;
-            background-size: cover; /* Faz a imagem cobrir todo o espaço */
-            background-position: center; /* Centraliza a imagem */
-            background-repeat: no-repeat; /* Não repete a imagem */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -114,18 +121,12 @@
             overflow: hidden;
         }
 
-        .tipo-imagem i {
-            font-size: 5rem;
-            color: white;
-            z-index: 2;
-        }
-
         .tipo-imagem::after {
             content: '';
             position: absolute;
             width: 150%;
             height: 150%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.062);
             transform: rotate(45deg) translateY(30%);
             transition: transform 0.5s ease;
         }
@@ -139,13 +140,16 @@
         }
 
         .tipo-info h2 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--text-color);
             margin-bottom: 0.5rem;
+            text-align: center;
         }
 
         .tipo-descricao {
-            color: #666;
+            color: #919191;
+            font-size: 0.8rem;
+            text-align: justify;
             margin-bottom: 1rem;
             line-height: 1.6;
             min-height: 80px;
@@ -180,12 +184,11 @@
             justify-content: center;
             gap: 10px;
             margin-top: 1rem;
-            transition: all 0.3s;
+            transition: all 0.5s;
         }
 
 
         .tipo-card.disponivel:hover .btn-selecionar {
-            background: var(--primary-color);
             color: white;
         }
 
@@ -194,6 +197,17 @@
             cursor: not-allowed;
             border-color: #ccc;
             color: #999;
+        }
+        .pBoasVindas {
+            background-color: rgb(255, 255, 255);
+            width: calc(100% - 20px);
+            box-shadow: 0 0 5px #00000062;
+            padding: 10px 20px;
+            border-radius: 15px;
+            color: #666;
+            font-size: 1rem;
+            text-align: center;
+            margin: 0px 10px;
         }
 
         @media (max-width: 768px) {
@@ -221,21 +235,33 @@
             .tipo-info h2 {
                 font-size: 1.5rem;
             }
+            .pBoasVindas{
+                border-radius: 0;
+                width: 100%;
+                margin: 0;
+                margin-bottom: 10px;
+            }
+            .pBoasVindas p{
+            font-size: 0.8rem;
+            }
+        }
+
+
+
+
+        @media (max-width: 600px) {
+            .tipo-imagem::after {
+                background: rgba(0, 0, 0, 0);
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <div class="header-left">
-                <button class="menu-toggle" id="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="logo-container" onclick="window.location.href='index.html'" style="cursor: pointer;">
-                    <img src="imagens/logo.png" alt="K101" class="logo">
-                    <h1>K101</h1>
-                </div>
-            </div>
+            
+                <img src="imagens/logo.png" alt="K101" class="logo-index">
+   
             <div class="carrinho-icon">
                 <a href="carrinho.html">
                     <i class="fas fa-shopping-cart"></i>
@@ -263,24 +289,21 @@
     </div>
 
     <main class="selecao-container">
-        <div class="cabecalho-selecao">
-            <h1>Serviços</h1>
-            <p>Selecione o tipo de serviço que a K101 oferece</p>
+        <div class="pBoasVindas">
+            <p>Bem vindo a K101, que tal dar uma olhada nos nossos vários dos  serviço a baixo ?👊</p>
         </div>
-        
         <div class="tipos-grid">
-
-            <!-- Adesivos prontos -->
+            <!-- Catalogo -->
             <div class="tipo-card disponivel" onclick="window.location.href='nav.html'">
                 <div class="tipo-badge">Disponível</div>
-                <div class="tipo-imagem" style="background-image: url('imagens/banners/Capa_personalizado_nome.jpg');">
-                    <i class="fas fa-sticky-note"></i>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/SERVICO_CATALOGO.webp');">
+                    
                 </div>
                 <div class="tipo-info">
-                    <h2>Adesivos prontos</h2>
+                    <h2>Catálogo de Adesivos</h2>
                     <p class="tipo-descricao">
-                        Todos os adesivos da nossa loja!<br>
-                        Aproveite para explorar todos os modelos de adesivos disponiveis na K101.
+                        Adesivos prontos da nossa loja!<br>
+                        Aproveite para explorar nosso modelos, existe exclusivos criado pela K101.
                     </p>
                     <button class="btn-selecionar">Personalizar Nome</button>
                 </div>
@@ -289,36 +312,36 @@
             <!-- Card Nome -->
             <div class="tipo-card disponivel" onclick="window.location.href='edicao/paginas_personalizacao/nome.html'">
                 <div class="tipo-badge">Disponível</div>
-                <div class="tipo-imagem" style="background-image: url('imagens/banners/Capa_personalizado_nome.jpg');">
-                    <i class="fas fa-signature"></i>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/SERVICO_NOME_PERSONALIZADO.webp');">
+                    
                 </div>
                 <div class="tipo-info">
-                    <h2>Nome</h2>
+                    <h2>Nome Personalizado</h2>
                     <p class="tipo-descricao">
-                        Crie um adesivo com qualquer nome!<br>
-                        Perfeito para nomes de namorado(a), parentes e muito mais.
+                        Crie um adesivo personalizado de um NOME<br>
+                        Perfeito para nomes de namorado(a), casal, parentes, e muito mais.
                     </p>
                     <button class="btn-selecionar">Personalizar Nome</button>
                 </div>
             </div>
 
             <!-- Card Instagram -->
-            <div class="tipo-card disponivel" onclick="window.location.href='edicao/paginas_personalizacao/instagram.html'">
-                <div class="tipo-badge">Disponível</div>
-                <div class="tipo-imagem" style="background-image: url('imagens/banners/Capa_personalizado_nome.jpg');">
-                    <i class="fab fa-instagram"></i>
+            <div class="tipo-card indisponivel">
+                <div class="tipo-badge em-breve">Em breve</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/default.webp');">
+                    
                 </div>
                 <div class="tipo-info">
                     <h2>@ Instagram</h2>
                     <p class="tipo-descricao">
-                        Seu @ do Instagram em um adesivo exclusivo!<br>
-                        Escolha o ícone e personalize do seu jeito.
+                        
                     </p>
                     <button class="btn-selecionar">Personalizar @</button>
                 </div>
             </div>
 
             <!-- Card Casal (Futuro) -->
+             <!--
             <div class="tipo-card indisponivel">
                 <div class="tipo-badge em-breve">Em breve</div>
                 <div class="tipo-imagem" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">
@@ -332,7 +355,8 @@
                     </p>
                     <button class="btn-selecionar" disabled>Em desenvolvimento</button>
                 </div>
-            </div>
+            </div
+            -->
         </div>
     </main>
 

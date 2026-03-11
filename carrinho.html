@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Carrinho - Minha Loja de Adesivos</title>
+    <title>Carrinho - K101</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -32,14 +32,16 @@ select {
         background: white;
         border-radius: 12px;
         padding: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 200px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         border: 1px solid #e0e0e0;
         z-index: 100;
     }
 
     #cliente-info2 {
-        position:relative;
+        position:absolute;
+        width: calc(100% - 64px);
+        margin-top: 245px;
         background: var(--primary-color);
         border-radius: 12px;
         padding: 20px;
@@ -375,6 +377,7 @@ select {
     color: var(--primary-color);
 }
 
+
 @media (max-width: 1000px) {
     .carrinho-container {
         grid-template-columns: 1fr;
@@ -403,6 +406,17 @@ select {
         grid-row: 2;
         margin-left: 120px;
     }
+    .cliente-info {
+        margin-bottom: 20px;
+
+    }
+
+    #cliente-info2 {
+        margin-top: 0px;
+        position: relative;
+        width:100%;
+        margin-bottom: -40px;
+    }
 }
         
     </style>
@@ -412,7 +426,6 @@ select {
         <div class="container">
             <div class="logo-container">
                 <img src="imagens/logo.png" alt="Minha Logo" class="logo">
-                <h1>Meu Carrinho</h1>
             </div>
             <a href="index.html" class="voltar-btn">
                 <i class="fas fa-arrow-left"></i> Voltar às compras

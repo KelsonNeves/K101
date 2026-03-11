@@ -85,14 +85,14 @@ function renderizarBanner() {
     // Adicionar slide "Todos"
     bannerSlides.push({
         colecao: 'todos',
-        imagem: 'imagens/banners/1todos.jpg'
+        imagem: 'imagens/banners/1todos.webp'
     });
     
     // Adicionar slides para cada coleção
     colecoesArray.forEach(colecao => {
         bannerSlides.push({
             colecao: colecao,
-            imagem: `imagens/banners/${colecao}.jpg`
+            imagem: `imagens/banners/${colecao}.webp`
         });
     });
     
@@ -110,7 +110,7 @@ function renderizarBanner() {
     bannerSlides.forEach((slide, index) => {
         slidesHTML += `
             <div class="banner-slide" data-colecao="${slide.colecao}">
-                <img src="${slide.imagem}" alt="Banner ${slide.colecao}" onerror="this.src='imagens/banners/default.jpg'; this.onerror=null;" draggable="false">
+                <img src="${slide.imagem}" alt="Banner ${slide.colecao}" onerror="this.src='imagens/banners/default.webp'; this.onerror=null;" draggable="false">
             </div>
         `;
         
@@ -777,11 +777,11 @@ function abrirModalProduto(produtoId) {
                 </div>
             </div>
             
-            <h2 style="margin-top: 5px; margin-bottom: -5px; font-size: 1.1rem; text-align: center; ">${produto.nome}</h2>
+            <h2 style="margin-top: 5px; margin-bottom: 10px; font-size: 1.1rem; text-align: center; ">${produto.nome}</h2>
             
             <div class="modal-preco-quantidade">
                 <p style="color: #666; margin-bottom: 10px; font-size: 0.7rem;"><strong>Coleção:</strong> ${produto.colecao || 'Sem coleção'}</p>
-                <p style="color: #666; margin-left: 10px; font-size: 0.7rem;">${produto.descricao || 'Sem descrição disponível.'}</p>
+                <p style="color: #666; font-size: 0.7rem; text-align: justify;">${produto.descricao || 'Sem descrição disponível.'}</p>
             </div>
             <div class="modal-preco-quantidade">
                 <div class="modal-preco">
@@ -1171,7 +1171,8 @@ function adicionarAoCarrinho(produtoId) {
             nome: produto.cod + " | " + produto.nome,
             preco: produto.preco,
             imagem: produto.imagem,
-            quantidade: quantidade
+            quantidade: quantidade,
+            servico: 'Adesivo',
         });
     }
     

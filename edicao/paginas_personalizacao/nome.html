@@ -40,7 +40,7 @@
             padding: 0;
             background-color: #ffffff;
             overflow-x: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
         }
 
         /* HEADER fixo */
@@ -82,6 +82,7 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s;
+            margin-left: auto;
         }
 
         .btn-voltar:hover {
@@ -572,7 +573,7 @@
         }
 
         .preco-total-container {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary-color);
             text-align: right;
@@ -678,10 +679,6 @@
     
     .conteudo-wrapper {
         margin-bottom: 40px; /* Reduz a margem inferior */
-    }
-    
-    .cabecalho-editor {
-        padding-right: 0;
     }
 }
 
@@ -936,7 +933,7 @@
 
         <div class="loader"></div>
 
-        <p style="margin-top: 20px; color: var(--primary-color); font-weight: 600; font-family: sans-serif; letter-spacing: 1px;">
+        <p style="margin-top: 20px; color: var(--primary-color); font-weight: 600; font-family: Segoe UI; letter-spacing: 1px;">
             PREPARANDO EDITOR...
         </p>
     </div>
@@ -946,9 +943,8 @@
                 <button class="menu-toggle" id="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="logo-container" onclick="window.location.href='../../nav.html'" style="cursor: pointer;">
+                <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer;">
                     <img src="../../imagens/logo.png" alt="K101" class="logo">
-                    <h1>K101</h1>
                 </div>
             </div>
             <div class="carrinho-icon">
@@ -978,14 +974,6 @@
     </div>
 
     <div class="main-wrapper">
-        <!-- CABEÇALHO -->
-        <div class="cabecalho-editor">
-            <button class="btn-voltar" onclick="window.location.href='../../index.html'">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <h1>Personalização de adesivos</h1>
-        </div>
-
         <!-- PRÉVIA FIXA -->
         <div class="previa-container">
             <div class="previa-adesivo-container">
@@ -1010,6 +998,16 @@
                 </svg>
             </div>
         </div>
+        
+        <!-- CABEÇALHO -->
+        <div class="cabecalho-editor">
+            <p style="font-size: 0.9rem; color:#8b8b8b">Crie um adesivo personalizado com algum NOME</p>
+            <button class="btn-voltar" onclick="window.location.href='../../index.html'">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+        </div>
+
+        
 
         <!-- CONTEÚDO -->
         <div class="conteudo-wrapper">
@@ -1386,7 +1384,6 @@
             { nome: 'Barett Street', arquivo: 'url("../fontes/Barett Street.ttf")' },
             { nome: 'Berani', arquivo: 'url("../fontes/Berani.otf")' },
             { nome: 'Birthlong', arquivo: 'url("../fontes/Birthlong.ttf")' },
-            { nome: 'Deardorf Demo', arquivo: 'url("../fontes/Deardorf Demo.otf")' },
             { nome: 'Embassy BT', arquivo: 'url("../fontes/Embassy BT.ttf")' },
             { nome: 'Exotc350 Bd BT Bold', arquivo: 'url("../fontes/Exotc350 Bd BT Bold.ttf")' },
             { nome: 'GraffitiYouth-Regular', arquivo: 'url("../fontes/GraffitiYouth-Regular.otf")' },
@@ -3149,9 +3146,11 @@ async function adicionarAoCarrinho() {
         }
 
         const imagemPrevia = await capturarPreviaComoImagem();
+        const idUnico = 'pers_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
 
         // 6. Criar item do carrinho
         const novoItem = {
+            id: idUnico.toString(),
             icone_produto: 'fa-paint-brush',
             nome: texto,
             preco: calcularPrecoUnitario(),
