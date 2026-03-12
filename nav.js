@@ -85,7 +85,7 @@ function renderizarBanner() {
     // Adicionar slide "Todos"
     bannerSlides.push({
         colecao: 'todos',
-        imagem: 'imagens/banners/1todos.webp'
+        imagem: 'imagens/banners/1TODOS.webp'
     });
     
     // Adicionar slides para cada coleção
@@ -1468,4 +1468,5 @@ function mostrarBanner() {
         colecoesContainer.style.transition = 'margin-top 0.3s ease';
         colecoesContainer.style.marginTop = '';
     }
+
 }
