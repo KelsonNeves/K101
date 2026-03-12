@@ -1,0 +1,3245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Personalizar Nome - K101</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Filtro SVG com controles -->
+    
+    
+    <style>
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Permite seleção de texto apenas em inputs e áreas de texto */
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        hr {
+            border: 0;
+            height: 2px;
+            background: #bebebe;
+            margin-bottom: 40px;
+        }
+
+        /* Reset e estilos base */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+        }
+
+        /* HEADER fixo */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        /* Container principal centralizado */
+        .main-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+            display: block;
+        }
+
+        /* CABEÇALHO DO EDITOR */
+        .cabecalho-editor {
+            width: 100%;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-voltar {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            margin-left: auto;
+        }
+
+        .btn-voltar:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .cabecalho-editor h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        /* PRÉVIA FIXA */
+        .previa-container {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 100px;
+            width: 100%;
+            height: 200px;
+            background-color: #f8f9fa;
+            background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0px 10px rgba(0, 0, 0, 0.726);
+            border: 1px solid var(--primary-color);
+            z-index: 950;
+            margin-bottom: 10px;
+            transition: all 0.5s ease;
+        }
+
+        .conteudo-wrapper {
+            width: 100%;
+            margin: 0 auto;
+            transition: all 0.5s ease;
+        }
+
+        .controles-edicao {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.5s ease;
+        }
+
+        /* CARDS */
+        .card-editor {
+            background: white;
+            border-radius: 24px;
+            padding: 1.8rem;
+            box-shadow: 0 0px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            position: relative;
+            transition: all 0.5s ease;
+
+        }
+
+        .card-seletor {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+            right: 30px;
+        }
+
+        .card-editor:hover {
+            box-shadow: 0 0px 25px rgba(0,0,0,0.12);
+        }
+
+        .card-titulo {
+            display: block;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+/* Botão desativar no final do card */
+.btn-desativar-card {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: transparent;
+  border: 2px solid #ff4444;
+  color: #ff4444;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btn-desativar-card:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.btn-desativar-card i {
+  font-size: 0.9rem;
+}
+
+
+@keyframes highlightCard {
+  0% { background-color: rgba(var(--primary-color-rgb), 0.1); }
+  100% { background-color: white; }
+}
+        .card-titulo input[type="checkbox"] {
+
+            -webkit-appearance: none;
+            appearance: none;
+            
+            width: 35px;
+            height: 35px;
+            border: 2px solid #bbbbbb;
+            border-radius: 50%;
+            background-color: var(--background-color);
+            cursor: pointer;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .card-titulo input[type="checkbox"]:checked {
+            background-color: #dfdfdf;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 5px #33333369;
+
+        }
+
+        .card-titulo i {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        .card-conteudo {
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            background: #f8f9fa;
+            transition: background 0.3s;
+            margin-bottom: 0.5rem;
+            accent-color: var(--primary-color);
+        }
+
+        /* Inputs e controles */
+        .campo-texto {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+            color: var(--text-color);
+        }
+
+        .campo-texto:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(18, 172, 159, 0.1);
+        }
+        .legenda-funcao{
+            font-weight: 500;
+            margin:10px;
+        }
+
+        select.campo-texto {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .selecao-cor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .cor-opcao {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .cor-opcao:hover {
+            transform: scale(1.1);
+        }
+
+        .cor-opcao.selecionada {
+            border-color: #333;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .visualizacao-de-material {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            width: 100%;
+            height: 40px;
+            background-color: #dfdfdf;
+            border-radius: 15px;
+            box-shadow: 0 0 10px #33333360;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: all 0.5s ease;
+
+        }
+
+        .checkbox-borda {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            background: #f8f9fa;
+            transition: background 0.3s;
+            margin-bottom: 0.5rem;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-borda:hover {
+            background: #f5f5f5;
+        }
+
+        .checkbox-borda input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-borda span {
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .controle-deslizante {
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 18px;
+        }
+
+        .controle-deslizante label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .controle-deslizante input[type=range] {
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            outline: none;
+        }
+
+
+        .valor-controle {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Opções de cor */
+        .opcoes-cor-borda {
+            display: flex;
+            gap: 20px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .opcao-cor-borda {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 30px;
+            transition: background 0.3s;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            margin-right: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"]:checked {
+            border-color: var(--primary-color);
+            background-color: white;
+        }
+
+        input[type="radio"]:checked::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: block;
+        }
+
+        .cor-preview {
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+
+        .cor-preview.preta {
+            background: black;
+            margin-right:30px;
+        }
+
+        .cor-preview.branca {
+            background: white;
+        }
+
+        /* Destaques */
+        .opcoes-destaque {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            border: 3px solid #b8b8b8;
+            transition: all 0.3s;
+            box-shadow: 0 0px 5px rgba(0, 0, 0, 0.295);
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .checkbox-option:hover {
+            background: #ffffff;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0px 5px rgba(0, 0, 0, 0.466);
+            transform: translateY(-2px);
+        }
+
+        .checkbox-option:has(input[type="checkbox"]:checked), .checkbox-option:has(input[type="radio"]:checked)  {
+            background: var(--primary-color); 
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        /* Preço e Quantidade */
+        .preco-quantidade-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .preco-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .preco-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .preco-valor {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .quantidade-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quantidade-controles {
+            display: flex;
+            position: relative;
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 40px;
+        }
+
+        .quantidade-btn {
+            width: 38px;
+            height: 38px;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            color: var(--text-color);
+        }
+
+        .quantidade-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quantidade-input {
+            width: 50px;
+            height: 38px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            background: white;
+            color: var(--text-color);
+        }
+
+        .quantidade-input::-webkit-inner-spin-button,
+        .quantidade-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .preco-total-container {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-align: right;
+            padding: 1.5rem 0 0.5rem;
+            border-top: 2px dashed var(--border-color);
+            margin-top: 0.5rem;
+            text-align:center;
+        }
+
+        .btn-adicionar {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-adicionar:hover {
+            transform: translateY(-2px);
+            
+        }
+
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+
+
+        /* Loading */
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+
+
+        .caixadeIcone{
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Responsividade */
+@media (max-width: 1200px) {
+    .previa-container {
+        right: calc(50% - 400px);
+        width: auto;
+    }
+}
+
+@media (max-width: 992px) {
+    .previa-container {
+        position: sticky; /* Mudado de fixed para sticky */
+        top: 100px; /* Mantém a mesma distância do header */
+        bottom: auto; /* Remove o bottom */
+        right: auto;
+        left: auto;
+        width: 100%; /* Volta a ocupar 100% da largura */
+        height: 120px; /* Mantém a altura original */
+        z-index: 950;
+        margin-bottom: 20px; /* Adiciona margem inferior */
+    }
+    
+    .conteudo-wrapper {
+        margin-bottom: 40px; /* Reduz a margem inferior */
+    }
+}
+
+@media (max-width: 768px) {
+    .card-editor {
+        padding: 1.5rem;
+    }
+    
+    .preco-valor {
+        font-size: 1.5rem;
+    }
+    .caixadeIcone{
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .card-titulo {
+        font-size: 1.1rem;
+    }
+    
+    .preco-quantidade-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .cor-opcao {
+        width: 40px;
+        height: 40px;
+    }
+    .caixadeIcone{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+        /* Dropdown customizado */
+        .dropdown-custom {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .dropdown-selecionado {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .dropdown-selecionado:hover {
+            border-color: var(--primary-color);
+        }
+
+        .dropdown-selecionado i {
+            transition: transform 0.3s;
+            color: var(--primary-color);
+        }
+
+        .dropdown-custom.ativo .dropdown-selecionado i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-opcoes {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 16px;
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-custom.ativo .dropdown-opcoes {
+            display: block;
+        }
+
+        .dropdown-opcao {
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-opcao:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-opcao:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .dropdown-opcao.selecionada {
+            background: var(--primary-color-light);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Garantir que a fonte seja aplicada ao texto da opção */
+        .dropdown-opcao {
+            font-family: inherit; /* Será sobrescrito por JavaScript */
+        }
+
+        /* Ajustes para mobile */
+        @media (max-width: 768px) {
+            .dropdown-opcoes {
+                max-height: 200px;
+            }
+        }
+
+
+
+        /* Estilos para o controle de largura */
+.largura-container {
+    margin: 20px 0;
+    padding-top: 15px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.largura-label {
+    color: #666;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.largura-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.largura-controles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.largura-btn {
+    width: 45px;
+    height: 45px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    color: var(--text-color);
+}
+
+.largura-btn:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.largura-input {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    background: white;
+    color: var(--text-color);
+}
+
+.largura-input::-webkit-inner-spin-button,
+.largura-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.dimensoes-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f0f0;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.dimensoes-info i.fa-times {
+    color: #999;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .largura-input {
+        width: 60px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .largura-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+
+/* CORREÇÃO: Ajustar a largura da caixa de cores secundária */
+#controles-cor-secundaria .card-conteudo {
+    padding: 0;
+    background: transparent;
+    margin-bottom: 0;
+}
+
+#selecao-cor-secundaria {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out, visibility 0.5s;
+    ">
+        <img src="../../imagens/logo1.png" alt="Logo K101" style="
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        ">
+
+        <div class="loader"></div>
+
+        <p style="margin-top: 20px; color: var(--primary-color); font-weight: 600; font-family: Segoe UI; letter-spacing: 1px;">
+            PREPARANDO EDITOR...
+        </p>
+    </div>
+    <header class="header">
+        <div class="container">
+            <div class="header-left">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo-container" onclick="window.location.href='../../index.html'" style="cursor: pointer;">
+                    <img src="../../imagens/logo.png" alt="K101" class="logo">
+                </div>
+            </div>
+            <div class="carrinho-icon">
+                <a href="../../carrinho.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="carrinho-count" id="carrinho-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="../../nav.html"><i class="fas fa-home"></i>Todos os Serviços</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Em manutenção</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <!-- PRÉVIA FIXA -->
+        <div class="previa-container">
+            <div class="previa-adesivo-container">
+                <svg id="svg-editor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="100%" height="100%">
+                    <defs>
+                        <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                            <feOffset dx="2" dy="2" />
+                            <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.5" />
+                            </feComponentTransfer>
+                            <feMerge>
+                                <feMergeNode />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <g filter="url(#dropShadow)">
+                        <text id="svg-texto-contorno" fill="none" stroke-width="0" stroke-linejoin="round" stroke-linecap="round"></text>
+                        <text id="svg-texto-frente"></text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- CABEÇALHO -->
+        <div class="cabecalho-editor">
+            <p style="font-size: 0.9rem; color:#8b8b8b">Crie um adesivo personalizado com algum NOME</p>
+            <button class="btn-voltar" onclick="window.location.href='../../index.html'">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+        </div>
+
+        
+
+        <!-- CONTEÚDO -->
+        <div class="conteudo-wrapper">
+            <div class="controles-edicao">
+                
+                <!-- CARD: NOME -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                        <i class="fas fa-pencil-alt"></i>
+                        <span>NOME</span>
+                    </div>
+                    <div class="card-conteudo">
+                        <input type="text" id="texto-adesivo" class="campo-texto" placeholder="Ex: Ana, João, Maria..." value="">
+                    </div>
+                </div>
+
+                <!-- CARD: FONTE - VERSÃO CUSTOMIZADA -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                        <i class="fas fa-font"></i>
+                        <span>FONTES</span>
+                    </div>
+                    <div class="card-conteudo">
+                        <!-- Dropdown customizado -->
+                        <div class="dropdown-custom" id="dropdown-fontes">
+                            <div class="dropdown-selecionado" id="fonte-selecionada">
+                                <span id="fonte-nome">Carregando...</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="dropdown-opcoes" id="dropdown-opcoes-fontes">
+                                <!-- Opções serão inseridas aqui via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD: COR PRINCIPAL -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                        <i class="fas fa-palette"></i>
+                        <span>COR PRINCIPAL</span>
+                    </div>
+                        <div class="card-conteudo">
+                            <p class="legenda-funcao">Material:</p>
+                            <select id="selecao-tipo-adesivo" class="campo-texto">
+                                <option value="vinil">Vinil Brilho</option>
+                                <option value="refletivo">Refletivo</option>
+                                <option value="especiais">Especiais</option>
+                            </select>
+                            <div class="selecao-cor" id="selecao-cor"></div>
+                            <p style="margin-top: 20px; color: #666; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> Imagem real do adesivo
+                            </p>
+                            <div class="visualizacao-de-material" id="visualizacao-de-material-primario"></div>
+                        </div>
+                        
+                        
+                </div>
+
+                <!-- CARD: ICONES -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                        <input class="card-seletor" type="checkbox" id="icone-ativo">
+                        <i class="fas fa-star"></i>
+                        <span>ICONES</span>
+                    </div>
+                    <div class="card-conteudo" id="controles-icone" style="display: none;">
+
+                        <!-- NOVA SEÇÃO: ÍCONES SVG -->
+                        <div class="card-conteudo" style="margin-top: 15px;">
+                            <p class="legenda-funcao">
+                                <i class=""></i> Ícones Decorativos
+                            </p>
+                            
+                            <!-- Grid de miniaturas de ícones -->
+                            <div id="icones-grid" class="caixadeIcone"></div>
+
+                            <!-- Posição do ícone -->
+                            <hr>
+                            <div style="margin-top: 10px;">
+                                <p class="legenda-funcao">Posição do ícone:</p>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option" >
+                                        <input type="radio" name="posicao-icone" id="icone-inicio" value="inicio" checked>
+                                        <span>No início</span>
+                                    </label>
+                                    <label class="checkbox-option" >
+                                        <input type="radio" name="posicao-icone" id="icone-final" value="final">
+                                        <span>No final</span>
+                                    </label>
+                                    <label class="checkbox-option" >
+                                        <input type="radio" name="posicao-icone" id="icone-ambos" value="ambos">
+                                        <span>Início e final</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- NOVO: Controle deslizante para tamanho do ícone -->
+                            <hr style="margin-top: 30px;">
+                            <div class="controle-deslizante" style="margin-top: 10px;">
+                                <label>
+                                    <p class="legenda-funcao">Tamanho do ícone</p>
+                                    <span class="valor-controle" id="tamanho-icone-valor">40</span>px
+                                </label>
+                                <input type="range" id="tamanho-icone" min="35" max="50" value="40" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Pequeno</span>
+                                    <span>Médio</span>
+                                    <span>Grande</span>
+                                </div>
+                            </div>
+                            <!-- NOVO: Controle deslizante para distância do ícone -->
+                            
+                            <div class="controle-deslizante" style="margin-top: 10px;">
+                                <label>
+                                    <p class="legenda-funcao">Distância do ícone</p>
+                                    <span class="valor-controle" id="distancia-icone-valor">25</span>px
+                                </label>
+                                <input type="range" id="distancia-icone" min="10" max="50" value="25" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Próximo</span>
+                                    <span>Médio</span>
+                                    <span>Distante</span>
+                                </div>
+                            </div>
+
+                            <!-- NOVO: Controle deslizante para altura do ícone -->
+                            
+                            <div class="controle-deslizante" style="margin-top: 15px;">
+                                <label>
+                                    <p class="legenda-funcao">Altura do ícone</p>
+                                    <span class="valor-controle" id="altura-icone-valor">85</span>px
+                                </label>
+                                <input type="range" id="altura-icone" min="75" max="100" value="85" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Acima</span>
+                                    <span>Central</span>
+                                    <span>Abaixo</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CARD: COR SECUNDARIA -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                        <input class="card-seletor" type="checkbox" id="destaques-ativo">
+                        <i class="fas fa-palette"></i>
+                        <span>COR SECUNDÁRIA</span>
+                    </div>
+                    <div class="card-conteudo" id="controles-cor-secundaria" style="display: none;">
+                        
+                        
+                        
+                        <p class="legenda-funcao" >Utilização da cor secundária</p>
+                        <div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="destaque-primeira-letra" checked>
+                                    <span>Primeira letra</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="destaque-primeiras-letras">
+                                    <span>Iniciais de cada palavra</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="destaque-especiais" >
+                                    <span>Caracteres especiais</span>
+                                </label><label class="checkbox-option">
+                                    <input type="checkbox" id="destaque-icone">
+                                    <span>Icone</span>
+                                </label>
+                            </div>
+
+                            <p style="margin-top: 10px; margin-bottom: 25px; color: #818181; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> VARIAÇÃO DE PREÇO - Adição de mais de um tipo de adesivo de cor diferente.
+                            </p>
+                        </div>
+                        <hr style="margin-top: 20px;">
+                        <p class="legenda-funcao">Cor Secondária</p>
+                        <div class="card-conteudo">
+                            
+                            <select id="selecao-tipo-secundario" class="campo-texto">
+                                <option value="vinil">Vinil Brilho</option>
+                                <option value="refletivo">Refletivo</option>
+                                <option value="especiais">Especiais</option>
+                            </select>
+                            <div class="selecao-cor" id="selecao-cor-secundaria"></div>
+                            <p style="margin-top: 20px; color: #666; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> Imagem real do adesivo
+                            </p>
+                                <div class="visualizacao-de-material" id="visualizacao-de-material-secundario"></div>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- CARD: BORDA -->
+                <div class="card-editor">
+                    <div class="card-titulo">
+                            <input class="card-seletor" type="checkbox" id="borda-ativa">
+                        <i class="fas fa-border-all"></i>
+                        <span>BORDA</span>     
+                    </div>
+                    <div class="card-conteudo" id="controles-filete" style="display: none;">
+
+
+                            <p style="margin-top: 10px; margin-bottom: 25px; color: #818181; font-size: 0.85rem; font-style: italic;">
+                                <i class="fas fa-info-circle"></i> VARIAÇÃO DE PREÇO - Adesivo a mais que vai no FUNDO do principal. É sobreposição de adesivos, dando aspecto de relevo.
+                            </p>
+                        
+                            <div class="card-titulo" style="margin-top: 10px;">
+                                
+                                <label class="opcao-cor-borda">
+                                    <span style="color: #555; font-weight: 500; margin-right: 20px;">Cor</span>
+                                    <input type="radio" name="cor-borda" id="borda-preta" value="preta" checked>
+                                    <span class="cor-preview preta"></span>
+
+                                    <input type="radio" name="cor-borda" id="borda-branca" value="branca">
+                                    <span class="cor-preview branca"></span>
+                                </label>
+                            </div>
+                            <hr>
+                            
+                            <div class="controle-deslizante">
+                                <label>
+                                    <p class="legenda-funcao">Grossura</p>
+                                    <span class="valor-controle" id="grossura-valor">3</span>
+                                </label>
+                                <input type="range" id="grossura-borda" min="2" max="5" value="3" step="1">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+                                    <span>Fina</span>
+                                    <span>Média</span>
+                                    <span>Grossa</span>
+                                </div>
+                            </div>
+                            <hr>
+                    </div>
+                </div>
+
+                <!-- CARD: PREÇO E QUANTIDADE -->
+                <div class="card-editor">
+                    <div class="card-conteudo">
+                        <div class="preco-quantidade-container">
+                            <div class="preco-info">
+                                <span class="preco-label">Unitário</span>
+                                <span class="preco-valor" id="preco-unitario">R$ 10,00</span>
+                            </div>
+                            
+                            <div class="quantidade-container">
+                                <span class="preco-label">Qtd</span>
+                                <div class="quantidade-controles" style="position: absolute; right: 40px;">
+                                    <button class="quantidade-btn" id="diminuir-qtd" onclick="alterarQuantidadePersonalizado(-1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" id="quantidade-personalizado" class="quantidade-input" value="1" min="1" max="99" readonly>
+                                    <button class="quantidade-btn" id="aumentar-qtd" onclick="alterarQuantidadePersonalizado(1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- NOVO: Controle de largura do adesivo (em cm) - com mesma aparência da quantidade -->
+                        <div style="margin: 20px 0; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span class="preco-label">Largura do adesivo</span>
+                                <!-- Controles no MESMO ESTILO da quantidade -->
+                                <div class="quantidade-controles">
+                                    <button class="quantidade-btn" id="diminuir-largura" style="width: 38px; height: 38px;">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    
+                                    <input type="number" id="largura-personalizado" class="quantidade-input" value="15" min="15" max="70" step="5" readonly style="width: 60px; height: 38px; font-size: 1rem;">
+                                    
+                                    <button class="quantidade-btn" id="aumentar-largura" style="width: 38px; height: 38px;">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Informações de dimensão proporcional (mantém o estilo atual) -->
+                            <div class="dimensoes-info" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 16px; text-align: center;">
+                                <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                    <div>
+                                        <span style="color: #666; font-size: 0.9rem; display: block;">Largura</span>
+                                        <span id="largura-final" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">15</span>
+                                        <span style="color: #666;">cm</span>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-times" style="color: #999; font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div>
+                                        <span style="color: #666; font-size: 0.9rem; display: block;">Altura</span>
+                                        <span id="altura-proporcional" style="font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">--</span>
+                                        <span style="color: #666;">cm</span>
+                                    </div>
+                                </div>
+                                <p style="margin-top: 10px; color: #666; font-size: 0.85rem; font-style: italic;">
+                                    <i class="fas fa-info-circle"></i> Altura calculada proporcionalmente ao texto e ícones
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="preco-total-container" id="preco-total">
+                            Total: R$ 10,00
+                        </div>
+
+                        <button class="btn-adicionar" id="adicionar-carrinho">
+                            <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificações -->
+    <div id="notificacao" class="notificacao"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
+    <script>
+        // ===== CONFIGURAÇÕES =====
+        const CATEGORIAS_ADESIVO = {
+            vinil: {
+                nome: 'Vinil Brilho (Padrão)',
+                precoAdicional: 1,
+                cores: [
+                    { nome: 'Preto', codigo: '#000000', arquivo: 'url("../../imagens/textura/Preto-vinil.png")' },
+                    { nome: 'Branco', codigo: '#FFFFFF', arquivo: 'url("../../imagens/textura/Branco-vinil.png")' },
+                    { nome: 'Prata', codigo: '#D1D1D1', arquivo: 'url("../../imagens/textura/Prata-vinil.png")' },
+                    { nome: 'Vermelho', codigo: '#D91108', arquivo: 'url("../../imagens/textura/Vermelho-vinil.png")' },
+                    { nome: 'Laranja', codigo: '#E47429', arquivo: 'url("../../imagens/textura/Laranja-vinil.png")' },
+                    { nome: 'Amarelo', codigo: '#FBB716', arquivo: 'url("../../imagens/textura/Amarelo-vinil.png")' },
+                    { nome: 'Azul escuro', codigo: '#0840D7', arquivo: 'url("../../imagens/textura/Azul-escuro-vinil.png")' },
+                    { nome: 'Azul claro', codigo: '#08C8ED', arquivo: 'url("../../imagens/textura/Azul-claro-vinil.png")' },
+                    { nome: 'Verde escuro', codigo: '#087636', arquivo: 'url("../../imagens/textura/Verde-escuro-vinil.png")' },
+                    { nome: 'Verde claro', codigo: '#36BF36', arquivo: 'url("../../imagens/textura/Verde-claro-vinil.png")' },
+                    { nome: 'Verde florescente', codigo: '#c7f000', arquivo: 'url("../../imagens/textura/Verde-florescente-vinil.png")' },
+                    { nome: 'Roxo', codigo: '#6B2690', arquivo: 'url("../../imagens/textura/Roxo-vinil.png")' },
+                    { nome: 'Rosa', codigo: '#df1a9a', arquivo: 'url("../../imagens/textura/Rosa-vinil.png")' },
+                    { nome: 'Pele', codigo: '#EDBFBF', arquivo: 'url("../../imagens/textura/Pele-vinil.png")' },
+                ]
+            },
+            refletivo: {
+                nome: 'Refletivo (Segurança)',
+                precoAdicional: 1.05,
+                cores: [
+                    { nome: 'Branco Refletivo', codigo: '#E6E6E6', arquivo: 'url("../../imagens/textura/Branco-refletivo.png")' },
+                    { nome: 'Vermelho Refletivo', codigo: '#FF0000', arquivo: 'url("../../imagens/textura/Vermelho-refletivo.png")' },
+                    { nome: 'Laranja Refletivo', codigo: '#FF571A', arquivo: 'url("../../imagens/textura/Laranja-refletivo.png")' },
+                    { nome: 'Amarelo Refletivo', codigo: '#FFF000', arquivo: 'url("../../imagens/textura/Amarelo-refletivo.png")' },
+                    { nome: 'Azul Refletivo', codigo: '#0000FF', arquivo: 'url("../../imagens/textura/Azul-refletivo.png")' },
+                    { nome: 'Verde Refletivo', codigo: '#00CE4F',arquivo: 'url("../../imagens/textura/Verde-refletivo.png")' },
+                ]
+            },
+            especiais: {
+                nome: 'Especiais',
+                precoAdicional: 1.05,
+                cores: [
+                    { nome: 'Holografico', codigo: '#EDCBE4', arquivo: 'url("../../imagens/textura/Hologra.png")' },
+                    
+                ]
+            },
+        };
+
+        const FONTES_DISPONIVEIS = [
+            { nome: 'arialbd', arquivo: 'url("../fontes/arialbd.ttf")' },
+            { nome: 'balmoral-d', arquivo: 'url("../fontes/balmoral-d.ttf")' },
+            { nome: 'Barett Street', arquivo: 'url("../fontes/Barett Street.ttf")' },
+            { nome: 'Berani', arquivo: 'url("../fontes/Berani.otf")' },
+            { nome: 'Birthlong', arquivo: 'url("../fontes/Birthlong.ttf")' },
+            { nome: 'Embassy BT', arquivo: 'url("../fontes/Embassy BT.ttf")' },
+            { nome: 'Exotc350 Bd BT Bold', arquivo: 'url("../fontes/Exotc350 Bd BT Bold.ttf")' },
+            { nome: 'GraffitiYouth-Regular', arquivo: 'url("../fontes/GraffitiYouth-Regular.otf")' },
+            { nome: 'MickstoneCrush', arquivo: 'url("../fontes/MickstoneCrush.ttf")' },
+            { nome: 'Mostwasted', arquivo: 'url("../fontes/Mostwasted.ttf")' },
+            { nome: 'NEO CYBERN', arquivo: 'url("../fontes/NEO CYBERN.otf")' },
+            { nome: 'Noxlock-FreeT', arquivo: 'url("../fontes/Noxlock-Free.otf")' },
+            { nome: 'Pagal Font', arquivo: 'url("../fontes/Pagal Font.TTF")' },
+            { nome: 'revue-bold', arquivo: 'url("../fontes/revue-bold.ttf")' },
+            { nome: 'Street Wars Demo', arquivo: 'url("../fontes/Street Wars Demo.otf")' },
+            { nome: 'Vandals Puppies', arquivo: 'url("../fontes/Vandals Puppies.ttf")' },
+        ];
+
+        // ===== ELEMENTOS DOM =====
+        const previaElement = document.getElementById('previa-adesivo');
+        const textoInput = document.getElementById('texto-adesivo');
+        const corContainer = document.getElementById('selecao-cor');
+        
+        const bordaCheckbox = document.getElementById('borda-ativa');
+        const controlesFilete = document.getElementById('controles-filete');
+        const grossuraSlider = document.getElementById('grossura-borda');
+        const grossuraValor = document.getElementById('grossura-valor');
+        const bordaPretaRadio = document.getElementById('borda-preta');
+        const bordaBrancaRadio = document.getElementById('borda-branca');
+        
+        // NOVOS ELEMENTOS PARA DESTAQUES
+        const corSecundariaCheckbox = document.getElementById('destaques-ativo');
+        const iconeCheckbox = document.getElementById('icone-ativo');
+
+
+
+
+        const controlesCorSecundaria = document.getElementById('controles-cor-secundaria');
+        const controlesIcone = document.getElementById('controles-icone');
+
+        
+        const tipoSecundarioSelect = document.getElementById('selecao-tipo-secundario');
+        const corSecundariaContainer = document.getElementById('selecao-cor-secundaria');
+
+
+        const destaqueIcone = document.getElementById('destaque-icone');
+        const destaquePrimeiraLetra = document.getElementById('destaque-primeira-letra');
+        const destaquePrimeirasLetras = document.getElementById('destaque-primeiras-letras');
+        const destaqueEspeciais = document.getElementById('destaque-especiais');
+        
+        const controleGrossura = document.getElementById('controle-grossura');
+        const controleArredondamento = document.getElementById('controle-arredondamento');
+        const controleCor = document.getElementById('controle-cor');
+
+        const svgTextoFrente = document.getElementById('svg-texto-frente');
+        const svgTextoContorno = document.getElementById('svg-texto-contorno');
+
+        // ===== ESTADO =====
+        let fonteSelecionada = FONTES_DISPONIVEIS[0];
+        let bordaAtiva = false;
+        let corBorda = 'preta';
+        let grossuraAtual = 3;
+        let arredondamentoAtual = 1;
+        let larguraAdesivo = 15;
+
+        let timeoutRedimensionamento = null;
+
+
+
+        let iconeAtivo = false;
+        let tamanhoIcone = 40;
+        let alturaIcone = 85;
+        let distanciaIcone = 25;
+
+        let tipoSelecionado = 'vinil';
+        let corSelecionada = CATEGORIAS_ADESIVO.vinil.cores[0];
+        
+        let corSecundariaAtivo = false;
+
+        let corIconeSelecionado = false;
+        let tipoSecundarioSelecionado = 'vinil';
+        let corSecundariaSelecionada = CATEGORIAS_ADESIVO.vinil.cores[0];
+
+        let iconesDisponiveis = [];
+        let iconeSelecionado = null;
+        let posicaoIcone = 'inicio';
+
+        // NOVA VARIÁVEL PARA ARMAZENAR O SVG COMPLETO
+        let svgCompletoAtual = null;
+
+        //Quantidades possiveis de compra
+        const QUANTIDADES_FIXAS = [1, 2, 3, 5, 10, 25, 50, 100];
+
+
+async function carregarIcones() {
+    try {
+        // Lista dos arquivos SVG que você tem na pasta
+        const arquivosIcones = [
+            'borboleta.svg',
+            'caveira1.svg',
+            'caveira2.svg',
+            'chama.svg',
+            'coracao1.svg',
+            'coracao2.svg',
+            'flor1.svg',
+            'cifrao.svg',
+            'grau.svg',
+            'faca1.svg',
+            'faca2.svg',
+            'arma2.svg',
+            'forte.svg',
+            'jogador.svg',
+            'arma1.svg',
+            
+            
+
+            
+            // Adicione aqui todos os nomes dos seus arquivos SVG
+        ];
+
+        const iconesGrid = document.getElementById('icones-grid');
+        iconesGrid.innerHTML = '<div style="grid-column: span 5; text-align: center; padding: 20px;">Carregando ícones...</div>';
+
+        for (const arquivo of arquivosIcones) {
+            try {
+                // Carrega o conteúdo do SVG
+                const resposta = await fetch(`../../imagens/icones/${arquivo}`);
+                const svgTexto = await resposta.text();
+                
+                // Extrai o path do SVG
+                const parser = new DOMParser();
+                const svgDoc = parser.parseFromString(svgTexto, 'image/svg+xml');
+                const svgElement = svgDoc.querySelector('svg');
+                
+                if (svgElement) {
+                    // Tenta encontrar o path
+                    let pathContent = '';
+                    const pathElement = svgElement.querySelector('path');
+                    if (pathElement) {
+                        pathContent = pathElement.getAttribute('d');
+                    } else {
+                        // Se não encontrar path, pega todo o conteúdo
+                        pathContent = svgElement.innerHTML;
+                    }
+
+                    iconesDisponiveis.push({
+                        nome: arquivo.replace('.svg', ''),
+                        arquivo: arquivo,
+                        path: pathContent,
+                        svgCompleto: svgTexto
+                    });
+                }
+            } catch (erro) {
+                console.warn(`Erro ao carregar ícone ${arquivo}:`, erro);
+            }
+        }
+
+        // Renderiza os ícones no grid
+        renderizarGridIcones();
+
+    } catch (erro) {
+        console.error('Erro ao carregar ícones:', erro);
+        document.getElementById('icones-grid').innerHTML = 
+            '<div style="grid-column: span 5; text-align: center; color: red;">Erro ao carregar ícones</div>';
+    }
+}
+
+// ===== PRÉ-CARREGAMENTO DE TEXTURAS =====
+async function preCarregarTexturas() {
+    console.log('Iniciando pré-carregamento das texturas...');
+    
+    // Coletar todas as URLs de textura de todas as categorias
+    const texturasParaCarregar = new Set();
+    
+    Object.values(CATEGORIAS_ADESIVO).forEach(categoria => {
+        categoria.cores.forEach(cor => {
+            if (cor.arquivo && cor.arquivo.startsWith('url(')) {
+                // Extrair a URL real do formato url("...")
+                const url = cor.arquivo.replace(/url\(["']?|["']?\)/g, "");
+                texturasParaCarregar.add(url);
+            }
+        });
+    });
+    
+    console.log(`Pré-carregando ${texturasParaCarregar.size} texturas...`);
+    
+    // Criar promessas para carregar cada imagem
+    const promessasCarregamento = Array.from(texturasParaCarregar).map(url => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                console.log(`✅ Textura carregada: ${url.split('/').pop()}`);
+                resolve(url);
+            };
+            img.onerror = () => {
+                console.warn(`❌ Erro ao carregar textura: ${url}`);
+                reject(url);
+            };
+            img.src = url;
+        });
+    });
+    
+    try {
+        // Aguardar todas as imagens carregarem (ou falharem)
+        await Promise.allSettled(promessasCarregamento);
+        console.log('✅ Todas as texturas foram processadas!');
+    } catch (error) {
+        console.warn('Algumas texturas falharam ao carregar:', error);
+    }
+}
+
+function renderizarGridIcones() {
+    const grid = document.getElementById('icones-grid');
+    grid.innerHTML = '';
+
+    iconesDisponiveis.forEach((icone, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.style.cssText = `
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 8px;
+            padding: 5px;
+            cursor: pointer;
+            border: 2px solid ${iconeSelecionado === icone ? 'var(--primary-color)' : '#ddd'};
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        
+        // Cria um elemento SVG para pré-visualização
+        itemDiv.innerHTML = icone.svgCompleto;
+        
+        // Ajusta o SVG para caber no quadrado
+        const svg = itemDiv.querySelector('svg');
+        if (svg) {
+            svg.setAttribute('width', '40');
+            svg.setAttribute('height', '40');
+            svg.style.maxWidth = '40px';
+            svg.style.maxHeight = '40px';
+        }
+        
+        itemDiv.addEventListener('click', () => {
+            iconeSelecionado = icone;
+            renderizarGridIcones();
+            atualizarPrevia(true);
+            atualizarDisplayLargura();
+            atualizarDisponibilidadeDestaques();
+        });
+        
+        grid.appendChild(itemDiv);
+    });
+}
+
+function criarIconeSVG(posicaoX, posicaoY) {
+    if (!iconeSelecionado) return null;
+
+    const ns = "http://www.w3.org/2000/svg";
+    const grupo = document.createElementNS(ns, "g");
+    grupo.classList.add('icone-decorativo');
+
+    // Determina qual cor usar baseado no destaque
+    const corParaAplicar = (corSecundariaAtivo && destaqueIcone.checked) ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
+        
+    // Carrega o SVG do ícone
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(iconeSelecionado.svgCompleto, 'image/svg+xml');
+    const svgOriginal = svgDoc.querySelector('svg');
+    
+    if (svgOriginal) {
+        // Configurações da borda
+        const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+        const strokeWidth = bordaAtiva ? (grossuraAtual * 2) : 0;
+        const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
+        
+        // Descobre as dimensões originais do ícone
+        let viewBox = svgOriginal.getAttribute('viewBox');
+        let width = 100;
+        let height = 100;
+        
+        if (viewBox) {
+            const viewBoxParts = viewBox.split(' ').map(Number);
+            if (viewBoxParts.length === 4) {
+                width = viewBoxParts[2];
+                height = viewBoxParts[3];
+            }
+        } else {
+            width = parseFloat(svgOriginal.getAttribute('width')) || 100;
+            height = parseFloat(svgOriginal.getAttribute('height')) || 100;
+        }
+        
+        // Usa o tamanho definido pelo usuário
+        const tamanhoAlvo = tamanhoIcone;
+        
+        // Calcula a escala
+        const escalaX = tamanhoAlvo / width;
+        const escalaY = tamanhoAlvo / height;
+        const escalaFinal = Math.min(escalaX, escalaY);
+        
+        // COMPENSAÇÃO da borda para visualização
+        const strokeWidthCompensado = bordaAtiva ? strokeWidth / escalaFinal : 0;
+        
+        // Extrair todos os paths do ícone original
+        const pathElements = svgOriginal.querySelectorAll('path');
+        
+        pathElements.forEach(path => {
+            const d = path.getAttribute('d');
+            if (!d) return;
+            
+            // Cria o path colorido (frente)
+            const pathFrente = document.createElementNS(ns, "path");
+            pathFrente.setAttribute('d', d);
+            pathFrente.setAttribute('fill', corParaAplicar);
+            pathFrente.setAttribute('transform', `translate(${posicaoX - (tamanhoAlvo/2)}, ${posicaoY - (tamanhoAlvo/2)}) scale(${escalaFinal})`);
+            grupo.appendChild(pathFrente);
+            
+            // Se a borda estiver ativa, cria o path da borda (atrás)
+            if (bordaAtiva) {
+                const pathBorda = document.createElementNS(ns, "path");
+                pathBorda.setAttribute('d', d);
+                pathBorda.setAttribute('fill', 'none');
+                pathBorda.setAttribute('stroke', corHexBorda);
+                pathBorda.setAttribute('stroke-width', strokeWidthCompensado);
+                pathBorda.setAttribute('stroke-linejoin', lineJoin);
+                pathBorda.setAttribute('stroke-linecap', 'round');
+                pathBorda.setAttribute('transform', `translate(${posicaoX - (tamanhoAlvo/2)}, ${posicaoY - (tamanhoAlvo/2)}) scale(${escalaFinal})`);
+                
+                // Insere a borda ANTES do path colorido (para ficar atrás)
+                grupo.insertBefore(pathBorda, pathFrente);
+            }
+        });
+    }
+    
+    return grupo;
+}
+
+        // ===== FUNÇÕES =====
+function calcularPrecoUnitario() {
+
+    let precoBase = 0;
+    const quantidade = parseInt(document.getElementById('quantidade-personalizado').value) || 1;
+
+    // Tabela de preços
+    if (larguraAdesivo<=15) precoBase = 20.00;
+    else if (larguraAdesivo<=20) precoBase = 20.00;
+    else if (larguraAdesivo<=25) precoBase = 25.00;
+    else if (larguraAdesivo<=35) precoBase = 30.00;
+    else if (larguraAdesivo<=45) precoBase = 30.00;
+    else if (larguraAdesivo<=50) precoBase = 35.00;
+    else if (larguraAdesivo<=60) precoBase = 40.00;
+    else if (larguraAdesivo<=70) precoBase = 45.00;
+    else if (larguraAdesivo<=80) precoBase = 55.00;
+    else if (larguraAdesivo<=90) precoBase = 60.00;
+    else if (larguraAdesivo<=100) precoBase = 70.00;
+
+    //Desconto por quantidade
+    if (quantidade === QUANTIDADES_FIXAS[0]) precoBase = precoBase;
+    else if (quantidade === QUANTIDADES_FIXAS[1]) precoBase *= 0.75;
+    else if (quantidade === QUANTIDADES_FIXAS[2]) precoBase *= 0.60;
+    else if (quantidade <= QUANTIDADES_FIXAS[3]) precoBase *= 0.50;
+    else if (quantidade <= QUANTIDADES_FIXAS[4]) precoBase *= 0.35;
+    else if (quantidade <= QUANTIDADES_FIXAS[5]) precoBase *= 0.25;
+    else if (quantidade <= QUANTIDADES_FIXAS[6]) precoBase *= 0.23;
+    else if (quantidade <= QUANTIDADES_FIXAS[7]) precoBase *= 0.22;
+   
+    // Soma o adicional do material
+    precoBase *= CATEGORIAS_ADESIVO[tipoSelecionado].precoAdicional;
+    
+    const Pl = document.getElementById("destaque-primeira-letra");
+    const In = document.getElementById("destaque-primeiras-letras");
+    const Ce = document.getElementById("destaque-especiais");
+    const Ic = document.getElementById("destaque-icone");
+
+
+
+    if (bordaAtiva) precoBase *= 1.1 * ((larguraAdesivo/(larguraAdesivo*quantidade*10))+1);
+    if ((Pl.checked === true || In.checked === true || Ce.checked === true || Ic.checked === true) && corSecundariaAtivo) precoBase *= 1.1;
+    
+    return precoBase;
+}
+
+function atualizarPrecos() {
+    const precoUnitario = calcularPrecoUnitario();
+    const quantidade = parseInt(document.getElementById('quantidade-personalizado').value) || 1;
+    const precoTotal = precoUnitario * quantidade;
+    
+    document.getElementById('preco-unitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
+    document.getElementById('preco-total').textContent = `Total: R$ ${precoTotal.toFixed(2)}`;
+}
+
+
+function calcularAlturaRealDoSVG(svgString, larguraDesejadaCm) {
+
+    // cria um container invisível
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.visibility = "hidden";
+    container.style.pointerEvents = "none";
+    container.style.left = "-9999px";
+
+    document.body.appendChild(container);
+
+    // insere o SVG real
+    container.innerHTML = svgString;
+
+    const svg = container.querySelector("svg");
+
+    if (!svg) {
+        container.remove();
+        return 0;
+    }
+
+    const bbox = svg.getBBox();
+
+    const larguraReal = bbox.width;
+    const alturaReal = bbox.height;
+
+    container.remove();
+
+    if (larguraReal === 0) return 0;
+
+    const proporcao = alturaReal / larguraReal;
+
+    const alturaCm = larguraDesejadaCm * proporcao;
+
+    return alturaCm.toFixed(1);
+}
+
+
+
+
+function atualizarDisplayLargura() {
+
+    
+
+    const larguraInput = document.getElementById('largura-personalizado');
+    const larguraValor = document.getElementById('largura-valor');
+    const larguraFinal = document.getElementById('largura-final');
+    const alturaProporcional = document.getElementById('altura-proporcional');
+    
+    if (larguraInput) larguraInput.value = larguraAdesivo;
+    if (larguraValor) larguraValor.textContent = larguraAdesivo;
+    if (larguraFinal) larguraFinal.textContent = larguraAdesivo;
+    
+    // Pequeno delay para garantir que o SVG foi renderizado
+    setTimeout(() => {
+        // Calcular e mostrar altura proporcional
+        if (alturaProporcional) {
+            const altura = calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo);
+            alturaProporcional.textContent = altura;
+        }
+    }, 50);
+
+    
+}
+
+function alterarLarguraPersonalizado(delta) {
+    // Cada passo equivale a 5cm
+    let novaAltura = larguraAdesivo + (delta * 5);
+    
+    // Respeitar os limites
+    if (novaAltura < 15) novaAltura = 15;
+    if (novaAltura > 100) novaAltura = 100;
+    
+    larguraAdesivo = novaAltura;
+    atualizarDisplayLargura();
+    
+    // A largura não precisa atualizar a prévia, apenas os cálculos de altura
+}
+
+
+function alterarQuantidadePersonalizado(delta) {
+    const input = document.getElementById('quantidade-personalizado');
+    const valorAtual = parseInt(input.value);
+    
+    // Encontra o índice do valor atual no array
+    let indiceAtual = QUANTIDADES_FIXAS.indexOf(valorAtual);
+    
+    // Se o valor atual não estiver no array (por algum motivo), encontra o mais próximo
+    if (indiceAtual === -1) {
+        // Encontra o valor mais próximo no array
+        let valorMaisProximo = QUANTIDADES_FIXAS.reduce((prev, curr) => {
+            return (Math.abs(curr - valorAtual) < Math.abs(prev - valorAtual) ? curr : prev);
+        });
+        indiceAtual = QUANTIDADES_FIXAS.indexOf(valorMaisProximo);
+    }
+    
+    // Calcula o novo índice baseado no delta
+    let novoIndice = indiceAtual + delta;
+    
+    // Garante que o índice está dentro dos limites do array
+    if (novoIndice < 0) novoIndice = 0;
+    if (novoIndice >= QUANTIDADES_FIXAS.length) novoIndice = QUANTIDADES_FIXAS.length - 1;
+    
+    // Atualiza o valor do input
+    const novaQuantidade = QUANTIDADES_FIXAS[novoIndice];
+    input.value = novaQuantidade;
+    
+    // Atualiza os preços
+    atualizarPrecos();
+}
+
+function atualizarVisualizacaoMaterial(tipoId, corSelecionada, elementoId) {
+    const elemento = document.getElementById(elementoId);
+    if (!elemento) return;
+    
+    const categoria = CATEGORIAS_ADESIVO[tipoId];
+    
+    // Encontra a cor selecionada na categoria atual
+    const cor = categoria.cores.find(c => c.codigo === corSelecionada.codigo) || categoria.cores[0];
+    
+    if (cor && cor.arquivo) {
+        // Aplica a imagem de fundo com blend mode para simular a cor
+        elemento.style.background = `
+            
+            ${cor.arquivo}
+        `;
+        elemento.style.backgroundSize = 'cover';
+        elemento.style.backgroundPosition = 'center';
+        elemento.style.backgroundRepeat = 'no-repeat';
+    } else {
+        // Fallback: apenas a cor sólida
+        elemento.style.background = cor.codigo;
+    }
+}
+
+function renderizarCores(tipoId, container, isSecundario = false) {
+    container.innerHTML = '';
+    const categoria = CATEGORIAS_ADESIVO[tipoId];
+    
+    categoria.cores.forEach((cor, index) => {
+        const corDiv = document.createElement('div');
+        corDiv.className = `cor-opcao ${index === 0 ? 'selecionada' : ''}`;
+        corDiv.style.backgroundColor = cor.codigo;
+        corDiv.dataset.cor = cor.codigo;
+        corDiv.dataset.nome = cor.nome;
+        corDiv.dataset.arquivo = cor.arquivo;
+        corDiv.title = cor.nome;
+        container.appendChild(corDiv);
+        
+        if(index === 0) {
+            if (!isSecundario) {
+                corSelecionada = cor;
+                atualizarVisualizacaoMaterial(tipoId, cor, 'visualizacao-de-material-primario');
+            } else {
+                corSecundariaSelecionada = cor;
+                atualizarVisualizacaoMaterial(tipoId, cor, 'visualizacao-de-material-secundario');
+            }
+        }
+    });
+}
+
+// Variável para controlar o dropdown
+let dropdownAtivo = false;
+
+// Função para criar o dropdown customizado
+function inicializarDropdownFontes() {
+    const dropdown = document.getElementById('dropdown-fontes');
+    const selecionado = document.getElementById('fonte-selecionada');
+    const nomeFonte = document.getElementById('fonte-nome');
+    const opcoesContainer = document.getElementById('dropdown-opcoes-fontes');
+    
+    // Limpar e preencher opções
+    opcoesContainer.innerHTML = '';
+    FONTES_DISPONIVEIS.forEach((fonte, index) => {
+        const opcao = document.createElement('div');
+        opcao.className = `dropdown-opcao ${index === 0 ? 'selecionada' : ''}`;
+        opcao.textContent = fonte.nome;
+        
+        // Aplicar a fonte ao texto da opção
+        if (fonte.arquivo.startsWith('url(')) {
+            opcao.style.fontFamily = fonte.nome;
+        } else {
+            opcao.style.fontFamily = fonte.arquivo;
+        }
+        
+        opcao.dataset.indice = index;
+        opcao.dataset.nome = fonte.nome;
+        
+        opcao.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Atualizar seleção
+            document.querySelectorAll('.dropdown-opcao').forEach(opt => {
+                opt.classList.remove('selecionada');
+            });
+            opcao.classList.add('selecionada');
+            
+            // Atualizar texto do selecionado
+            nomeFonte.textContent = fonte.nome;
+            
+            // Aplicar a fonte ao texto do selecionado também
+            if (fonte.arquivo.startsWith('url(')) {
+                nomeFonte.style.fontFamily = fonte.nome;
+            } else {
+                nomeFonte.style.fontFamily = fonte.arquivo;
+            }
+            
+            // Atualizar variável
+            fonteSelecionada = fonte;
+            
+            // Fechar dropdown
+            dropdown.classList.remove('ativo');
+            dropdownAtivo = false;
+            
+            // Atualizar prévia
+            atualizarPrevia(true);
+            atualizarPrecos();
+            atualizarDisplayLargura();
+        });
+        
+        opcoesContainer.appendChild(opcao);
+    });
+    
+    // Configurar clique no selecionado
+    selecionado.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('ativo');
+        dropdownAtivo = dropdown.classList.contains('ativo');
+    });
+    
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('ativo');
+            dropdownAtivo = false;
+        }
+    });
+    
+    // Inicializar com a primeira fonte
+    if (FONTES_DISPONIVEIS.length > 0) {
+        nomeFonte.textContent = FONTES_DISPONIVEIS[0].nome;
+        if (FONTES_DISPONIVEIS[0].arquivo.startsWith('url(')) {
+            nomeFonte.style.fontFamily = FONTES_DISPONIVEIS[0].nome;
+        } else {
+            nomeFonte.style.fontFamily = FONTES_DISPONIVEIS[0].arquivo;
+        }
+    }
+}
+
+
+function inicializarOpcoes() {
+    renderizarCores('vinil', corContainer, false);
+    renderizarCores('vinil', corSecundariaContainer, true);
+
+    // Não precisa mais do loop para criar options no select
+    FONTES_DISPONIVEIS.forEach((fonte, index) => {
+        if (fonte.arquivo.startsWith('url(')) {
+            const fontFace = `
+                @font-face {
+                    font-family: '${fonte.nome}';
+                    src: ${fonte.arquivo};
+                }
+            `;
+            document.head.appendChild(document.createElement('style')).textContent = fontFace;
+        }
+    });
+    
+    // Inicializar dropdown customizado
+    inicializarDropdownFontes();
+}
+
+function eCorClara(color) {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    
+    return luma > 128;
+}
+
+function atualizarFundoPrevia() {
+    const previaContainer = document.querySelector('.previa-container');
+    
+    let corParaTeste;
+    
+    if (bordaAtiva) {
+        corParaTeste = corBorda === 'branca' ? '#FFFFFF' : '#000000';
+    } else {
+        corParaTeste = corSelecionada.codigo;
+    }
+
+    if (eCorClara(corParaTeste)) {
+        previaContainer.style.backgroundColor = '#404040';
+        previaContainer.style.backgroundImage = 'radial-gradient(circle, #555 1px, transparent 1px)';
+        previaContainer.style.borderColor = 'var(--primary-color)';
+    } else {
+        previaContainer.style.backgroundColor = '#f8f9fa';
+        previaContainer.style.backgroundImage = 'radial-gradient(circle, #ccc 1px, transparent 1px)';
+        previaContainer.style.borderColor = 'var(--primary-color)';
+    }
+}
+
+function aplicarDestaquesAoTexto(texto, corPrincipal, corSecundaria) {
+    if (!corSecundariaAtivo || !texto) return { textoPrincipal: texto, destaques: [] };
+
+    const posicoesDestaque = new Set();
+
+    // Verificar quais checkboxes estão ativos
+    const primeiraAtivo = document.getElementById('destaque-primeira-letra').checked;
+    const primeirasAtivo = document.getElementById('destaque-primeiras-letras').checked;
+    const especiaisAtivo = document.getElementById('destaque-especiais').checked;
+
+    // Se nenhuma opção estiver ativa, não aplica destaques
+    if (!primeiraAtivo && !primeirasAtivo && !especiaisAtivo) {
+        return { textoPrincipal: texto, destaques: [] };
+    }
+
+    // Função auxiliar para verificar se é letra (incluindo acentuadas)
+    const isLetra = (char) => /[a-zA-Z\u00C0-\u00FF]/.test(char);
+    
+    // Função auxiliar para verificar se é número
+    const isNumero = (char) => /[0-9]/.test(char);
+
+    // 1. Destacar primeira letra (se ativo)
+    if (primeiraAtivo && texto.length > 0) {
+        const primeiraLetra = texto[0];
+        if (isLetra(primeiraLetra)) { // Apenas letras, ignora números
+            posicoesDestaque.add(0);
+        }
+    }
+
+    // 2. Destacar primeiras letras de cada palavra (apenas palavras com 3+ letras)
+    if (primeirasAtivo) {
+        let i = 0;
+        while (i < texto.length) {
+            // Pular caracteres que não são letras
+            while (i < texto.length && !isLetra(texto[i])) {
+                i++;
+            }
+            
+            if (i < texto.length && isLetra(texto[i])) {
+                const inicioPalavra = i;
+                // Contar tamanho da palavra (só letras)
+                let tamanhoPalavra = 0;
+                while (i < texto.length && isLetra(texto[i])) {
+                    tamanhoPalavra++;
+                    i++;
+                }
+                
+                // Só destacar primeira letra se palavra tiver 3 ou mais letras
+                if (tamanhoPalavra >= 3) {
+                    posicoesDestaque.add(inicioPalavra);
+                }
+            }
+        }
+    }
+
+    // 3. Destacar caracteres especiais (incluindo números agora)
+    if (especiaisAtivo) {
+        for (let i = 0; i < texto.length; i++) {
+            const char = texto[i];
+            // Caracteres especiais = NÃO é letra E NÃO é espaço
+            // AGORA INCLUI NÚMEROS também!
+            if (!isLetra(char) && !/\s/.test(char)) {
+                posicoesDestaque.add(i);
+            }
+        }
+    }
+
+    // Converter Set para array de objetos
+    const destaquesArray = Array.from(posicoesDestaque)
+        .sort((a, b) => a - b)
+        .map(posicao => ({
+            posicao: posicao,
+            caractere: texto[posicao]
+        }));
+
+    return { textoPrincipal: texto, destaques: destaquesArray };
+}
+
+// NOVA FUNÇÃO: Gerar SVG completo com paths
+async function gerarSVGCompleto() {
+    const texto = textoInput.value.trim() || '';
+    const familiaFonte = fonteSelecionada.arquivo.startsWith('url(') ? `'${fonteSelecionada.nome}'` : fonteSelecionada.arquivo;
+
+    if (!texto) {
+        return null;
+    }
+
+    const fontSize = 50;
+    const xCentro = 400;
+    const yBase = 100;
+    
+    let svgString;
+    
+    try {
+        // Extrai o caminho correto da fonte (remove 'url(""' e '")"')
+        let urlFonte = fonteSelecionada.arquivo;
+        
+        // Se for fonte personalizada (com url)
+        if (urlFonte.startsWith('url(')) {
+            urlFonte = urlFonte.replace(/url\(["']?|["']?\)/g, "");
+        } else {
+            // Se for fonte padrão (Arial), não precisa carregar
+            throw new Error('Fonte padrão, não precisa carregar');
+        }
+        
+        const font = await opentype.load(urlFonte);
+        
+        // ===== GERAR PATHS DO TEXTO =====
+        
+        // 1. Calcular posicionamento das letras
+        let largurasAcumuladas = [];
+        let larguraTotal = 0;
+        
+        for (let i = 0; i < texto.length; i++) {
+            largurasAcumuladas.push(larguraTotal);
+            larguraTotal += font.getAdvanceWidth(texto[i], fontSize);
+        }
+        
+        const xInicio = xCentro - (larguraTotal / 2);
+        
+        // 2. Identificar posições de destaque (se ativo)
+        const posicoesDestaque = new Set();
+        if (corSecundariaAtivo) {
+            // Primeira letra
+            if (document.getElementById('destaque-primeira-letra').checked && texto.length > 0) {
+                if (/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[0])) {
+                    posicoesDestaque.add(0);
+                }
+            }
+            
+            // Primeiras letras de cada palavra
+            if (document.getElementById('destaque-primeiras-letras').checked) {
+                let i = 0;
+                while (i < texto.length) {
+                    while (i < texto.length && !/[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) i++;
+                    if (i < texto.length) {
+                        posicoesDestaque.add(i);
+                        while (i < texto.length && /[a-zA-Z0-9\u00C0-\u00FF]/.test(texto[i])) i++;
+                    }
+                }
+            }
+            
+            // Caracteres especiais
+            if (document.getElementById('destaque-especiais').checked) {
+                for (let i = 0; i < texto.length; i++) {
+                    if (!/[a-zA-Z0-9\u00C0-\u00FF\s]/.test(texto[i])) {
+                        posicoesDestaque.add(i);
+                    }
+                }
+            }
+        }
+        
+        // 3. Cores e estilos
+        const corPrincipal = corSelecionada.codigo;
+        const corSecundaria = corSecundariaSelecionada.codigo;
+        const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+        const strokeWidth = bordaAtiva ? (grossuraAtual * 2) : 0;
+        const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
+
+        // Determina qual cor usar baseado no destaque
+        const corParaAplicar = (corSecundariaAtivo && destaqueIcone.checked) ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
+        
+        // ===== GERAR ÍCONES PARA O SVG FINAL =====
+        let iconesSVG = '';
+        let iconesPathCompleto = ''; // Para concatenar com a borda
+        if (iconeSelecionado && iconeAtivo) {
+            const posicao = document.querySelector('input[name="posicao-icone"]:checked')?.value || 'inicio';
+            const yIcone = alturaIcone; // Mesma altura do texto no path
+            const espacoEntreIconeETexto = distanciaIcone;
+            
+            // Calcula posições baseado no texto
+            const textWidth = font.getAdvanceWidth(texto, fontSize);
+            const xInicioTexto = xCentro - (textWidth / 2);
+            const xFimTexto = xCentro + (textWidth / 2);
+            
+            // Parse do SVG do ícone para extrair paths
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(iconeSelecionado.svgCompleto, 'image/svg+xml');
+            const svgOriginal = svgDoc.querySelector('svg');
+            
+            if (svgOriginal) {
+                // Descobrir dimensões originais do ícone
+                let viewBox = svgOriginal.getAttribute('viewBox');
+                let iconWidth = 100, iconHeight = 100;
+                let minX = 0, minY = 0;
+                
+                if (viewBox) {
+                    const parts = viewBox.split(' ').map(Number);
+                    if (parts.length === 4) {
+                        minX = parts[0];
+                        minY = parts[1];
+                        iconWidth = parts[2];
+                        iconHeight = parts[3];
+                    }
+                }
+                
+                // Usa o tamanho definido pelo usuário
+                const tamanhoAlvo = tamanhoIcone;
+                
+                // Calcular escala necessária
+                const escala = tamanhoAlvo / Math.max(iconWidth, iconHeight);
+                
+                // Extrair TODOS os valores d dos paths
+                let todosPathsD = [];
+                const pathElements = svgOriginal.querySelectorAll('path');
+                
+                pathElements.forEach(path => {
+                    const d = path.getAttribute('d');
+                    if (d) {
+                        todosPathsD.push(d);
+                    }
+                });
+                
+                // Concatenar todos os valores d
+                const dConcatenado = todosPathsD.join(' ');
+                
+                // Função para transformar o path do ícone (ícone colorido)
+                const transformarPathIcone = (d, x, y) => {
+                    if (!d) return '';
+                    
+                    // Calcula a posição final do ícone
+                    const xFinal = x - (tamanhoAlvo / 2);
+                    const yFinal = y - (tamanhoAlvo / 2);
+                    
+                    // ÍCONE COLORIDO (sem borda)
+                    return `<path 
+                        d="${d}" 
+                        fill="${corParaAplicar}" 
+                        transform="translate(${xFinal}, ${yFinal}) scale(${escala})" 
+                    />`;
+                };
+                
+                // Função para obter o path da borda do ícone
+                const obterPathParaBorda = (d, x, y) => {
+                    if (!d) return '';
+                    
+                    // Calcula a posição final do ícone
+                    const xFinal = x - (tamanhoAlvo / 2);
+                    const yFinal = y - (tamanhoAlvo / 2);
+                    
+                    // COMPENSAÇÃO: aumenta a grossura da borda proporcionalmente à escala
+                    // Se o ícone é reduzido (escala < 1), a borda precisa ser MAIS GROSSA
+                    const strokeWidthCompensado = strokeWidth / escala;
+                    
+                    // BORDA DO ÍCONE com grossura compensada
+                    return `<path 
+                        d="${d}" 
+                        fill="none" 
+                        stroke="${corHexBorda}" 
+                        stroke-width="${strokeWidthCompensado}" 
+                        stroke-linejoin="${lineJoin}" 
+                        stroke-linecap="round" 
+                        transform="translate(${xFinal}, ${yFinal}) scale(${escala})" 
+                    />`;
+                };
+                
+                // Adicionar ícones conforme posição
+                if (posicao === 'inicio' || posicao === 'ambos') {
+                    iconesSVG += transformarPathIcone(dConcatenado, xInicioTexto - espacoEntreIconeETexto, yIcone);
+                    iconesPathCompleto += obterPathParaBorda(dConcatenado, xInicioTexto - espacoEntreIconeETexto, yIcone);
+                }
+                
+                if (posicao === 'final' || posicao === 'ambos') {
+                    iconesSVG += transformarPathIcone(dConcatenado, xFimTexto + espacoEntreIconeETexto, yIcone);
+                    iconesPathCompleto += obterPathParaBorda(dConcatenado, xFimTexto + espacoEntreIconeETexto, yIcone);
+                }
+            }
+        }
+        
+        // 4. GERAR SVG com APENAS PATHS
+        if (posicoesDestaque.size > 0) {
+            // Construir paths para cada grupo de cor
+            let pathsPrincipal = '';
+            let pathsDestaques = '';
+            
+            // Gerar path para cada caractere individualmente
+            for (let i = 0; i < texto.length; i++) {
+                const caractere = texto[i];
+                const xLetra = xInicio + largurasAcumuladas[i];
+                const pathData = font.getPath(caractere, xLetra, yBase, fontSize).toPathData(2);
+                const isDestaque = posicoesDestaque.has(i);
+                
+                if (isDestaque) {
+                    pathsDestaques += pathData;
+                } else {
+                    pathsPrincipal += pathData;
+                }
+            }
+            
+            // Path ÚNICO para borda (texto completo)
+            const pathBorda = bordaAtiva ? 
+                font.getPath(texto, xInicio, yBase, fontSize).toPathData(2) : '';
+            
+            svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
+                <g>
+                    ${bordaAtiva ? `
+                    <!-- Borda do texto -->
+                    <path d="${pathBorda}" 
+                        fill="none" 
+                        stroke="${corHexBorda}" 
+                        stroke-width="${strokeWidth}" 
+                        stroke-linejoin="${lineJoin}" 
+                        stroke-linecap="round" />
+                    <!-- Borda dos ícones -->
+                    ${iconesPathCompleto}` : ''}
+                </g>
+                <g>
+                    <path d="${pathsPrincipal}" fill="${corPrincipal}" />
+                    <path d="${pathsDestaques}" fill="${corSecundaria}" />
+                    ${iconesSVG}
+                </g>
+                
+            </svg>`;
+            
+        } else {
+            // Versão SEM destaques
+            const textWidth = font.getAdvanceWidth(texto, fontSize);
+            const xInicioSimples = xCentro - (textWidth / 2);
+            const pathData = font.getPath(texto, xInicioSimples, yBase, fontSize).toPathData(2);
+
+            svgString = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
+                <g>
+                    ${bordaAtiva ? `
+                    <!-- Borda do texto -->
+                    <path d="${pathData}" 
+                        fill="none" 
+                        stroke="${corHexBorda}" 
+                        stroke-width="${strokeWidth}" 
+                        stroke-linejoin="${lineJoin}" 
+                        stroke-linecap="round" />
+                    <!-- Borda dos ícones -->
+                    ${iconesPathCompleto}` : ''}
+                    <!-- Texto principal -->
+                    <path d="${pathData}" fill="${corPrincipal}" />
+                    <!-- Ícones coloridos -->
+                    ${iconesSVG}
+                </g>
+                
+            </svg>`;
+        }
+        
+    } catch (erroFonte) {
+        console.warn('Erro ao carregar fonte, usando fallback:', erroFonte);
+        // Fallback: retorna null ou um SVG simples
+        return null;
+    }
+
+    return svgString;
+}
+
+// Função para adicionar botões de desativar nos cards
+function adicionarBotoesDesativar() {
+  const configCards = [
+    { 
+      checkboxId: 'icone-ativo', 
+      containerId: 'controles-icone',
+      texto: 'Remover ícones',
+      tituloSelector: '.card-titulo'
+    },
+    { 
+      checkboxId: 'destaques-ativo', 
+      containerId: 'controles-cor-secundaria',
+      texto: 'Remover cor secundária',
+      tituloSelector: '.card-titulo'
+    },
+    { 
+      checkboxId: 'borda-ativa', 
+      containerId: 'controles-filete',
+      texto: 'Remover borda',
+      tituloSelector: '.card-titulo'
+    }
+  ];
+  
+  configCards.forEach(config => {
+    const checkbox = document.getElementById(config.checkboxId);
+    const container = document.getElementById(config.containerId);
+    const card = checkbox?.closest('.card-editor');
+    
+    if (!checkbox || !container || !card) return;
+    
+    const btnExistente = card.querySelector('.btn-desativar-card');
+    if (btnExistente) btnExistente.remove();
+    
+    if (checkbox.checked) {
+      const btnDesativar = document.createElement('button');
+      btnDesativar.className = 'btn-desativar-card';
+      btnDesativar.innerHTML = `<i class="fas fa-power-off"></i> ${config.texto}`;
+      
+      btnDesativar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        // Pega o título do card para scroll
+        const tituloCard = card.querySelector(config.tituloSelector);
+        const tituloTop = tituloCard?.getBoundingClientRect().top + window.scrollY;
+        
+        // Desmarca o checkbox
+        checkbox.checked = false;
+        
+        // Esconde os controles
+        container.style.display = 'none';
+        
+        // Dispara o evento change para atualizar tudo
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Remove o botão
+        btnDesativar.remove();
+        
+        // Scroll suave para o título do card
+          if (tituloTop) {
+            window.scrollTo({
+              top: tituloTop - 350, // Ajuste para compensar o header fixo
+              behavior: 'smooth'
+            });
+            
+            // Opcional: destaque temporário
+            card.style.transition = 'background-color 0.5s';
+            card.style.backgroundColor = 'rgba(18, 172, 159, 0.1)';
+            setTimeout(() => {
+              card.style.backgroundColor = '';
+            }, 1000);
+          }
+
+      });
+      
+      container.appendChild(btnDesativar);
+    }
+  });
+}
+
+// FUNÇÃO MODIFICADA: atualizarPrevia (apenas com a correção do debounce)
+async function atualizarPrevia(deveRedimensionar = false) {
+    const texto = textoInput.value.trim() || '';
+    const familiaFonte = fonteSelecionada.arquivo.startsWith('url(') ? `'${fonteSelecionada.nome}'` : fonteSelecionada.arquivo;
+
+    // Limpar conteúdo anterior
+    while (svgTextoFrente.firstChild) svgTextoFrente.removeChild(svgTextoFrente.firstChild);
+    while (svgTextoContorno.firstChild) svgTextoContorno.removeChild(svgTextoContorno.firstChild);
+
+    if (!texto) {
+        atualizarFundoPrevia();
+        atualizarPrecos();
+        svgCompletoAtual = null;
+        return;
+    }
+
+    // Gerar o SVG completo usando a nova função
+    try {
+        const svgCompleto = await gerarSVGCompleto();
+        
+        if (svgCompleto) {
+            // Armazenar para uso no carrinho
+            svgCompletoAtual = svgCompleto;
+            
+            // Código original de visualização (mantido igual)
+            [svgTextoFrente, svgTextoContorno].forEach(el => {
+                el.style.fontFamily = familiaFonte;
+                el.style.fontSize = "50px";
+                el.setAttribute('x', '400');
+                el.setAttribute('y', '100');
+            });
+
+            // Medição para centralização
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            context.font = `50px ${familiaFonte}`;
+
+            let larguras = [];
+            let larguraTotal = 0;
+            for (let char of texto) {
+                let larguraChar = context.measureText(char).width;
+                larguras.push(larguraChar);
+                larguraTotal += larguraChar;
+            }
+
+            let xAtual = 400 - (larguraTotal / 2);
+            const { destaques } = aplicarDestaquesAoTexto(texto, corSelecionada.codigo, corSecundariaSelecionada.codigo);
+
+            // Definimos o estilo de junção baseado no checkbox de arredondamento
+            const lineJoin = arredondamentoAtual > 0 ? 'round' : 'miter';
+
+            // Renderizar de TRÁS PARA FRENTE (Z-index: a primeira letra será a última no DOM)
+            for (let i = texto.length - 1; i >= 0; i--) {
+                const char = texto[i];
+                let xLetra = xAtual;
+                for(let j = 0; j < i; j++) {
+                    xLetra += larguras[j];
+                }
+
+                const isDestaque = corSecundariaAtivo && destaques.some(d => d.posicao === i);
+                const cor = isDestaque ? corSecundariaSelecionada.codigo : corSelecionada.codigo;
+
+                // Frente
+                const tspanF = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                tspanF.textContent = char;
+                tspanF.setAttribute('x', xLetra);
+                tspanF.setAttribute('y', '100');
+                tspanF.setAttribute('fill', cor);
+                tspanF.style.fontFamily = familiaFonte;
+                svgTextoFrente.appendChild(tspanF);
+
+                // Contorno (Borda)
+                if (bordaAtiva) {
+                    const tspanC = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                    tspanC.textContent = char;
+                    tspanC.setAttribute('x', xLetra);
+                    tspanC.setAttribute('y', '100');
+                    tspanC.style.fontFamily = familiaFonte;
+                    tspanC.setAttribute('stroke-linejoin', lineJoin);
+                    tspanC.setAttribute('stroke-linecap', 'round');
+                    svgTextoContorno.appendChild(tspanC);
+                }
+            }
+
+            // Configurar estilos globais da borda
+            if (bordaAtiva) {
+                const corHexBorda = corBorda === 'preta' ? '#000000' : '#FFFFFF';
+                svgTextoContorno.setAttribute('fill', 'none');
+                svgTextoContorno.setAttribute('stroke', corHexBorda);
+                svgTextoContorno.setAttribute('stroke-width', grossuraAtual * 2);
+                svgTextoContorno.setAttribute('stroke-linejoin', lineJoin);
+                svgTextoContorno.style.display = 'block';
+            } else {
+                svgTextoContorno.style.display = 'none';
+            }
+
+            // ===== Adicionar ícones com tamanho padronizado (para visualização) =====
+            const grupoPrincipal = document.querySelector('#svg-editor g');
+            if (grupoPrincipal && iconeSelecionado && iconeAtivo) {
+                // Remove ícones antigos (se houver)
+                const iconesAntigos = grupoPrincipal.querySelectorAll('.icone-decorativo');
+                iconesAntigos.forEach(icone => icone.remove());
+
+                const posicao = document.querySelector('input[name="posicao-icone"]:checked')?.value || 'inicio';
+                const yIcone = alturaIcone; // Mesma altura do texto
+                const espacoEntreIconeETexto = distanciaIcone; // Espaço entre texto e ícone
+                
+                // Calcula a largura total do texto
+                const canvasTemp = document.createElement("canvas");
+                const contextTemp = canvasTemp.getContext("2d");
+                contextTemp.font = `50px ${familiaFonte}`;
+                
+                let larguraTotalTexto = 0;
+                for (let char of texto) {
+                    larguraTotalTexto += contextTemp.measureText(char).width;
+                }
+                
+                const xInicioTexto = 400 - (larguraTotalTexto / 2);
+                const xFimTexto = 400 + (larguraTotalTexto / 2);
+
+                // Adiciona ícones baseado na posição selecionada
+                if (posicao === 'inicio' || posicao === 'ambos') {
+                    const icone = criarIconeSVG(xInicioTexto - espacoEntreIconeETexto, yIcone);
+                    if (icone) {
+                        grupoPrincipal.appendChild(icone);
+                    }
+                }
+                
+                if (posicao === 'final' || posicao === 'ambos') {
+                    const icone = criarIconeSVG(xFimTexto + espacoEntreIconeETexto, yIcone);
+                    if (icone) {
+                        grupoPrincipal.appendChild(icone);
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao gerar SVG completo:', error);
+    }
+
+    // APENAS ESTA PARTE FOI MODIFICADA - Redimensionamento com debounce
+    if (deveRedimensionar) {
+        // Cancelar o timeout anterior se existir
+        if (timeoutRedimensionamento) {
+            clearTimeout(timeoutRedimensionamento);
+        }
+        
+        // Criar um novo timeout para redimensionar após 50ms
+        timeoutRedimensionamento = setTimeout(() => {
+            const svgEditor = document.getElementById('svg-editor');
+            const grupoSvg = svgEditor.querySelector('g');
+            
+            if (grupoSvg) {
+                const bbox = grupoSvg.getBBox();
+                if (bbox.width > 0) {
+                    const margem = 40;
+                    svgEditor.setAttribute('viewBox', 
+                        `${bbox.x - margem} ${bbox.y - margem} ${bbox.width + (margem * 2)} ${bbox.height + (margem * 2)}`
+                    );
+                }
+            }
+            
+            timeoutRedimensionamento = null;
+        }, 50); // Pequeno delay de 50ms para acumular múltiplas mudanças
+    }
+
+    requestAnimationFrame(() => {
+        const altura = calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo);
+        document.getElementById("altura-proporcional").textContent = altura;
+    });
+    atualizarFundoPrevia();
+    atualizarPrecos();
+}
+
+function mostrarNotificacao(mensagem) {
+    const notificacao = document.getElementById('notificacao');
+    if (!notificacao) return;
+    
+    notificacao.textContent = mensagem;
+    notificacao.classList.add('mostrar');
+    
+    setTimeout(() => {
+        notificacao.classList.remove('mostrar');
+    }, 2000);
+}
+
+// ADICIONE ESTA FUNÇÃO TAMBÉM
+function configurarMenuLateral() {
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarClose = document.getElementById('sidebar-close');
+
+    if (menuToggle && sidebar && sidebarOverlay && sidebarClose) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        sidebarClose.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+}
+
+async function capturarPreviaComoImagem() {
+    try {
+        const svgOriginal = document.getElementById('svg-editor');
+        const grupo = svgOriginal.querySelector('g');
+        const bbox = grupo.getBBox();
+        const margem = 20;
+
+        const svgClonado = svgOriginal.cloneNode(true);
+        svgClonado.removeAttribute('filter');
+
+        const vx = bbox.x - margem;
+        const vy = bbox.y - margem;
+        const vw = bbox.width + (margem * 2);
+        const vh = bbox.height + (margem * 2);
+        svgClonado.setAttribute('viewBox', `${vx} ${vy} ${vw} ${vh}`);
+        svgClonado.setAttribute('width', '200');
+        svgClonado.setAttribute('height', '100');
+
+        // Tenta converter fonte se for arquivo
+        try {
+            const urlFonte = fonteSelecionada.arquivo.replace('url("', '').replace('")', '');
+            if (urlFonte !== fonteSelecionada.arquivo) {
+                const resposta = await fetch(urlFonte);
+                const blob = await resposta.blob();
+                
+                const reader = new FileReader();
+                const fonteBase64 = await new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+
+                const estilo = document.createElementNS("http://www.w3.org/2000/svg", "style");
+                estilo.textContent = `
+                    @font-face {
+                        font-family: '${fonteSelecionada.nome}';
+                        src: url('${fonteBase64}');
+                    }
+                    text, tspan { 
+                        font-family: '${fonteSelecionada.nome}' !important;
+                    }
+                `;
+                svgClonado.prepend(estilo);
+            }
+        } catch (e) {
+            console.warn("Não foi possível converter a fonte, usando fallback");
+        }
+
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svgClonado);
+        return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+        
+    } catch (error) {
+        console.error('Erro ao converter imagem:', error);
+        // Fallback: retorna o SVG original como string
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(document.getElementById('svg-editor'));
+        return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+    }
+}
+
+// NÃO PRECISA NA PROXIMA PÁGINA DE SERVIÇO, É EXCLUSIVA DESSA
+function atualizarDisponibilidadeDestaques() {
+    const texto = textoInput.value.trim();
+    
+    // Elementos das opções
+    const primeiraLetraOption = document.getElementById('destaque-primeira-letra').parentElement;
+    const primeirasLetrasOption = document.getElementById('destaque-primeiras-letras').parentElement;
+    const especiaisOption = document.getElementById('destaque-especiais').parentElement;
+    const iconeOption = document.getElementById('destaque-icone').parentElement;
+    
+    // Elementos checkbox
+    const primeiraLetraCheck = document.getElementById('destaque-primeira-letra');
+    const primeirasLetrasCheck = document.getElementById('destaque-primeiras-letras');
+    const especiaisCheck = document.getElementById('destaque-especiais');
+    const iconeCheck = document.getElementById('destaque-icone');
+    
+    // Verificar disponibilidade
+    const temPrimeiraLetra = texto.length > 0 && /[a-zA-Z\u00C0-\u00FF]/.test(texto[0]);
+    const temPrimeirasLetras = (() => {
+        if (!texto) return false;
+        
+        let palavrasValidas = 0;
+        let i = 0;
+        
+        while (i < texto.length) {
+            // Pular caracteres que não são letras
+            while (i < texto.length && !/[a-zA-Z\u00C0-\u00FF]/.test(texto[i])) i++;
+            
+            if (i < texto.length) {
+                let tamanho = 0;
+                while (i < texto.length && /[a-zA-Z\u00C0-\u00FF]/.test(texto[i])) {
+                    tamanho++;
+                    i++;
+                }
+                // Só contar palavras com 3 ou mais letras
+                if (tamanho >= 3) {
+                    palavrasValidas++;
+                }
+            }
+        }
+        
+        // Habilitar apenas se houver 2 ou mais palavras válidas
+        return palavrasValidas >= 2;
+    })();
+    
+    const temEspeciais = (() => {
+        if (!texto) return false;
+        for (let char of texto) {
+            // Caracteres especiais = não é letra e não é espaço (inclui números)
+            if (!/[a-zA-Z\u00C0-\u00FF\s]/.test(char)) return true;
+        }
+        return false;
+    })();
+    
+    const temIcone = iconeSelecionado !== null;
+    
+    // Função para atualizar estado de uma opção
+    function atualizarOpcao(checkbox, optionElement, disponivel) {
+        if (!disponivel) {
+            // Se não estiver disponível, desabilita e desmarca
+            checkbox.disabled = true;
+            optionElement.style.opacity = '0.5';
+            optionElement.style.pointerEvents = 'none';
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                // Disparar evento de mudança para atualizar a prévia
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        } else {
+            // Se estiver disponível, habilita
+            checkbox.disabled = false;
+            optionElement.style.opacity = '1';
+            optionElement.style.pointerEvents = 'auto';
+        }
+    }
+    
+    // Atualizar cada opção
+    atualizarOpcao(primeiraLetraCheck, primeiraLetraOption, temPrimeiraLetra);
+    atualizarOpcao(primeirasLetrasCheck, primeirasLetrasOption, temPrimeirasLetras);
+    atualizarOpcao(especiaisCheck, especiaisOption, temEspeciais);
+    atualizarOpcao(iconeCheck, iconeOption, temIcone);
+}
+
+// ===== EVENT LISTENERS =====
+function configurarEventListeners() {
+    // Variável para controlar o debounce do texto
+    let timeoutTexto = null;
+    
+    textoInput.addEventListener('input', () => {
+        // Cancela o timeout anterior se existir
+        if (timeoutTexto) {
+            clearTimeout(timeoutTexto);
+        }
+        
+        // Cria um novo timeout para atualizar após 150ms
+        timeoutTexto = setTimeout(() => {
+            atualizarPrevia(true);
+            atualizarDisponibilidadeDestaques();
+            atualizarDisplayLargura();
+            timeoutTexto = null;
+        }, 150);
+    });
+
+    corContainer.addEventListener('click', (e) => {
+        const corDiv = e.target.closest('.cor-opcao');
+        if (!corDiv) return;
+        
+        document.querySelectorAll('#selecao-cor .cor-opcao').forEach(c => c.classList.remove('selecionada'));
+        corDiv.classList.add('selecionada');
+        
+        corSelecionada = {
+            nome: corDiv.dataset.nome,
+            codigo: corDiv.dataset.cor,
+            arquivo: corDiv.dataset.arquivo
+        };
+        
+        atualizarVisualizacaoMaterial(tipoSelecionado, corSelecionada, 'visualizacao-de-material-primario');
+        atualizarPrevia(false);
+        atualizarFundoPrevia();
+        atualizarPrecos();
+        atualizarDisplayLargura();
+    });
+
+    corSecundariaContainer.addEventListener('click', (e) => {
+        const corDiv = e.target.closest('.cor-opcao');
+        if (!corDiv) return;
+        
+        document.querySelectorAll('#selecao-cor-secundaria .cor-opcao').forEach(c => c.classList.remove('selecionada'));
+        corDiv.classList.add('selecionada');
+        
+        corSecundariaSelecionada = {
+            nome: corDiv.dataset.nome,
+            codigo: corDiv.dataset.cor,
+            arquivo: corDiv.dataset.arquivo
+        };
+        
+        atualizarVisualizacaoMaterial(tipoSecundarioSelecionado, corSecundariaSelecionada, 'visualizacao-de-material-secundario');
+        
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+            atualizarDisplayLargura();
+        }
+    });
+
+    // Controle de largura do adesivo
+    const diminuirLargura = document.getElementById('diminuir-largura');
+    const aumentarLargura = document.getElementById('aumentar-largura');
+    const larguraInput = document.getElementById('largura-personalizado');
+
+    if (diminuirLargura) {
+        diminuirLargura.addEventListener('click', () => {
+            alterarLarguraPersonalizado(-1);
+            atualizarPrecos();
+        });
+    }
+
+    if (aumentarLargura) {
+        aumentarLargura.addEventListener('click', () => {
+            alterarLarguraPersonalizado(1);
+            atualizarPrecos();
+        });
+    }
+
+    bordaCheckbox.addEventListener('change', (e) => {
+        bordaAtiva = e.target.checked;
+        controlesFilete.style.display = bordaAtiva ? 'block' : 'none';
+        atualizarPrevia(false);
+        atualizarPrecos();
+    });
+
+    grossuraSlider.addEventListener('input', (e) => {
+        grossuraAtual = parseInt(e.target.value);
+        grossuraValor.textContent = grossuraAtual;
+        atualizarPrevia(false);
+        atualizarDisplayLargura();
+    });
+
+
+    bordaPretaRadio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            corBorda = 'preta';
+            atualizarPrevia(false);
+            atualizarPrecos();
+        }
+    });
+
+    bordaBrancaRadio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            corBorda = 'branca';
+            atualizarPrevia(false);
+            atualizarPrecos();
+        }
+    });
+
+    const checkboxes = ['icone-ativo', 'destaques-ativo', 'borda-ativa'];
+    checkboxes.forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+        checkbox.addEventListener('change', () => {
+            setTimeout(adicionarBotoesDesativar, 50);
+        }); 
+        }
+    });
+
+    document.getElementById('selecao-tipo-adesivo').addEventListener('change', (e) => {
+        tipoSelecionado = e.target.value;
+        renderizarCores(tipoSelecionado, corContainer, false);
+        // Atualiza a visualização com a primeira cor da nova categoria
+        const primeiraCor = CATEGORIAS_ADESIVO[tipoSelecionado].cores[0];
+        atualizarVisualizacaoMaterial(tipoSelecionado, primeiraCor, 'visualizacao-de-material-primario');
+        atualizarPrevia(false);
+        atualizarPrecos();
+    });
+
+    corSecundariaCheckbox.addEventListener('change', (e) => {
+        corSecundariaAtivo = e.target.checked;
+        controlesCorSecundaria.style.display = corSecundariaAtivo ? 'block' : 'none';
+        atualizarPrevia(false);
+        atualizarPrecos();
+    });
+
+    iconeCheckbox.addEventListener('change', (e) => {
+        iconeAtivo = e.target.checked;
+        controlesIcone.style.display = iconeAtivo ? 'block' : 'none';
+
+        if (!iconeAtivo){
+            iconeSelecionado = null;
+        }
+        const grupoPrincipal = document.querySelector('#svg-editor g');
+            if (grupoPrincipal) {
+                const iconesAntigos = grupoPrincipal.querySelectorAll('.icone-decorativo');
+                iconesAntigos.forEach(icone => icone.remove());
+            }
+        atualizarDisponibilidadeDestaques();
+        atualizarPrevia(true);
+        atualizarDisplayLargura();
+        atualizarPrecos();
+    });
+
+    // Controle de tamanho do ícone
+    const tamanhoIconeSlider = document.getElementById('tamanho-icone');
+    const tamanhoIconeValor = document.getElementById('tamanho-icone-valor');
+    if (tamanhoIconeSlider && tamanhoIconeValor) {
+        tamanhoIconeSlider.addEventListener('input', (e) => {
+            tamanhoIcone = parseInt(e.target.value);
+            tamanhoIconeValor.textContent = tamanhoIcone;
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+                atualizarDisplayLargura();
+            }
+        });
+    }
+
+
+    const distanciaIconeSlider = document.getElementById('distancia-icone');
+    const distanciaIconeValor = document.getElementById('distancia-icone-valor');
+    if (distanciaIconeSlider && distanciaIconeValor) {
+        distanciaIconeSlider.addEventListener('input', (e) => {
+            distanciaIcone = parseInt(e.target.value);
+            distanciaIconeValor.textContent = distanciaIcone;
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+                atualizarDisplayLargura();
+            }
+        });
+    }
+
+    // Controle de altura do ícone
+    const alturaIconeSlider = document.getElementById('altura-icone');
+    const alturaIconeValor = document.getElementById('altura-icone-valor');
+    if (alturaIconeSlider && alturaIconeValor) {
+        alturaIconeSlider.addEventListener('input', (e) => {
+            alturaIcone = parseInt(e.target.value);
+            alturaIconeValor.textContent = alturaIcone;
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+                atualizarDisplayLargura();
+            }
+        });
+    }
+
+    tipoSecundarioSelect.addEventListener('change', (e) => {
+        tipoSecundarioSelecionado = e.target.value;
+        renderizarCores(tipoSecundarioSelecionado, corSecundariaContainer, true);
+        // Atualiza a visualização com a primeira cor da nova categoria
+        const primeiraCor = CATEGORIAS_ADESIVO[tipoSecundarioSelecionado].cores[0];
+        atualizarVisualizacaoMaterial(tipoSecundarioSelecionado, primeiraCor, 'visualizacao-de-material-secundario');
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+        }
+    });
+
+    destaqueIcone.addEventListener('change', () => {
+        if (iconeSelecionado) {
+            atualizarPrevia(false);
+        }
+    });
+
+    destaquePrimeirasLetras.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            destaquePrimeiraLetra.checked = false;
+        }
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+        }
+    });
+
+    destaquePrimeiraLetra.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            destaquePrimeirasLetras.checked = false;
+        }
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+        }
+    });
+
+    destaqueEspeciais.addEventListener('change', () => {
+        if (corSecundariaAtivo) {
+            atualizarPrevia(false);
+        }
+    });
+
+    document.getElementById('adicionar-carrinho').addEventListener('click', adicionarAoCarrinho);
+
+    // Adicione evento para mudança de posição do ícone
+    document.querySelectorAll('input[name="posicao-icone"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (iconeSelecionado) {
+                atualizarPrevia(true);
+            }
+        });
+    });
+
+}
+
+// FUNÇÃO MODIFICADA: adicionarAoCarrinho agora usa o SVG gerado pelo atualizarPrevia
+async function adicionarAoCarrinho() {
+    const btn = document.querySelector('.btn-adicionar');
+    const originalHtml = btn.innerHTML;
+
+    try {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+        const texto = textoInput.value.trim();
+        if (!texto) {
+            mostrarNotificacao('❌ Digite um nome para o adesivo');
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            return;
+        }
+
+        // Forçar uma atualização da prévia para garantir que o SVG completo seja gerado
+        await atualizarPrevia(false);
+
+        // Verificar se o SVG completo foi gerado
+        if (!svgCompletoAtual) {
+            mostrarNotificacao('❌ Erro ao gerar o SVG do adesivo');
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            return;
+        }
+
+        const imagemPrevia = await capturarPreviaComoImagem();
+        const idUnico = 'pers_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+
+        // 6. Criar item do carrinho
+        const novoItem = {
+            id: idUnico.toString(),
+            icone_produto: 'fa-paint-brush',
+            nome: texto,
+            preco: calcularPrecoUnitario(),
+            quantidade: parseInt(document.getElementById('quantidade-personalizado')?.value || 1),
+            imagem: imagemPrevia,
+            tipoMaterial: tipoSelecionado,
+            cor: corSelecionada.nome,
+            tipoMaterialSecundario: corSecundariaAtivo ? tipoSecundarioSelecionado : null,
+            corSecundaria: corSecundariaAtivo ? corSecundariaSelecionada.nome : null,
+            largura: larguraAdesivo,
+            altura: calcularAlturaRealDoSVG(svgCompletoAtual, larguraAdesivo),
+            servico: 'Nome_personalizado',
+        };
+
+        // Usar o SVG completo gerado pela função atualizarPrevia
+        if (svgCompletoAtual && typeof svgCompletoAtual === 'string') {
+            const svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgCompletoAtual)));
+            novoItem.svgRaw = svgBase64;
+        }
+
+        // 7. Salvar no localStorage
+        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        carrinho.push(novoItem);
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+        // 8. Atualizar contador do carrinho
+        const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+        const carrinhoCount = document.getElementById('carrinho-count');
+        if (carrinhoCount) carrinhoCount.textContent = totalItens;
+
+        mostrarNotificacao('✅ Adesivo adicionado ao carrinho!');
+
+        setTimeout(() => {
+            window.location.href = '../../carrinho.html';
+        }, 1000);
+
+    } catch (error) {
+        console.error("Erro detalhado:", error);
+        mostrarNotificacao('❌ Erro ao adicionar ao carrinho: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+    }
+}
+
+// ===== INICIALIZAÇÃO =====
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    
+    try {
+        // PRÉ-CARREGAR TEXTURAS DURANTE O LOADING
+        await preCarregarTexturas();
+        
+        // Inicializar opções (agora as texturas já estão em cache)
+        inicializarOpcoes();
+        configurarEventListeners();
+        configurarMenuLateral();
+        carregarIcones();
+        
+        // Pequeno delay para garantir que tudo está pronto
+        setTimeout(() => {
+            loadingOverlay.classList.add('loading-hidden');
+            atualizarPrevia(true);
+            adicionarBotoesDesativar();
+            
+            // Atualizar visualizações com as texturas já carregadas
+            atualizarVisualizacaoMaterial(tipoSelecionado, corSelecionada, 'visualizacao-de-material-primario');
+            atualizarVisualizacaoMaterial(tipoSecundarioSelecionado, corSecundariaSelecionada, 'visualizacao-de-material-secundario');
+            window.atualizarContadorCarrinho = function() {
+                const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+                const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+                const carrinhoCount = document.getElementById('carrinho-count');
+                if (carrinhoCount) carrinhoCount.textContent = totalItens;
+            };
+            atualizarDisponibilidadeDestaques();
+            atualizarContadorCarrinho();
+            atualizarPrecos();
+            atualizarDisplayLargura();
+            window.atualizarContadorCarrinho = atualizarContadorCarrinho;
+            
+            setTimeout(() => loadingOverlay.remove(), 500);
+        }, 500); // Reduzido para 500ms já que as imagens já carregaram
+        
+    } catch (error) {
+        console.error('Erro na inicialização:', error);
+        // Mesmo com erro, tentamos carregar a página
+        loadingOverlay.classList.add('loading-hidden');
+        setTimeout(() => loadingOverlay.remove(), 500);
+    }
+});
+    </script>
+</body>
+</html>
