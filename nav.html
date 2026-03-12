@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Catálogo - K101</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- HEADER COM LOGO -->
+    <header class="header">
+        <div class="container">
+            <div class="header-left">
+                <!-- BOTÃO DO MENU LATERAL - FALTAVA ISSO! -->
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo-container" id="logo-container" onclick="window.location.href='index.html'"style="cursor: pointer;">
+                    <img src="imagens/logo.png" alt="Minha Logo" class="logo" id="logo-img">
+                </div>
+            </div>
+            
+            <!-- ÍCONE DO CARRINHO -->
+            <div class="carrinho-icon">
+                <a href="carrinho.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="carrinho-count" id="carrinho-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i>Todos os Serviços</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Em manutenção</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- BARRA DE PESQUISA E FILTROS -->
+    <main class="main-container">
+        <div class="pesquisa-container">
+            <input type="text" id="pesquisa" placeholder="Pesquisar adesivos..." class="pesquisa-input">
+            <i class="fas fa-search pesquisa-icon"></i>
+        </div>
+        
+        <!-- BANNER DE COLEÇÕES -->
+        <div class="banner-container" id="banner-container">
+            <div class="banner-wrapper" id="banner-wrapper">
+                <!-- Os banners serão carregados aqui via JavaScript -->
+            </div>
+            
+            <div class="banner-nav">
+                <div class="banner-nav-left">
+                    <button class="banner-nav-btn" id="banner-prev"></button>
+                </div>
+                <div class="banner-nav-right">
+                    <button class="banner-nav-btn" id="banner-next"></button>
+                </div>
+            </div>
+            
+            <div class="banner-indicators" id="banner-indicators">
+                <!-- Indicadores serão carregados aqui -->
+            </div>
+        </div>
+
+        <!-- FILTRO POR COLEÇÕES -->
+        <div class="colecoes-container" id="colecoes-container">
+            <button class="colecao-btn ativa" data-colecao="todos">Todos</button>
+            <!-- As coleções serão carregadas aqui via JavaScript -->
+        </div>
+
+        <!-- GRADE DE PRODUTOS -->
+        <div class="produtos-grid" id="produtos-grid">
+            <!-- Loading skeleton será mostrado inicialmente -->
+            <div class="loading-skeleton">
+                <!-- Repetir isso 6 vezes para criar um efeito de skeleton -->
+                <div class="skeleton-item">
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-price"></div>
+                </div>
+                
+                <!-- Mais 5 itens similares -->
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DO PRODUTO -->
+    <div id="produto-modal" class="modal">
+        <div class="modal-content">
+            <span class="close"><i class="fas fa-times"></i></span>
+            <div class="modal-body" id="modal-body">
+                <!-- Conteúdo do modal será carregado aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div id="notificacao" class="notificacao"></div>
+
+    <script src="nav.js"></script>
+    <!-- BOTÃO FLUTUANTE DO CARRINHO -->
+    <div id="floating-cart" class="floating-cart" style="display: none;">
+        <a href="carrinho.html" class="floating-cart-btn">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Ir para o carrinho</span>
+            <span class="floating-cart-count" id="floating-cart-count">0</span>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Store - K101</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Permite seleção de texto apenas em inputs e áreas de texto */
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        /* Estilos específicos para a página de seleção */
+        .selecao-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .cabecalho-selecao {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .cabecalho-selecao h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cabecalho-selecao p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .tipos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .tipo-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+            margin: 0px 10px;
+        }
+
+        .tipo-card.disponivel {
+            cursor: pointer;
+        }
+
+        .tipo-card.disponivel:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 0px 25px rgba(0, 0, 0, 0.151);
+        }
+
+        .tipo-card.indisponivel{
+            opacity: 0.7;
+            filter: grayscale(0.7);
+            cursor: not-allowed;
+        }
+        .tipo-card.indisponivel button{
+            cursor: not-allowed;
+            background: #666;
+        }
+
+        .tipo-card.indisponivel:hover {
+            transform: none;
+            border-color: transparent;
+        }
+
+        .tipo-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .tipo-badge.em-breve {
+            background: #7c7c7c;
+            color: #333;
+        }
+
+        .tipo-imagem {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tipo-imagem::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: rgba(0, 0, 0, 0.062);
+            transform: rotate(45deg) translateY(30%);
+            transition: transform 0.5s ease;
+        }
+
+        .tipo-card:hover .tipo-imagem::after {
+            transform: rotate(45deg) translateY(-30%);
+        }
+
+        .tipo-info {
+            padding: 1.5rem;
+        }
+
+        .tipo-info h2 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .tipo-descricao {
+            color: #919191;
+            font-size: 0.8rem;
+            text-align: justify;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        .tipo-preco {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .tipo-preco small {
+            font-size: 0.9rem;
+            font-weight: normal;
+            color: #999;
+        }
+
+
+        .btn-selecionar {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            transition: all 0.5s;
+        }
+
+
+        .tipo-card.disponivel:hover .btn-selecionar {
+            color: white;
+        }
+
+        .btn-selecionar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #999;
+        }
+        .pBoasVindas {
+            background-color: rgb(255, 255, 255);
+            width: calc(100% - 20px);
+            box-shadow: 0 0 5px #00000062;
+            padding: 10px 20px;
+            border-radius: 15px;
+            color: #666;
+            font-size: 1rem;
+            text-align: center;
+            margin: 0px 10px;
+        }
+
+        @media (max-width: 768px) {
+            .cabecalho-selecao h1 {
+                font-size: 2rem;
+            }
+            
+            .cabecalho-selecao p {
+                font-size: 1rem;
+            }
+            
+            .tipos-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .tipo-imagem {
+                height: 150px;
+            }
+            
+            .tipo-imagem i {
+                font-size: 4rem;
+            }
+            
+            .tipo-info h2 {
+                font-size: 1.5rem;
+            }
+            .pBoasVindas{
+                border-radius: 0;
+                width: 100%;
+                margin: 0;
+                margin-bottom: 10px;
+            }
+            .pBoasVindas p{
+            font-size: 0.8rem;
+            }
+        }
+
+
+
+
+        @media (max-width: 600px) {
+            .tipo-imagem::after {
+                background: rgba(0, 0, 0, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            
+                <img src="imagens/logo.png" alt="K101" class="logo-index">
+   
+            <div class="carrinho-icon">
+                <a href="carrinho.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="carrinho-count" id="carrinho-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i>Todos os Serviços</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Em manutenção</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="selecao-container">
+        <div class="pBoasVindas">
+            <p>Bem vindo a K101, que tal dar uma olhada nos nossos serviço a baixo ?👊</p>
+        </div>
+        <div class="tipos-grid">
+            <!-- Catalogo -->
+            <div class="tipo-card disponivel" onclick="window.location.href='nav.html'">
+                <div class="tipo-badge">Disponível</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/SERVICO_CATALOGO.webp');">
+                    
+                </div>
+                <div class="tipo-info">
+                    <h2>Catálogo de Adesivos</h2>
+                    <p class="tipo-descricao">
+                        Adesivos prontos da nossa loja!<br>
+                        Aproveite para explorar nosso modelos, existe exclusivos criado pela K101.
+                    </p>
+                    <button class="btn-selecionar">Abrir Catálogo</button>
+                </div>
+            </div>
+
+            <!-- Card Nome -->
+            <div class="tipo-card disponivel" onclick="window.location.href='edicao/paginas_personalizacao/nome.html'">
+                <div class="tipo-badge">Disponível</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/SERVICO_NOME_PERSONALIZADO.webp');">
+                    
+                </div>
+                <div class="tipo-info">
+                    <h2>Nome Personalizado</h2>
+                    <p class="tipo-descricao">
+                        Crie um adesivo personalizado de um NOME<br>
+                        Perfeito para nomes de namorado(a), casal, parentes, e muito mais.
+                    </p>
+                    <button class="btn-selecionar">Personalizar Nome</button>
+                </div>
+            </div>
+
+            <!-- Card Instagram -->
+            <div class="tipo-card indisponivel">
+                <div class="tipo-badge em-breve">Em breve</div>
+                <div class="tipo-imagem" style="background-image: url('imagens/banners/default.webp');">
+                    
+                </div>
+                <div class="tipo-info">
+                    <h2>@ Instagram</h2>
+                    <p class="tipo-descricao">
+                        
+                    </p>
+                    <button class="btn-selecionar">Personalizar @</button>
+                </div>
+            </div>
+
+            <!-- Card Casal (Futuro) -->
+             <!--
+            <div class="tipo-card indisponivel">
+                <div class="tipo-badge em-breve">Em breve</div>
+                <div class="tipo-imagem" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="tipo-info">
+                    <h2>Em Breve</h2>
+                    <p class="tipo-descricao">
+                        Adesivos personalizados em breve.<br>
+                        Em desenvolvimento.
+                    </p>
+                    <button class="btn-selecionar" disabled>Em desenvolvimento</button>
+                </div>
+            </div
+            -->
+        </div>
+    </main>
+
+    <div id="notificacao" class="notificacao"></div>
+
+    <script>
+        // Atualizar contador do carrinho
+        function atualizarContadorCarrinho() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+            
+            const carrinhoCount = document.getElementById('carrinho-count');
+            if (carrinhoCount) {
+                carrinhoCount.textContent = totalItens;
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarContadorCarrinho();
+            
+            // Menu lateral
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarClose = document.getElementById('sidebar-close');
+            
+            if (menuToggle && sidebar && sidebarOverlay && sidebarClose) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                sidebarClose.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+                
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
