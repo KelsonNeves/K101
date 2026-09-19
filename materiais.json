@@ -1,0 +1,41 @@
+{
+  "vinil": {
+    "nome": "Vinil Brilho",
+    "precoAdicional": 1,
+    "cores": [
+      { "nome": "Preto", "codigo": "#000000", "textura": "imagens/textura/Preto-vinil.png" },
+      { "nome": "Branco", "codigo": "#FFFFFF", "textura": "imagens/textura/Branco-vinil.png" },
+      { "nome": "Prata", "codigo": "#D1D1D1", "textura": "imagens/textura/Prata-vinil.png" },
+      { "nome": "Vermelho", "codigo": "#D91108", "textura": "imagens/textura/Vermelho-vinil.png" },
+      { "nome": "Laranja", "codigo": "#E47429", "textura": "imagens/textura/Laranja-vinil.png" },
+      { "nome": "Amarelo", "codigo": "#FBB716", "textura": "imagens/textura/Amarelo-vinil.png" },
+      { "nome": "Azul escuro", "codigo": "#0840D7", "textura": "imagens/textura/Azul-escuro-vinil.png" },
+      { "nome": "Azul claro", "codigo": "#08C8ED", "textura": "imagens/textura/Azul-claro-vinil.png" },
+      { "nome": "Verde escuro", "codigo": "#087636", "textura": "imagens/textura/Verde-escuro-vinil.png" },
+      { "nome": "Verde claro", "codigo": "#36BF36", "textura": "imagens/textura/Verde-claro-vinil.png" },
+      { "nome": "Verde florescente", "codigo": "#c7f000", "textura": "imagens/textura/Verde-florescente-vinil.png" },
+      { "nome": "Roxo", "codigo": "#6B2690", "textura": "imagens/textura/Roxo-vinil.png" },
+      { "nome": "Rosa", "codigo": "#df1a9a", "textura": "imagens/textura/Rosa-vinil.png" },
+      { "nome": "Pele", "codigo": "#EDBFBF", "textura": "imagens/textura/Pele-vinil.png" }
+    ]
+  },
+  "refletivo": {
+    "nome": "Refletivo",
+    "precoAdicional": 1.05,
+    "cores": [
+      { "nome": "Branco Refletivo", "codigo": "#E6E6E6", "textura": "imagens/textura/Branco-refletivo.png" },
+      { "nome": "Vermelho Refletivo", "codigo": "#FF0000", "textura": "imagens/textura/Vermelho-refletivo.png" },
+      { "nome": "Laranja Refletivo", "codigo": "#FF571A", "textura": "imagens/textura/Laranja-refletivo.png" },
+      { "nome": "Amarelo Refletivo", "codigo": "#FFF000", "textura": "imagens/textura/Amarelo-refletivo.png" },
+      { "nome": "Azul Refletivo", "codigo": "#0000FF", "textura": "imagens/textura/Azul-refletivo.png" },
+      { "nome": "Verde Refletivo", "codigo": "#00CE4F", "textura": "imagens/textura/Verde-refletivo.png" }
+    ]
+  },
+  "especiais": {
+    "nome": "Especiais",
+    "precoAdicional": 1.05,
+    "cores": [
+      { "nome": "Holografico", "codigo": "#EDCBE4", "textura": "imagens/textura/Hologra.png" }
+    ]
+  }
+}
