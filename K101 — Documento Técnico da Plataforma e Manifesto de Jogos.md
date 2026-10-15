@@ -113,7 +113,7 @@ O que **não muda** em relação ao seu projeto: a organização interna (`css/`
 
 **Limites a ter em mente** (valores de referência; confirme na documentação): site publicado de até cerca de 1 GB, arquivos individuais de até 100 MB e tráfego mensal "suave" na casa de 100 GB. Para muitos jogos com modelos 3D pesados, o plano futuro é mover só a pasta `assets/` pesada para um armazenamento com CDN (por exemplo Cloudflare R2) e apontar o `basePath` do jogo para lá. Como o jogo já usa `AUDIO.basePath`, essa troca é simples.
 
-**Atenção — maiúsculas e minúsculas.** O GitHub Pages roda em Linux e diferencia `Game.js` de `game.js`. No Windows/macOS funciona de qualquer jeito, então o erro só aparece depois de publicar. Regra: o texto do `import` tem que ser **idêntico** ao nome do arquivo (hoje seus arquivos são `Game.js`, `Data.js` etc. e os imports usam `./Game.js`: está certo, só mantenha assim).
+**Atenção — maiúsculas e minúsculas.** O GitHub Pages roda em Linux e diferencia `Game.js` de `game.js`. No Windows/macOS funciona de qualquer jeito, então o erro só aparece depois de publicar. Regra: o texto do `import` tiene que ser **idêntico** ao nome do arquivo (hoje seus arquivos são `Game.js`, `Data.js` etc. e os imports usam `./Game.js`: está certo, só mantenha assim).
 
 ## 5. O catálogo
 
@@ -379,7 +379,7 @@ document.addEventListener("webkitfullscreenchange", onFS);
 
 /* ------------------------------ popup de confirmação de saída ------------------------------ */
 // Logo no centro, pergunta embaixo e dois botões: Cancelar e Sair.
-// Ao abrir emite "exit:open" (o jogo deve pausar e silenciar); ao cancelar emite "exit:cancel"
+// Ao abrir emite "exit:open" (o jogo pausa e silencia); ao cancelar emite "exit:cancel"
 // (o jogo continua pausado até o jogador retomar pelo próprio botão); ao confirmar, vai ao catálogo.
 class K101Exit extends HTMLElement {
   connectedCallback() {
@@ -600,7 +600,7 @@ Evita que o jogador saia por engano. Ele aparece quando, com o menu aberto, o jo
 
 Para ouvir esses eventos sem importar o SDK, use o `window` com o prefixo `k101:`, por exemplo `window.addEventListener("k101:ad:start", () => { /* pausar e silenciar */ })`. Os mesmos nomes valem para `k101:menu:open`, `k101:menu:close`, `k101:ad:end`, `k101:exit:open`, `k101:exit:cancel`, `k101:exit:confirm` e `k101:fullscreen:change`.
 
-**Anúncio e saída ao mesmo tempo.** Os dois pedem pausa e silêncio, então o jogo deve usar um contador (ou um mudo externo por origem) em vez de um simples liga/desliga, para que o fim de um não religue o áudio enquanto o outro ainda está ativo. Na prática, `setExternalMute` deve ser chamado com `true` em `exit:open`/`ad:start` e só voltar a `false` quando nenhum dos dois estiver ativo.
+**Anúncio e saída ao mesmo tempo.** Os dois pedem pausa e silêncio, então o jogo deve usar um contador (ou um mudo externo por origem) em vez de um simples liga/desliga, para que o fim de um não religue o áudio enquanto o outro ainda estiver ativo. Na prática, `setExternalMute` deve ser chamado com `true` em `exit:open`/`ad:start` e só voltar a `false` quando nenhum dos dois estiver ativo.
 
 ### 8.2 Chamadas que o jogo pode fazer
 
@@ -772,7 +772,7 @@ async restart() {
 }
 ```
 
-**6. `Audio.js`.** `Sound.setExternalMute(on)` silencia o jogo durante o anúncio **sem** alterar o volume nem o mudo que o jogador salvou (ao contrário de `toggleMute`).
+**6. `Audio.js`.** `Sound.setExternalMute(on)` silencia o jogo durante o anúncio **sem** alterar o volume nor o mudo que o jogador salvou (ao contrário de `toggleMute`).
 
 **7. Teclas.** O menu não usa teclas; B, P, Z, M e WASD seguem como estão. Só com o popup de saída aberto o SDK usa `Esc` (cancelar), `Tab` e `Enter`/`Espaço` nos botões, e nenhuma tecla chega ao jogo enquanto ele está aberto.
 
