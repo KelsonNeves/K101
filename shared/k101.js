@@ -50,12 +50,29 @@ export const K101 = {
   // Pede confirmação antes de sair: avisa o jogo (pausar) e mostra o popup. Só sai se o jogador confirmar.
   confirmExit() { exitDialog.open(); },
 
-  // Anúncios: por enquanto devolve "não exibido" na hora. A plataforma troca esta implementação depois,
-  // sem o jogo mudar. O jogo continua normalmente nos dois casos.
+  // Anúncios: gerencia anúncios em tela cheia (interstitials) sem banners no layout.
   ads: {
-    enabled: false,
-    async request(type, info = {}) { return { shown: false, rewarded: false }; },
-    slot(name) { /* futuro: preenche <div data-k101-slot="name"> */ }
+    enabled: true,
+    
+    // Função para verificar se deve exibir o anúncio na entrada (na 1ª abertura e depois a cada 3 aberturas)
+    checkEntryAd() {
+      const KEY = 'k101_global_game_opens';
+      let opens = parseInt(localStorage.getItem(KEY) || '0', 10);
+      opens += 1;
+      localStorage.setItem(KEY, opens.toString());
+
+      // Se for a 1ª vez (1) ou múltiplos de 3 (ex: 1, 4, 7, 10...)
+      if (opens === 1 || (opens - 1) % 3 === 0) {
+        return this.request('interstitial', { reason: 'entry' });
+      }
+      return Promise.resolve({ shown: false, skipped: true });
+    },
+
+    async request(type, info = {}) {
+      // Quando a conta AdSense/Ad Manager estiver ativa, a chamada real do bloco entra aqui.
+      // Por enquanto, avisa o jogo para pausar/despausar normalmente.
+      return { shown: false, rewarded: false };
+    }
   }
 };
 window.K101 = K101;
@@ -66,9 +83,6 @@ document.addEventListener("fullscreenchange", onFS);
 document.addEventListener("webkitfullscreenchange", onFS);
 
 /* ------------------------------ popup de confirmação de saída ------------------------------ */
-// Logo no centro, pergunta embaixo e dois botões: Cancelar e Sair.
-// Ao abrir emite "exit:open" (o jogo deve pausar e silenciar); ao cancelar emite "exit:cancel"
-// (o jogo continua pausado até o jogador retomar pelo próprio botão); ao confirmar, vai ao catálogo.
 class K101Exit extends HTMLElement {
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
@@ -77,10 +91,8 @@ class K101Exit extends HTMLElement {
   :host { display: none; position: fixed; inset: 0; z-index: 2147483600; touch-action: none;
           -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   :host(.open) { display: grid; place-items: center; }
-  /* mesmo fundo escurecido dos popups do catálogo */
   .veil { position: absolute; inset: 0; background: var(--overlay);
           backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-  /* mesmo cartão do popup de jogo do catálogo (.frame) */
   .box { position: relative; width: min(340px, calc(100vw - 40px)); box-sizing: border-box; padding: 26px 22px 22px;
          border: var(--borda); border-radius: var(--raio-card);
          background: var(--brilho-popup), var(--background2); box-shadow: var(--sombra-popup);
@@ -92,9 +104,9 @@ class K101Exit extends HTMLElement {
            font: 800 16px/1 var(--fonte); border-radius: var(--raio-btn);
            border: var(--btn-borda-largura) solid transparent; transition: background .2s ease; }
   button:focus-visible { outline: var(--foco); outline-offset: 3px; }
-  .cancel { background: var(--btn2-fundo); color: var(--btn2-texto); border-color: var(--btn2-borda); }   /* BTN2: neutro */
+  .cancel { background: var(--btn2-fundo); color: var(--btn2-texto); border-color: var(--btn2-borda); }
   .cancel:hover { background: var(--btn2-fundo-hover); }
-  .leave { background: var(--btn3-fundo); color: var(--btn3-texto); border-color: var(--btn3-borda); }    /* BTN3: atenção */
+  .leave { background: var(--btn3-fundo); color: var(--btn3-texto); border-color: var(--btn3-borda); }
   .leave:hover { background: var(--btn3-fundo-hover); }
 </style>
 <div class="veil"></div>
@@ -116,8 +128,8 @@ class K101Exit extends HTMLElement {
       previous = document.activeElement;
       this.classList.add("open");
       K101._holds.add("exit");
-      K101.emit("exit:open");          // o jogo pausa e silencia
-      cancel.focus();                  // foco no botão seguro, para um Enter acidental não sair
+      K101.emit("exit:open");
+      cancel.focus();
     };
     const hide = () => {
       this.classList.remove("open");
@@ -130,7 +142,6 @@ class K101Exit extends HTMLElement {
     veil.addEventListener("click", hide);
     leave.addEventListener("click", () => { K101.emit("exit:confirm"); K101.goHome(); });
 
-    // Teclado: Esc cancela; Tab fica preso entre os dois botões; nada vaza para o jogo.
     this.addEventListener("keydown", (e) => {
       e.stopPropagation();
       if (e.key === "Escape") { e.preventDefault(); hide(); }
@@ -141,10 +152,8 @@ class K101Exit extends HTMLElement {
     });
     this.addEventListener("keyup", (e) => e.stopPropagation());
 
-    // Voltou pelo botão "voltar" do navegador (cache de página): não reaparece com o popup aberto.
     window.addEventListener("pageshow", (e) => { if (e.persisted && this.classList.contains("open")) hide(); });
 
-    // O toque no popup não "vaza" para o jogo.
     for (const ev of ["pointerdown", "pointerup", "pointermove", "touchstart", "touchmove", "touchend", "wheel", "contextmenu", "click"])
       this.addEventListener(ev, (e) => e.stopPropagation(), { passive: false });
   }
@@ -160,7 +169,6 @@ const exitDialog = {
 };
 
 /* ------------------------------ menu flutuante ------------------------------ */
-// Fechado: só o botão com a logo. Aberto: [logo → catálogo] [ícone de tela cheia] [x fechar].
 const ICON = {
   enter: '<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',
   exit:  '<path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/>',
@@ -177,12 +185,10 @@ class K101Menu extends HTMLElement {
   :host { position: fixed; top: max(env(safe-area-inset-top), 6px); left: 50%; transform: translateX(-50%);
           z-index: 2147483000; touch-action: manipulation; -webkit-user-select: none; user-select: none;
           -webkit-tap-highlight-color: transparent; font-family: var(--fonte); }
-  /* mesma "pílula de vidro" do menu do catálogo (.dock-bar) */
   .bar { display: flex; align-items: center; gap: 5px; padding: 4px; border-radius: var(--raio-pill);
          background: var(--vidro); border: var(--borda);
          backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
          opacity: .55; transition: opacity .15s; }
-  /* Só o estado aberto deixa a barra opaca; fechado é sempre translúcido. */
   .bar.open { opacity: 1; }
   button { all: unset; box-sizing: border-box; display: grid; place-items: center; cursor: pointer;
            width: 40px; height: 40px; border-radius: var(--raio-pill); color: var(--texto1); }
@@ -216,7 +222,7 @@ class K101Menu extends HTMLElement {
       logo.setAttribute("aria-label", label);
       logo.title = open ? label : "";
       clearTimeout(timer);
-      if (open) timer = setTimeout(() => setOpen(false), 5000);   // fecha sozinho
+      if (open) timer = setTimeout(() => setOpen(false), 5000);
       K101.emit(open ? "menu:open" : "menu:close");
     };
     const syncFS = () => {
@@ -226,15 +232,14 @@ class K101Menu extends HTMLElement {
       fs.title = on ? "Sair da tela cheia" : "Tela cheia";
     };
 
-    fs.hidden = !K101.fullscreen.supported;                       // iPhone/Safari: sem tela cheia
+    fs.hidden = !K101.fullscreen.supported;
     syncFS();
-    logo.addEventListener("click", () => (isOpen() ? (setOpen(false), K101.confirmExit()) : setOpen(true)));   // aberto: a logo leva ao catálogo
+    logo.addEventListener("click", () => (isOpen() ? (setOpen(false), K101.confirmExit()) : setOpen(true)));
     fs.addEventListener("click", () => { K101.fullscreen.toggle(); setOpen(false); });
     close.addEventListener("click", () => setOpen(false));
     K101.on("fullscreen:change", syncFS);
     document.addEventListener("pointerdown", (e) => { if (!e.composedPath().includes(this)) setOpen(false); }, true);
 
-    // O toque no menu não "vaza" para o jogo.
     for (const ev of ["pointerdown", "pointerup", "pointermove", "wheel", "contextmenu"])
       this.addEventListener(ev, (e) => e.stopPropagation());
   }

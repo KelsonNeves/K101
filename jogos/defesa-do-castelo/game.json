@@ -11,6 +11,10 @@
   "orientation": "landscape",
   "approxDownloadMB": 25,
   "sdk": 1,
-  "ads": { "interstitial": true, "rewarded": false, "banner": ["loading", "end-screen"] },
+  "ads": {
+  "interstitial": true,
+  "rewarded": false,
+  "banner": []
+},
   "menuSafeTop": 44
 }

@@ -72,18 +72,14 @@ export class Game {
       onKey: (code) => this.handleKey(code)
     });
 
-    // Áudio posicional com FOCO (veja AUDIO.foco em Data.js). O volume de um som depende de:
-    //   1) onde ele está na tela: queda suave até a borda; fora da tela some (rápido com zoom perto);
-    //   2) o zoom: com a câmera longe tudo fica mais baixo, e cada som mantém só a fração `alcance`
-    //      do volume (passos somem, explosões continuam audíveis).
     Sound.setLocator((x, y, z, alcance) => {
       const p = this.input.worldToScreen(x, y, z);
       if (!p) return null;
       const foco = AUDIO.foco;
-      const zoom = this.scene.cameraManager.zoomLevel;             // 0 = bem perto, 1 = bem longe
+      const zoom = this.scene.cameraManager.zoomLevel;
       const nx = (p.x - window.innerWidth / 2) / (window.innerWidth / 2);
       const ny = (p.y - window.innerHeight / 2) / (window.innerHeight / 2);
-      const out = Math.max(Math.abs(nx), Math.abs(ny));            // 1 = borda da tela
+      const out = Math.max(Math.abs(nx), Math.abs(ny));
       const fora = foco.foraPerto + (foco.foraLonge - foco.foraPerto) * zoom;
       const tela = out <= 1 ? 1 - foco.queda * out : Math.max(0, (1 - foco.queda) - (out - 1) * fora);
       const longe = 1 - zoom * (1 - (alcance ?? foco.alcancePadrao));
@@ -92,12 +88,8 @@ export class Game {
   }
 
   /* --------------------------- plataforma K101 --------------------------- */
-  // O SDK (/shared/k101.js) avisa por eventos do window ("k101:*"), então não importa quem carrega primeiro
-  // e o jogo funciona igual se o SDK não existir (rodando fora do site).
   installPlatform() {
     const on = (name, fn) => window.addEventListener(`k101:${name}`, fn);
-    // Várias origens podem pedir silêncio ao mesmo tempo (anúncio e popup de saída):
-    // o áudio só volta quando nenhuma delas estiver ativa.
     this.muteSources = new Set();
     const mute = (src, active) => {
       active ? this.muteSources.add(src) : this.muteSources.delete(src);
@@ -114,11 +106,15 @@ export class Game {
     this.installPlatform();
     this.setState("LOADING");
     this.ui.showLoading(0);
+
+    // Verifica a exibição do anúncio de entrada (1ª vez e a cada 3 aberturas)
+    window.K101?.ads?.checkEntryAd?.();
+
     await this.scene.preload(this.collectModels(), (p) => this.ui.showLoading(p * 0.9));
-    await Sound.load((p) => this.ui.showLoading(0.9 + p * 0.1));   // nunca derruba o jogo se falhar
+    await Sound.load((p) => this.ui.showLoading(0.9 + p * 0.1));
     this.ui.setTowers(Object.values(TOWERS), GAME_CONFIG.paths.icons);
     this.ui.setBuildIcon(GAME_CONFIG.paths.buildIcon ? GAME_CONFIG.paths.icons + GAME_CONFIG.paths.buildIcon : null);
-    this.buildWorld();               // mundo de fundo atrás do menu
+    this.buildWorld();
     this.setState("MENU");
     this.ui.setRecord(this.record);
     this.ui.showMenu();
@@ -131,9 +127,9 @@ export class Game {
     Object.values(ENEMIES).forEach((d) => list.push({ category: "enemies", model: d.model }));
     Object.values(TOWERS).forEach((d) => {
       list.push({ category: "structures", model: d.model });
-      if (d.wall?.link?.model) list.push({ category: "structures", model: d.wall.link.model });   // segmento do muro
-      d.upgrades?.forEach((u) => u.link?.model && list.push({ category: "structures", model: u.link.model }));   // segmento por nível
-      d.upgrades?.forEach((u) => u.model && list.push({ category: "structures", model: u.model }));   // modelos por nível
+      if (d.wall?.link?.model) list.push({ category: "structures", model: d.wall.link.model });
+      d.upgrades?.forEach((u) => u.link?.model && list.push({ category: "structures", model: u.link.model }));
+      d.upgrades?.forEach((u) => u.model && list.push({ category: "structures", model: u.model }));
     });
     list.push({ category: "structures", model: GAME_CONFIG.castle.model });
     Object.values(GAME_CONFIG.environment).forEach((d) => list.push({ category: "environment", model: d.model }));
@@ -144,7 +140,6 @@ export class Game {
   frame(now) {
     const delta = Math.min((now - (this.lastTime || now)) / 1000, 0.05);
     this.lastTime = now;
-    // Um erro num frame não pode derrubar o loop inteiro (o jogo "congelaria").
     try { this.update(delta); this.render(); } catch (err) { console.error(err); }
     requestAnimationFrame((t) => this.frame(t));
   }
@@ -154,7 +149,6 @@ export class Game {
     if (!this.world) return;
 
     if (this.state === "PREPARING" || this.state === "PLAYING") {
-      // Intervalo entre ondas sempre em 1x; na onda, vale a velocidade escolhida pelo jogador.
       const speed = this.state === "PREPARING" ? 1 : this.timeScale;
       const dt = delta * speed;
       this.elapsed += dt;
@@ -178,7 +172,6 @@ export class Game {
     this.ui.update(this.snapshot());
   }
 
-  // Malha de construção: só as células livres dentro da área permitida. Refeita quando a área muda.
   syncBuildGrid() {
     if (!this.selectedTower || !this.map || this.gridVersion === this.map.zoneVersion) return;
     this.gridVersion = this.map.zoneVersion;
@@ -202,7 +195,6 @@ export class Game {
     Sound.play("ui_pausar");
   }
 
-  // Botão "Finalizar partida" do menu de pausa: encerra a run atual e salva o recorde, se houver.
   finishRun() {
     if (this.state !== "PAUSED") return;
     this.ui.showPause(false);
@@ -234,8 +226,6 @@ export class Game {
     this.ui.message("Construa suas torres! A primeira onda vem aí", false);
   }
 
-  // "Jogar de novo" na tela de fim de partida é a pausa natural para um anúncio entre partidas.
-  // O anúncio é decisão da plataforma (pode não aparecer) e nunca impede de jogar.
   async restart() {
     if (this.restarting) return;
     this.restarting = true;
@@ -251,7 +241,7 @@ export class Game {
     this.dragging = false;
     this.selectTower(null);
     this.scene.reset();
-    this.wallLinks = new Map();      // "uidA-uidB" → segmento de muro 3D
+    this.wallLinks = new Map();
     this.undoStack = [];
 
     const map = new GameMap(MAPS[GAME_CONFIG.defaultMap].layout);
@@ -269,7 +259,7 @@ export class Game {
     this.scene.setPosition(castle.object3D, pos.x, 0, pos.z);
     this.scene.add(castle.object3D);
     entities.castle = castle;
-    this.scene.focusCamera(pos.x, pos.z);   // a partida começa com o castelo no centro da tela
+    this.scene.focusCamera(pos.x, pos.z);
 
     const animation = new AnimationSystem({ scene: this.scene });
     const combat = new CombatSystem({ scene: this.scene, entities, emit });
@@ -318,16 +308,16 @@ export class Game {
         const c = payload.castle;
         const p = this.input.worldToScreen(c.position.x, 3, c.position.z);
         if (p) this.ui.floatCoins(p.x, p.y, payload.amount);
-        Sound.play("moeda_castelo", { x: c.position.x, y: 3, z: c.position.z });   // segue a tela, como a mina
+        Sound.play("moeda_castelo", { x: c.position.x, y: 3, z: c.position.z });
         break;
       }
       case "healBeam":
-        this.systems.vfx.setHealBeam(payload.tower, payload.target);   // laser contínuo da torre de restauração
+        this.systems.vfx.setHealBeam(payload.tower, payload.target);
         break;
       case "structureBuilt":
-        this.systems.vfx.buildComplete(payload.tower);   // andaime se desmonta + onda de choque
+        this.systems.vfx.buildComplete(payload.tower);
         this.director.structureBuilt(payload.tower);
-        this.syncWallLinks();                            // muro pronto: agora liga aos vizinhos
+        this.syncWallLinks();
         break;
       case "castleDamaged":
         this.ui.flashDamage();
@@ -362,7 +352,6 @@ export class Game {
     }
   }
 
-  // Fim da partida: compara o tempo sobrevivido com o recorde e mostra o resultado.
   endRun(title = "O castelo caiu") {
     const time = Math.floor(this.elapsed);
     const isRecord = time > this.record;
@@ -373,7 +362,7 @@ export class Game {
 
   /* ----------------------------- construção ---------------------------- */
   selectTower(id) {
-    this.closeStructureMenu();      // escolher/cancelar uma construção fecha o menu de contexto
+    this.closeStructureMenu();
     if (!id || id === this.selectedTower) {
       this.selectedTower = null;
       this.ghostCell = null;
@@ -388,7 +377,7 @@ export class Game {
     this.ghostCell = null;
     Sound.play("ui_selecionar");
     this.scene.createGhost("structures", data, data.combat?.range ?? data.heal?.range ?? 0);
-    this.gridVersion = -1;           // força desenhar a malha na próxima atualização
+    this.gridVersion = -1;
     this.scene.setGridVisible(true);
     this.ui.setSelected(id);
   }
@@ -410,7 +399,6 @@ export class Game {
     const w = this.map.gridToWorld(cell.row, cell.col, data.footprint);
     const prev = this.ghostCell;
     this.ghostCell = cell;
-    // Arrastando uma construção: uma vibraçãozinha a cada célula nova (várias seguidas se passar rápido).
     if (this.dragging && (!prev || prev.row !== cell.row || prev.col !== cell.col)) { Haptics.play("cell"); Sound.play("ui_tique"); }
     const state = this.placementState(cell);
     this.scene.setGhost(w.x, w.z, state.ok);
@@ -419,7 +407,6 @@ export class Game {
     this.updateGhostPrice();
   }
 
-  // Etiqueta com o preço total (base + evoluções do grupo de muros) logo acima do fantasma.
   updateGhostPrice() {
     const g = this.ghostPrice;
     if (!g || !this.selectedTower || !this.ghostCell) return this.ui.hideGhostPrice();
@@ -428,13 +415,10 @@ export class Game {
     this.ui.showGhostPrice(p.x, p.y, g.cost, g.ok);
   }
 
-  // Mouse: o modelo segue o cursor e o clique constrói.
-  // Toque: a construção é feita arrastando o card (veja beginDrag/dragMove/dragEnd).
   handleSelect(point, pointerType, sx, sy) {
     const active = this.state === "PREPARING" || this.state === "PLAYING";
     if (!active) return;
 
-    // Com uma torre escolhida no menu, o clique do mouse constrói.
     if (this.selectedTower) {
       if (pointerType !== "mouse") return;
       const cell = this.map.worldToGrid(point);
@@ -443,14 +427,12 @@ export class Game {
       return;
     }
 
-    // Sem construção em andamento: clicar numa estrutura abre o menu de contexto dela.
     const tower = this.pickStructure(point, sx, sy);
     if (!tower || tower === this.selectedStructure) this.closeStructureMenu();
     else this.openStructureMenu(tower, sx != null ? { x: sx, y: sy - 36 } : null);
   }
 
   /* ------------------ menu de contexto das estruturas ------------------ */
-  // Acha a torre clicada: primeiro pela célula do chão; senão pelo corpo (da base ao topo) na tela.
   pickStructure(point, sx, sy) {
     const cell = this.map.worldToGrid(point);
     const occupant = this.map.getCell(cell.row, cell.col)?.occupant;
@@ -471,18 +453,15 @@ export class Game {
     return best;
   }
 
-  // Devolve parte de TUDO que foi investido na torre (compra + evoluções).
   refundFor(tower) { return Math.floor(tower.invested * GAME_CONFIG.refundRate); }
 
-  // Opções do menu. Para novas opções (evoluir etc.), basta acrescentar itens aqui
-  // e tratar o `id` em handleContextAction. `icon` é uma chave de ICONS em UI.js.
   structureActions(tower) {
     const next = tower.nextUpgrade();
     const group = this.upgradeGroup(tower);
     const groupCost = this.groupUpgradeCost(group);
     const refund = this.refundFor(tower);
     const demolish = { id: "demolish", icon: "demolish", kind: "danger", label: `Demolir (+${refund} moedas)`, badge: `+${refund}` };
-    if (!tower.built) {                                       // em obra: só dá para cancelar (demolir)
+    if (!tower.built) {
       const pct = Math.floor(tower.buildProgress * 100);
       return [{ id: "building", static: true, caption: "Obra", text: `${pct}%`, label: `${tower.name} — em construção (${pct}%)` }, demolish];
     }
@@ -498,8 +477,8 @@ export class Game {
           poor: !this.economy.canAfford(fix)
         }
       : { id: "repair", icon: "repair", kind: "repair", label: "Vida cheia", badge: "OK", disabled: true };
-    if (tower.trap) return [demolish];                        // armadilha: só dá para demolir (vida nunca é danificada)
-    if (tower.maxLevel === 1) return [repair, demolish];     // sem evolução: reparar e demolir
+    if (tower.trap) return [demolish];
+    if (tower.maxLevel === 1) return [repair, demolish];
 
     const upgrade = next
       ? {
@@ -513,14 +492,13 @@ export class Game {
       : { id: "upgrade", icon: "upgrade", kind: "upgrade", label: "Nível máximo", badge: "MAX", disabled: true };
 
     return [
-      { id: "level", static: true, caption: "Nv", text: `${tower.level}`, label: `${tower.name} — nível ${tower.level} de ${tower.maxLevel} · vida ${Math.ceil(tower.health)}/${tower.maxHealth}${tower.mining ? `\n+${tower.mineAmount} moedas a cada ${tower.mineInterval}s` : ""}${tower.healer ? `\nCura ${tower.healAmount} a cada ${tower.healInterval}s · alcance ${tower.healRange}\nEnergia ${Math.round(tower.healEnergy * 100)}%${tower.healOverheated ? " (superaquecida)" : ""}` : ""}` },
+      { id: "level", static: true, caption: "Nv", text: `${tower.level}`, label: `${tower.name} — nível ${tower.level} de ${tower.maxLevel} · vida ${Math.ceil(tower.health)}/${tower.maxHealth}${tower.mining ? `\n+${tower.mineAmount} moedas a cada${tower.mineInterval}s` : ""}${tower.healer ? `\nCura ${tower.healAmount} a cada ${tower.healInterval}s · alcance ${tower.healRange}\nEnergia ${Math.round(tower.healEnergy * 100)}\%${tower.healOverheated ? " (superaquecida)" : ""}` : ""}` },
       upgrade,
       repair,
       demolish
     ];
   }
 
-  // "Dano 10→14 · Alcance 7.5→8 · Recarga 0.7→0.65s" (só o que muda)
   describeUpgrade(tower, u) {
     const parts = [];
     const add = (name, now, next, unit = "") => { if (next !== undefined && next !== now) parts.push(`${name} ${now}→${next}${unit}`); };
@@ -540,12 +518,11 @@ export class Game {
     return parts.join(" · ");
   }
 
-  // `tap` = ponto tocado (px): posição de reserva caso a projeção 3D → tela falhe.
   openStructureMenu(tower, tap = null) {
     this.selectedStructure = tower;
     Sound.play("ui_abrir");
     this.menuFallback = tap;
-    this.scene.setOutline(tower.object3D);    // contorno branco enquanto o menu está aberto
+    this.scene.setOutline(tower.object3D);
     this.ui.showContext(this.structureActions(tower));
     this.updateStructureMenu();
   }
@@ -558,18 +535,17 @@ export class Game {
     this.ui.hideContext();
   }
 
-  // Todo frame: o menu acompanha a estrutura quando a câmera se move.
   updateStructureMenu() {
     const t = this.selectedStructure;
     if (!t) return;
     try {
       if (!this.entities.towers.includes(t)) return this.closeStructureMenu();
-      this.scene.setOutline(t.object3D);      // a evolução pode trocar o objeto 3D: o contorno acompanha
+      this.scene.setOutline(t.object3D);
       this.scene.setSecondaryOutlines(this.linkedGroup(t).filter((o) => o !== t).map((o) => o.object3D));
       let p = this.input.worldToScreen(t.position.x, t.muzzleHeight + 0.8, t.position.z);
       if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) p = this.menuFallback;
       if (p) this.ui.moveContext(p.x, p.y);
-      this.ui.refreshContext(this.structureActions(t));   // moedas/nível mudaram? atualiza os botões
+      this.ui.refreshContext(this.structureActions(t));
     } catch (err) {
       console.error(err);
       this.closeStructureMenu();
@@ -584,8 +560,6 @@ export class Game {
     else if (id === "repair") this.repairStructure(t);
   }
 
-  // Resolve o visual do nível atual da torre e troca o objeto 3D se o .glb mudou.
-  // Retorna a escala final: 1 se o nível tem modelo próprio, senão cresce GAME_CONFIG.upgradeGrowth por nível.
   applyTowerVisual(tower) {
     const base = TOWERS[tower.type];
     const pick = (o) => Object.fromEntries(
@@ -598,29 +572,28 @@ export class Game {
       const u = base.upgrades?.[i];
       if (u?.model) {
         customModel = true;
-        visual = { fallback: base.fallback, ...pick(u) };   // modelo próprio: scale/yOffset/rotationY são dele
+        visual = { fallback: base.fallback, ...pick(u) };
       } else if (u?.fallback) {
-        visual = { ...visual, fallback: u.fallback };       // só muda o graybox (cor/forma); o .glb, se houver, continua
+        visual = { ...visual, fallback: u.fallback };
       }
     }
 
     const key = JSON.stringify([visual.model, visual.fallback]);
     if (key !== tower.visualKey) {
-      const { scale, yOffset, rotationY, ...rest } = base;   // não herda o ajuste do modelo anterior
+      const { scale, yOffset, rotationY, ...rest } = base;
       const old = tower.object3D;
       const obj = this.scene.createObject("structures", { ...rest, ...visual }).object3D;
       this.scene.setPosition(obj, tower.position.x, 0, tower.position.z);
-      obj.rotation.copy(old.rotation);                       // mantém a mira
+      obj.rotation.copy(old.rotation);
       this.scene.add(obj);
       this.scene.remove(old);
       tower.object3D = obj;
       tower.visualKey = key;
-      this.scene.attachHealthBar(obj, tower.muzzleHeight + 0.5);   // a barra de vida pertencia ao objeto antigo
+      this.scene.attachHealthBar(obj, tower.muzzleHeight + 0.5);
     }
     return customModel ? 1 : 1 + GAME_CONFIG.upgradeGrowth * (tower.level - 1);
   }
 
-  // Muros: evolui todo o grupo ligado de uma vez. Outras construções: só a selecionada.
   upgradeStructure(tower) {
     if (!tower.built) return this.ui.message("Aguarde a obra terminar", true);
     if (!tower.nextUpgrade()) return this.ui.message("Esta construção já está no nível máximo", true);
@@ -632,17 +605,16 @@ export class Game {
     this.economy.spend(cost);
     for (const t of group) {
       while (t.level < group.target && t.applyUpgrade());
-      this.map.refreshThreat(t);               // novo alcance = nova área de perigo para os inimigos
+      this.map.refreshThreat(t);
     }
     this.systems.enemy.recomputePaths();
 
-    // Visual do novo nível: troca o .glb (se o nível tiver um) ou só aumenta o tamanho; depois o brilho (Vfx.js).
     for (const t of group) {
       const scale = this.applyTowerVisual(t);
       this.scene.setHealthBar(t.object3D, t.health / t.maxHealth);
       this.systems.vfx.upgradeGlow(t, scale);
     }
-    this.syncWallLinks();                      // o visual do segmento depende do nível dos dois muros
+    this.syncWallLinks();
     Sound.play("evoluir", { x: tower.position.x, y: 1, z: tower.position.z, pitch: 1 + 0.05 * (tower.level - 2) });
 
     this.ui.message(group.length > 1
@@ -651,8 +623,6 @@ export class Game {
     this.updateStructureMenu();
   }
 
-  // Quem evolui junto: para muro, todos os muros prontos ligados a ele (direta ou indiretamente);
-  // para o resto, só a própria construção. `target` = nível que todos alcançam (o maior do grupo + 1).
   upgradeGroup(tower) {
     const group = this.linkedGroup(tower);
     const top = Math.max(...group.map((t) => t.level));
@@ -660,7 +630,6 @@ export class Game {
     return group;
   }
 
-  // Muro: ele + todos os muros prontos ligados (direta ou indiretamente). Outras construções: só ela.
   linkedGroup(tower) {
     if (!tower.wall || !tower.built) return [tower];
     const seen = new Set([tower]);
@@ -676,7 +645,6 @@ export class Game {
     return [...seen];
   }
 
-  // Soma das evoluções que cada membro ainda precisa pagar até o nível alvo do grupo.
   groupUpgradeCost(group) {
     let total = 0;
     for (const t of group) {
@@ -685,7 +653,6 @@ export class Game {
     return total;
   }
 
-  // Construção destruída por inimigos: igual a demolir, mas sem reembolso e com explosão.
   destroyStructure(tower) {
     const list = this.entities.towers;
     const i = list.indexOf(tower);
@@ -694,14 +661,12 @@ export class Game {
     this.map.release(tower.row, tower.col, tower.footprint);
     this.scene.spawnEffect(GAME_CONFIG.effects.explosion, { x: tower.position.x, y: 0.6, z: tower.position.z }, 1.2);
     Sound.play("construcao_destruida", { x: tower.position.x, y: 1, z: tower.position.z });
-    this.collapseVisual(tower, true);          // desaba em escombros (Vfx.js) e só então remove o objeto 3D
-    this.systems.enemy.recomputePaths();       // com a construção fora, o melhor caminho pode mudar
+    this.collapseVisual(tower, true);
+    this.systems.enemy.recomputePaths();
     this.syncWallLinks();
-    this.ui.message(`${tower.name} destruída!`, true, false);   // já tem o som de desabamento
+    this.ui.message(`${tower.name} destruída!`, true, false);
   }
 
-  // Armadilha que já explodiu (TowerSystem/CombatSystem cuidaram do dano e da explosão): some sem
-  // reembolso e sem escombros. A explosão já foi desenhada por CombatSystem.detonate.
   consumeTrap(tower) {
     const list = this.entities.towers;
     const i = list.indexOf(tower);
@@ -714,11 +679,10 @@ export class Game {
     this.ui.message(`${tower.name} explodiu!`);
   }
 
-  // Animação de queda (Vfx.js); o objeto 3D só é removido quando o desabamento termina.
   collapseVisual(tower, violent) {
     const obj = tower.object3D;
     if (!obj) return;
-    this.scene.setHealthBar(obj, 1);           // esconde a barra de vida
+    this.scene.setHealthBar(obj, 1);
     this.systems.vfx.collapse(tower, {
       violent,
       colors: TOWERS[tower.type]?.debrisColors,
@@ -726,7 +690,6 @@ export class Game {
     });
   }
 
-  // Recupera toda a vida pelo preço de Tower.repairCost(). Em muros, repara todos os danificados do grupo ligado.
   repairStructure(tower) {
     const damaged = this.linkedGroup(tower).filter((t) => t.repairCost() > 0);
     const cost = damaged.reduce((n, t) => n + t.repairCost(), 0);
@@ -736,18 +699,17 @@ export class Game {
     this.economy.spend(cost);
     for (const t of damaged) {
       t.health = t.maxHealth;
-      this.scene.setHealthBar(t.object3D, 1);          // esconde a barra de vida
-      this.systems.vfx.repairPulse(t);                 // animação de reparo (Vfx.js)
+      this.scene.setHealthBar(t.object3D, 1);
+      this.systems.vfx.repairPulse(t);
     }
     Sound.play("reparar", { x: tower.position.x, y: 1, z: tower.position.z });
-    this.systems.enemy.recomputePaths();               // construção reforçada custa mais para os inimigos quebrarem
+    this.systems.enemy.recomputePaths();
     this.ui.message(damaged.length > 1
       ? `${damaged.length} muros reparados (-${cost} moedas)`
       : `${tower.name} reparada (-${cost} moedas)`);
     this.updateStructureMenu();
   }
 
-  // undo = desfazer uma obra recém-colocada: devolve 100% do investido (demolir devolve só refundRate).
   demolishStructure(tower, { undo = false } = {}) {
     const list = this.entities.towers;
     const i = list.indexOf(tower);
@@ -756,24 +718,22 @@ export class Game {
 
     list.splice(i, 1);
     tower.alive = false;
-    this.map.release(tower.row, tower.col, tower.footprint);   // libera as células e o "peso" de perigo
-    this.collapseVisual(tower, false);                         // desaba em escombros (Vfx.js)
+    this.map.release(tower.row, tower.col, tower.footprint);
+    this.collapseVisual(tower, false);
     Sound.play(undo ? "desfazer" : "demolir", { x: tower.position.x, y: 1, z: tower.position.z });
     this.economy.earn(refund);
-    this.systems.enemy.recomputePaths();                       // o caminho dos inimigos pode mudar
-    this.syncWallLinks();                                      // remove as ligações do muro demolido
+    this.systems.enemy.recomputePaths();
+    this.syncWallLinks();
 
     if (!undo || this.selectedStructure === tower) this.closeStructureMenu();
     this.ui.message(undo ? `Obra de ${tower.name} desfeita +${refund} moedas` : `${tower.name} demolida +${refund} moedas`);
   }
 
   /* ------------------------------ desfazer ------------------------------ */
-  // Mantém só as construções que ainda estão em obra (as prontas ou destruídas saem da lista).
   pruneUndo() {
     this.undoStack = this.undoStack.filter((t) => t.alive && !t.built);
   }
 
-  // Desfaz a última construção ainda em obra, com reembolso total.
   undoBuild() {
     if (this.state !== "PREPARING" && this.state !== "PLAYING") return;
     this.pruneUndo();
@@ -792,7 +752,7 @@ export class Game {
   confirmBuild(cell) {
     const data = TOWERS[this.selectedTower];
     const plan = this.placementPlan(data, cell.row, cell.col);
-    const tower = new Tower(data, cell.row, cell.col, plan.level);     // muro novo já nasce no nível do grupo
+    const tower = new Tower(data, cell.row, cell.col, plan.level);
 
     const p = this.map.gridToWorld(cell.row, cell.col, data.footprint);
     tower.position = { x: p.x, y: 0, z: p.z };
@@ -800,27 +760,25 @@ export class Game {
     this.scene.setPosition(tower.object3D, p.x, 0, p.z);
     this.scene.add(tower.object3D);
     Sound.play("construir_posicionar", { x: p.x, y: 0.5, z: p.z });
-    this.scene.attachHealthBar(tower.object3D, tower.muzzleHeight + 0.5);   // só aparece depois de levar dano
-    if (tower.level > 1) this.applyTowerVisual(tower);                     // modelo/cor do nível inicial
+    this.scene.attachHealthBar(tower.object3D, tower.muzzleHeight + 0.5);
+    if (tower.level > 1) this.applyTowerVisual(tower);
 
     this.map.occupy(cell.row, cell.col, data.footprint, tower);
     this.economy.spend(plan.cost);
     this.entities.towers.push(tower);
     this.systems.enemy.recomputePaths();
-    this.syncWallLinks();                    // muro novo: liga aos vizinhos (só quando a obra terminar)
-    this.systems.vfx.constructionSite(tower);   // andaime + progresso (nada acontece se buildTime = 0)
+    this.syncWallLinks();
+    this.systems.vfx.constructionSite(tower);
 
-    if (!tower.built) {                      // pode ser desfeita enquanto estiver em obra
+    if (!tower.built) {
       this.undoStack.push(tower);
       while (this.undoStack.length > (GAME_CONFIG.undoLimit ?? 2)) this.undoStack.shift();
     }
 
-    this.handleHover({ x: p.x, z: p.z });    // revalida o fantasma (agora ocupado)
+    this.handleHover({ x: p.x, z: p.z });
   }
 
   /* ------------------------------ muros ------------------------------ */
-  // Nível inicial e preço TOTAL de uma construção nova. Muro encostado em muros já evoluídos nasce no
-  // nível deles (inclusive muros ainda em obra, que vão se ligar) e custa base + cada evolução até lá.
   placementPlan(data, row, col) {
     let level = 1;
     if (data.wall) {
@@ -837,19 +795,17 @@ export class Game {
     return { level, cost };
   }
 
-  // Muros nas 8 células ao redor (inclusive a própria, se já houver um).
   wallNeighbors(row, col) {
     const list = [];
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
         const o = this.map.getCell(row + dr, col + dc)?.occupant;
-        if (o instanceof Tower && o.wall && o.built) list.push(o);   // muro em obra ainda não liga
+        if (o instanceof Tower && o.wall && o.built) list.push(o);
       }
     }
     return list;
   }
 
-  // Visual do segmento no nível do muro: base + `link` de cada evolução já alcançada.
   linkSpecFor(tower) {
     const base = TOWERS[tower.type];
     let spec = base.wall.link;
@@ -860,14 +816,12 @@ export class Game {
     return spec;
   }
 
-  // Deixa os segmentos 3D exatamente iguais aos pares de muros vizinhos que existem agora
-  // (e com o visual do nível certo; o par usa o muro de menor nível).
   syncWallLinks() {
     const wanted = new Map();
     for (const a of this.entities.towers) {
       if (!a.wall || !a.built) continue;
       for (const b of this.wallNeighbors(a.row, a.col)) {
-        if (b === a || a.uid > b.uid) continue;           // cada par uma vez só
+        if (b === a || a.uid > b.uid) continue;
         const spec = this.linkSpecFor(a.level <= b.level ? a : b);
         wanted.set(`${a.uid}-${b.uid}`, { a, b, spec, sig: JSON.stringify(spec) });
       }
@@ -885,7 +839,6 @@ export class Game {
     }
   }
 
-  // Prévia: mostra no fantasma com quais muros vizinhos ele vai se ligar.
   updateGhostLinks(cell, ok) {
     const data = TOWERS[this.selectedTower];
     if (!data?.wall) return;
@@ -908,13 +861,12 @@ export class Game {
 
   dragMove(x, y, overMenu = false) {
     if (!this.dragging) return;
-    if (overMenu) { this.scene.hideGhost(); this.ui.hideGhostPrice(); this.ghostCell = null; return; }   // sobre a lixeira
+    if (overMenu) { this.scene.hideGhost(); this.ui.hideGhostPrice(); this.ghostCell = null; return; }
     const pt = this.dragPoint(x, y);
     if (pt) this.handleHover(pt);
     else { this.scene.hideGhost(); this.ui.hideGhostPrice(); this.ghostCell = null; }
   }
 
-  // Soltou: constrói só se o quadrado for válido; senão cancela sem mensagem.
   dragEnd(x, y, cancel) {
     if (!this.dragging) return;
     this.dragging = false;
@@ -956,7 +908,7 @@ export class Game {
       castleMax: c.maxHealth,
       wave: w.started,
       time: Math.floor(this.elapsed),
-      record: Math.max(this.record, Math.floor(this.elapsed)),   // o recorde sobe junto enquanto você o supera
+      record: Math.max(this.record, Math.floor(this.elapsed)),
       waveActive: w.active,
       countdown: this.state === "PREPARING" ? w.countdown : null,
       waveTimer: !w.active && w.countdown != null && (this.state === "PREPARING" || this.state === "PAUSED")
