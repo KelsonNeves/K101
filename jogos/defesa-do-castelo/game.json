@@ -1,0 +1,16 @@
+{
+  "id": "defesa-do-castelo",
+  "title": "Defesa do Castelo",
+  "tagline": "Construa torres, segure goblins e orcs na ponte e proteja o castelo. As ondas nunca acabam.",
+  "cover": "cover.webp",
+  "icon": "icon.webp",
+  "version": "1.0.0",
+  "status": "published",
+  "tags": ["estratégia", "tower defense", "3D"],
+  "platforms": ["desktop", "mobile"],
+  "orientation": "landscape",
+  "approxDownloadMB": 25,
+  "sdk": 1,
+  "ads": { "interstitial": true, "rewarded": false, "banner": ["loading", "end-screen"] },
+  "menuSafeTop": 44
+}

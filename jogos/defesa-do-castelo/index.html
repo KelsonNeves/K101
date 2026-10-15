@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Defesa do Castelo — K101</title>
+  <meta name="description" content="Tower defense 3D: construa torres, segure goblins e orcs na ponte e proteja o castelo. As ondas nunca acabam.">
+
+  <!-- Identificação para a plataforma K101 -->
+  <meta name="k101-game" content="defesa-do-castelo">
+  <meta name="k101-safe-top" content="44">
+
+  <!-- Prévia de link (estático: redes sociais não executam JavaScript) -->
+  <link rel="canonical" href="https://k101.com.br/jogos/defesa-do-castelo/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Defesa do Castelo">
+  <meta property="og:description" content="Tower defense 3D: construa torres e proteja o castelo. As ondas nunca acabam.">
+  <meta property="og:image" content="https://k101.com.br/jogos/defesa-do-castelo/cover.webp">
+  <meta property="og:url" content="https://k101.com.br/jogos/defesa-do-castelo/">
+  <link rel="icon" href="/shared/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/hud.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <!-- SDK K101: menu flutuante + anúncios. Precisa vir DEPOIS do importmap (módulo não bloqueia o carregamento). -->
+  <script type="module" src="/shared/k101.js"></script>
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+  <div id="damage-flash"></div>
+
+  <!-- HUD (tudo na parte inferior) -->
+  <div id="hud" hidden>
+    <div id="toast" class="toast"></div>
+
+    <!-- Aba central superior: número da onda + barra com o tempo até a próxima -->
+    <div class="wave-hud">
+      <div class="wave-tab"><span id="hud-wave">Onda 0 · 0:00</span><small id="hud-record" class="record"></small></div>
+      <div id="wave-timer" class="wave-timer"><div id="wave-timer-fill" class="bar-fill"></div></div>
+    </div>
+    <div id="countdown" class="countdown" aria-live="polite"></div>
+    <div id="tip" class="tip" hidden></div>
+
+    <!-- Menu de contexto de uma estrutura construída (botões redondos, preenchido pelo UI.js) -->
+    <div id="ctx-menu" class="ctx" hidden></div>
+
+    <div id="dock" class="dock">
+      <!-- 2º menu: cards das construções (abre/fecha pelo botão de ferramenta).
+           Os cards rolam para o lado; o botão de desfazer fica fixo no canto direito e só aparece
+           quando há uma construção em obra para desfazer. -->
+      <div id="tower-tray" class="tray" hidden>
+        <div id="tower-cards" class="cards"></div>
+        <button id="btn-undo" class="undo-btn" disabled title="Desfazer construção (Z)" aria-label="Desfazer construção">
+          <svg viewBox="0 0 48 48" width="30" height="30" aria-hidden="true">
+            <path d="M20 9 L6 22 L20 35 V27 C29 27 35 30 40 39 C39 27 32 19 20 19 Z" fill="#2a1d05"/>
+          </svg>
+          <span id="undo-count" class="badge" hidden></span>
+        </button>
+      </div>
+
+      <!-- Lixeira: aparece no lugar do menu principal enquanto uma construção é arrastada -->
+      <div id="trash" class="trash" hidden aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="34" height="34">
+          <path d="M16 10h16v3H16z" fill="#fff"/>
+          <path d="M8 13h32v4H8z" fill="#fff"/>
+          <path d="M12 19h24l-2 21a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3z" fill="#fff"/>
+          <path d="M20 24v14M24 24v14M28 24v14" stroke="#c0414a" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Menu principal (some enquanto uma construção é arrastada) -->
+      <div id="main-menu" class="main">
+        <div class="tab tab-left">
+          <span class="stat-icon coin"></span><b id="hud-coins">0</b>
+        </div>
+
+        <button id="btn-build" class="build-btn" aria-expanded="false" title="Construir (B)" aria-label="Abrir construções">
+          <span class="build-icon">F</span>
+        </button>
+
+        <div class="tab tab-right">
+          <button id="btn-speed" class="btn small" title="Velocidade do jogo">1x</button>
+          <button id="btn-pause" class="btn small" title="Pausar (P)">❚❚</button>
+        </div>
+
+        <div class="main-body">
+          <span class="stat-icon heart"></span>
+          <div class="bar"><div id="hud-castle-fill" class="bar-fill"></div></div>
+          <small id="hud-castle-text">100</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlays -->
+  <div id="ov-loading" class="overlay">
+    <div class="card">
+      <h1>Defesa do Castelo</h1>
+      <p>Carregando modelos…</p>
+      <div class="bar wide"><div id="loading-fill" class="bar-fill"></div></div>
+    </div>
+  </div>
+
+  <div id="ov-menu" class="overlay" hidden>
+    <div class="card">
+      <h1>Defesa do Castelo</h1>
+      <p>Construa torres, segure os goblins e orcs na ponte e proteja o castelo. As ondas nunca acabam: sobreviva o máximo de tempo que puder!</p>
+      <p id="menu-record" class="record-line" hidden></p>
+      <button id="btn-play" class="btn primary big">Jogar</button>
+      <ul class="tips">
+        <li>As ondas começam sozinhas: use o intervalo para construir.</li>
+        <li>Toque no martelo para abrir as construções.</li>
+        <li>No computador: escolha uma torre e clique no gramado.</li>
+        <li>No celular: arraste o card até o quadrado e solte.</li>
+        <li>Arraste o mapa para mover a câmera, role ou use pinça para zoom.</li>
+        <li>O botão da logo, no topo, leva ao catálogo e controla a tela cheia.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="ov-pause" class="overlay" hidden>
+    <div class="card">
+      <h2>Jogo pausado</h2>
+      <p id="pause-record" class="record-line"></p>
+      <p id="pause-time" class="pause-time"></p>
+      <button id="btn-resume" class="btn primary big">Continuar</button>
+      <button id="btn-finish" class="btn">Finalizar partida</button>
+      <button id="btn-restart-pause" class="btn">Reiniciar partida</button>
+    </div>
+  </div>
+
+  <div id="ov-end" class="overlay" hidden>
+    <div class="card">
+      <h2 id="end-title"></h2>
+      <p id="end-text"></p>
+      <p id="end-record" class="record-line"></p>
+      <button id="btn-restart" class="btn primary big">Jogar de novo</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

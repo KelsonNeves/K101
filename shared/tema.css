@@ -1,0 +1,77 @@
+/* ==========================================================================
+   K101 — TEMA  (/shared/tema.css)
+   ÚNICO lugar onde ficam cores, bordas, botões, formas e fonte do ecossistema.
+   O catálogo, o menu flutuante, o popup de saída e qualquer jogo leem daqui.
+   Para mudar a aparência de tudo: edite só a parte "EDITE AQUI".
+
+   Como usar em qualquer CSS (site ou jogo):
+     color: var(--texto1);   background: var(--background2);   border: var(--borda);
+   Transparência de uma cor do tema (sem criar cor nova):
+     color-mix(in srgb, var(--cor1) 30%, transparent)        ← cor1 a 30%
+   Botões:  background: var(--btn1-fundo);  color: var(--btn1-texto);  etc.
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap");
+
+:root {
+  /* ======================== EDITE AQUI ======================== */
+
+  /* CORES DO TEMA */
+  --cor1: #a00048;            /* destaque forte: brilhos, glows, lupa, botão BTN3 */
+  --cor2: #6e0041;            /* cor de bordas, foco, manchas de fundo, linhas */
+  --cor3: #570048;            /* fundo de ícones, botão BTN1, barras de rolagem, hover */
+  --cor4: #36003d;            /* hover do botão BTN1 */
+
+  /* FUNDOS */
+  --background1: #070707;     /* fundo da página */
+  --background2: #070707be;     /* cards, popups e menus */
+
+  /* TEXTOS */
+  --texto1: #dfdfdf;          /* texto principal */
+  --texto2: #dadadab8;        /* texto secundário (descrições, legendas). Aceita transparência (8 dígitos) */
+
+  /* BORDAS (cards, popups, divisões, menus) */
+  --borda-cor: var(--cor2);   /* cor-base da borda */
+  --borda-largura: 1px;       /* espessura */
+  --borda-opacidade: 26%;     /* transparência: 0% some, 100% sólida */
+  --borda-opacidade-hover: 100%;   /* borda em destaque (hover/foco de card) */
+
+  /* FORMAS */
+  --raio-card: 20px;          /* cantos de cards e popups */
+  --raio-btn: 999px;          /* cantos dos botões (999px = pílula) */
+  --raio-pill: 999px;         /* menu flutuante, campo de busca, tags, barras (999px = pílula) */
+  --raio-img: 14px;           /* cantos de imagens do carrossel */
+  --raio-icone: 22%;          /* cantos do ícone quadrado de cada jogo (em % do tamanho) */
+  --foco-largura: 3px;        /* espessura do contorno de foco (teclado) */
+  --fonte: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* BOTÕES — BTN1: ação principal (Jogar) · BTN2: neutro (Cancelar) · BTN3: destaque/atenção (Sair) */
+  --btn-borda-largura: 1px;
+  --btn1-fundo: var(--cor3);
+  --btn1-fundo-hover: var(--cor4);
+  --btn1-texto: var(--texto1);
+  --btn1-borda: transparent;
+
+  --btn2-fundo: #ffffff1f;
+  --btn2-fundo-hover: #ffffff33;
+  --btn2-texto: var(--texto1);
+  --btn2-borda: var(--borda-cor-suave);
+
+  --btn3-fundo: var(--cor1);
+  --btn3-fundo-hover: color-mix(in srgb, var(--cor1) 82%, #ffffff);
+  --btn3-texto: var(--texto1);
+  --btn3-borda: transparent;
+
+  /* ================= DERIVADOS (não precisa mexer) ================= */
+  --borda-cor-suave: color-mix(in srgb, var(--borda-cor) var(--borda-opacidade), transparent);
+  --borda-cor-hover: color-mix(in srgb, var(--borda-cor) var(--borda-opacidade-hover), transparent);
+  --borda: var(--borda-largura) solid var(--borda-cor-suave);              /* border: var(--borda) */
+  --borda-hover: var(--borda-largura) solid var(--borda-cor-hover);
+  --foco: var(--foco-largura) solid var(--cor2);                           /* outline: var(--foco) */
+  --overlay: color-mix(in srgb, var(--background1) 74%, transparent);      /* fundo escurecido atrás de popups */
+  --vidro: color-mix(in srgb, var(--background2) 86%, transparent);        /* menus flutuantes (com blur) */
+  --hover-leve: color-mix(in srgb, var(--texto1) 8%, transparent);         /* hover de botões de ícone */
+  --brilho-popup: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--cor2) 38%, transparent), transparent 62%);  /* luz no topo de popups */
+  --sombra-popup: 0 24px 80px color-mix(in srgb, var(--cor1) 20%, transparent);
+  --skeleton1: color-mix(in srgb, var(--cor3) 30%, var(--background2));    /* carregamento (escuro) */
+  --skeleton2: color-mix(in srgb, var(--cor3) 75%, var(--background1));    /* carregamento (claro) */
+}
