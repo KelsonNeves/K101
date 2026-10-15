@@ -1,0 +1,17 @@
+{
+  "id": "colheita-infinita",
+  "title": "Colheita Infinita",
+  "tagline": "Plante, regue e colha em dias de 30 segundos. Evolua sem parar.",
+  "description": "Um jogo de fazenda 3D low poly, fácil e satisfatório.\nEm cada dia de 30 segundos, semeie, regue e colha. O dinheiro compra habilidades numa árvore que cresce conforme as suas escolhas. As fases nunca acabam.",
+  "cover": "cover.webp",
+  "icon": "icon.webp",
+  "version": "0.1.0",
+  "status": "draft",
+  "tags": ["fazenda", "relaxante", "low poly", "3D"],
+  "platforms": ["desktop", "mobile"],
+  "orientation": "landscape",
+  "approxDownloadMB": 4,
+  "sdk": 1,
+  "ads": { "interstitial": true, "rewarded": false, "banner": ["loading", "end-screen"] },
+  "menuSafeTop": 52
+}

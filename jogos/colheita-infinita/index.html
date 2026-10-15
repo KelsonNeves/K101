@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang='pt-BR'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'>
+  <title>COLHEITA INFINITA — K101</title>
+  <meta name='k101-game' content='colheita-infinita'>
+  <meta name='k101-safe-top' content='52'>
+
+  <link rel='canonical' href='https://k101.com.br/jogos/colheita-infinita/'>
+  <meta property='og:type' content='website'>
+  <meta property='og:title' content='Colheita Infinita'>
+  <meta property='og:description' content='Plante, regue e colha em dias de 30 segundos.'>
+  <meta property='og:image' content='https://k101.com.br/jogos/colheita-infinita/cover.webp'>
+  <meta property='og:url' content='https://k101.com.br/jogos/colheita-infinita/'>
+
+  <link rel='icon' href='/favicon.ico'>
+  <!-- tema.css continua carregado só para o popup «Deseja sair?» do k101.js; o jogo não usa suas variáveis. -->
+  <link rel='stylesheet' href='/shared/tema.css'>
+  <link rel='preconnect' href='https://fonts.googleapis.com'>
+  <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap'>
+  <link rel='stylesheet' href='css/style.css'>
+  <link rel='stylesheet' href='css/hud.css'>
+  <link rel='stylesheet' href='css/tree.css'>
+
+  <script type='importmap'>
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+  </script>
+  <!-- SDK da plataforma: DEPOIS do importmap -->
+  <script type='module' src='/shared/k101.js'></script>
+
+  <!-- Falha ao carregar os módulos (ex.: CDN fora do ar): mostra a tela de erro sem depender do jogo. -->
+  <script>
+    window.__k101Fail = function (msg) {
+      var l = document.getElementById('ov-loading'), e = document.getElementById('ov-error');
+      if (l) l.hidden = true;
+      if (e) { document.getElementById('err-text').textContent = msg || 'Não foi possível carregar o jogo.'; e.hidden = false; }
+    };
+  </script>
+</head>
+<body>
+  <canvas id='c'></canvas>
+
+  <!-- Telas (z-index 20 no máximo; o menu K101 fica acima) -->
+  <div id='ov-loading' class='ov'>        <!-- visível desde o primeiro byte -->
+    <div class='farm-bg' aria-hidden='true'><i class='sun'></i><i class='cloud c1'></i><i class='cloud c2'></i><i class='hill h2'></i><i class='hill h1'></i><i class='hill h3'></i><i class='rows'></i></div>
+    <h1 class='logo-title'>COLHEITA INFINITA</h1>
+    <p id='loading-text'>Carregando plantações…</p>
+    <div class='bar'><div id='loading-fill'></div></div>
+    <div class='ad-slot' data-k101-slot='loading'></div>   <!-- altura fixa reservada p/ banner futuro -->
+  </div>
+
+  <div id='ov-error' class='ov' hidden>
+    <div class='farm-bg' aria-hidden='true'><i class='cloud c1'></i><i class='hill h2'></i><i class='hill h1'></i></div>
+    <h2 class='logo-title'>Ops!</h2>
+    <p id='err-text'>Não foi possível carregar o jogo.</p>
+    <div class='row'>
+      <button id='btn-retry' class='btn btn1' type='button'>Tentar de novo</button>
+      <a class='btn btn2' href='/'>Voltar ao catálogo</a>
+    </div>
+  </div>
+
+  <div id='ov-title' class='ov' hidden>
+    <div class='farm-bg' aria-hidden='true'><i class='sun'></i><i class='cloud c1'></i><i class='cloud c2'></i><i class='cloud c3'></i><i class='hill h2'></i><i class='hill h1'></i><i class='hill h3'></i><i class='rows'></i></div>
+    <h1 class='logo-title'>COLHEITA INFINITA</h1>
+    <p class='tagline'>Plante, regue e colha. Evolua sem parar.</p>
+    <div class='col'>
+      <button id='btn-play' class='btn btn1 big' type='button'>Jogar</button>
+      <button id='btn-new' class='btn btn2' type='button' hidden>Novo jogo</button>
+    </div>
+    <p class='tip'>Dica: a logo do menu no topo pede confirmação antes de sair.</p>
+  </div>
+
+  <div id='ov-pause' class='ov' hidden>
+    <h2 class='logo-title'>Pausado</h2>
+    <button id='btn-resume' class='btn btn1 big' type='button'>Continuar</button>
+  </div>
+
+  <div id='ov-summary' class='ov' hidden>
+    <div class='card'>
+      <h2 id='sum-title'>Dia 1 concluído</h2>
+      <ul id='sum-list' class='sum-list'></ul>
+      <div class='sum-line'><span>Total colhido</span><strong id='sum-total'>0</strong></div>
+      <div class='sum-money'><span>Dinheiro recebido</span><strong id='sum-money'>0</strong></div>
+      <p id='sum-best' class='sum-best'></p>
+      <div class='ad-slot' data-k101-slot='end-screen'></div>
+      <button id='btn-continue' class='btn btn1 big' type='button' disabled>Continuar</button>
+    </div>
+  </div>
+
+  <div id='ov-skills' class='ov' hidden>
+    <header class='sk-top'>
+      <span class='sk-money'><i class='coin'></i><b id='sk-money'>0</b></span>
+      <span id='sk-day' class='sk-day'>DIA 1</span>
+    </header>
+    <div id='tree-viewport'>
+      <div id='tree-world'>
+        <svg id='tree-lines' width='1' height='1' aria-hidden='true'></svg>
+        <div id='tree-nodes'></div>
+      </div>
+      <div class='sk-zoom'>
+        <button id='sk-zin' type='button' aria-label='Aproximar'>+</button>
+        <button id='sk-zout' type='button' aria-label='Afastar'>−</button>
+        <button id='sk-center' type='button' aria-label='Recentralizar'>◎</button>
+      </div>
+    </div>
+    <section id='sk-panel' aria-live='polite'>
+      <div class='sk-info'>
+        <h3 id='sk-name'>Árvore de habilidades</h3>
+        <p id='sk-desc'></p>
+        <p id='sk-effects' class='sk-eff'></p>
+      </div>
+      <button id='sk-buy' class='btn btn1' type='button' disabled>Desbloquear</button>
+    </section>
+    <footer class='sk-foot'>
+      <button id='btn-next-day' class='btn btn1 big' type='button'>Próximo dia</button>
+    </footer>
+  </div>
+
+  <div id='ov-confirm' class='ov' hidden>
+    <div class='card small' role='alertdialog' aria-modal='true' aria-labelledby='conf-q'>
+      <p id='conf-q'>Começar um novo jogo apaga o progresso salvo. Continuar?</p>
+      <div class='row'>
+        <button id='conf-no' class='btn btn2' type='button'>Cancelar</button>
+        <button id='conf-yes' class='btn btn3' type='button'>Novo jogo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id='hud' hidden>
+    <div class='hud-time'>
+      <div class='bar'><div id='time-fill'></div></div>
+      <span id='time-text'>30</span><small>s</small>
+    </div>
+    <div id='hud-day' class='hud-day'>DIA 1</div>
+    <div class='hud-money'><small>colhido hoje</small><i class='coin'></i><b id='money-text'>0</b></div>
+    <button id='btn-pause' class='hud-pause' type='button' aria-label='Pausar'><i></i><i></i></button>
+    <div class='hud-tool'>
+      <span id='tool-name'></span>
+      <small id='tool-hint'>Botão direito: ferramentas</small>
+    </div>
+  </div>
+  <div id='countdown' hidden></div>
+  <div id='float-layer' aria-hidden='true'></div>
+
+  <button id='tool-btn' hidden aria-label='Ferramentas' type='button'>   <!-- só no toque -->
+    <img id='tool-icon' alt='' draggable='false'><span id='tool-glyph' hidden></span>
+  </button>
+  <div id='radial' hidden></div>
+  <img id='cursor-icon' alt='' hidden draggable='false'>                  <!-- só com mouse -->
+
+  <script type='module' src='js/main.js' onerror="window.__k101Fail && window.__k101Fail('Falha ao baixar os arquivos do jogo. Verifique sua conexão.')"></script>
+</body>
+</html>

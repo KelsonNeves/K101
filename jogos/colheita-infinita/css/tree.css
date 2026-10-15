@@ -1,0 +1,102 @@
+/* tree.css — árvore de habilidades: um canteiro onde as habilidades "brotam".
+   Usa as variáveis --c-* definidas em style.css. */
+#ov-skills {
+  justify-content: flex-start; align-items: stretch; gap: 0; padding: 0; text-align: left;
+  background: #6b8f3a; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+/* fundo de campo: faixas de grama e terra */
+#ov-skills::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 244, 160, .35), transparent 65%),
+    repeating-linear-gradient(90deg, #79a443 0 60px, #6f9a3c 60px 120px);
+}
+
+.sk-top {
+  position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px;
+  padding: max(env(safe-area-inset-top, 0px), 6px) calc(14px + env(safe-area-inset-right, 0px)) 8px calc(14px + env(safe-area-inset-left, 0px));
+  height: calc(var(--k101-safe-top, 52px) + 6px);
+}
+.sk-money, .sk-day {
+  border: 3px solid var(--c-brown); background: var(--c-paper); box-shadow: 0 4px 0 var(--c-brown);
+  border-radius: var(--r-pill); font-weight: 700; padding: 4px 16px; color: var(--c-brown);
+}
+.sk-money { display: flex; align-items: center; font-size: 24px; }
+.sk-day { font-size: 13px; letter-spacing: .1em; background: var(--c-green); color: #fff; }
+
+#tree-viewport { position: relative; flex: 1; min-height: 0; overflow: hidden; cursor: grab; }
+#tree-viewport.dragging { cursor: grabbing; }
+#tree-world { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-origin: 0 0; will-change: transform; }
+#tree-world.glide { transition: transform .45s cubic-bezier(.3, .8, .3, 1); }
+#tree-lines { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+/* caminho de terra; vira trilha dourada quando desbloqueado */
+#tree-lines path { fill: none; stroke: #8a5a32; stroke-width: 9; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: .85; }
+#tree-lines path.on { stroke: var(--c-gold); }
+#tree-lines path.born { animation: draw .5s ease-out backwards; }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+.node {
+  all: unset; box-sizing: border-box; position: absolute; cursor: pointer;
+  width: var(--node-size, 84px); height: var(--node-size, 84px); transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 6px 4px 4px;
+  text-align: center; border-radius: 20px; color: var(--c-brown);
+  background: var(--c-paper-2); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
+  touch-action: manipulation; transition: box-shadow .15s ease, opacity .15s ease, background .15s ease;
+}
+.node:focus-visible { outline: var(--focus); outline-offset: 4px; }
+.node.born { animation: born .5s cubic-bezier(.3, 1.6, .5, 1) backwards; }
+@keyframes born { from { transform: translate(-50%, -50%) scale(0) rotate(-20deg); } to { transform: translate(-50%, -50%) scale(1) rotate(0); } }
+.node.avail { background: #fff3b0; animation: avail-glow 1.6s ease-in-out infinite; }   /* disponível e acessível */
+@keyframes avail-glow { 50% { box-shadow: 0 4px 0 var(--c-brown), 0 0 0 6px rgba(244, 185, 47, .55); } }
+.node.poor { opacity: .6; filter: grayscale(.4); }                                       /* sem dinheiro suficiente */
+.node.owned { background: var(--c-green-l); }                                            /* desbloqueada */
+.node.sel { outline: 4px solid #fff; outline-offset: 3px; }
+.n-ico { width: 34px; height: 34px; display: grid; place-items: center; }
+.n-ico img { width: 34px; height: 34px; object-fit: contain; pointer-events: none; }
+.n-glyph { font-size: 25px; font-weight: 700; }
+.n-name { font-size: 11px; font-weight: 700; line-height: 1.1; max-width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.n-price { font-size: 11px; font-weight: 600; color: var(--c-brown-2); min-height: 1.1em; }
+.n-seal {
+  position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 14px; font-weight: 700;
+  background: var(--c-green); color: #fff; border: 3px solid var(--c-brown);
+}
+
+.sk-zoom { position: absolute; right: calc(10px + env(safe-area-inset-right, 0px)); bottom: 10px; display: flex; flex-direction: column; gap: 8px; z-index: 3; }
+.sk-zoom button {
+  all: unset; box-sizing: border-box; cursor: pointer; width: 46px; height: 46px; display: grid; place-items: center;
+  font-size: 22px; font-weight: 700; border-radius: 50%; color: var(--c-brown);
+  background: var(--c-paper); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.sk-zoom button:hover { background: #fff0b8; }
+.sk-zoom button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--c-brown); }
+.sk-zoom button:focus-visible { outline: var(--focus); }
+
+#sk-panel {
+  position: relative; z-index: 2; display: flex; align-items: center; gap: 14px;
+  margin: 0 calc(12px + env(safe-area-inset-right, 0px)) 10px calc(12px + env(safe-area-inset-left, 0px));
+  padding: 12px 16px; border: 4px solid var(--c-edge); border-radius: var(--r-card);
+  background: var(--c-paper); box-shadow: 0 6px 0 var(--c-brown);
+}
+.sk-info { flex: 1; min-width: 0; }
+.sk-info h3 { margin: 0 0 2px; font-size: 20px; font-weight: 700; color: var(--c-green-d); }
+.sk-info p { margin: 0; font-size: 14px; color: var(--c-brown-2); }
+.sk-info .sk-eff { color: var(--c-brown); font-weight: 700; font-size: 13px; margin-top: 2px; }
+#sk-buy { flex: none; min-width: 160px; }
+
+.sk-foot { position: relative; z-index: 2; display: flex; justify-content: center; padding: 4px 12px calc(14px + env(safe-area-inset-bottom, 0px)); }
+
+@media (max-width: 560px) {
+  #sk-panel { flex-direction: column; align-items: stretch; gap: 8px; }
+  #sk-buy { width: 100%; }
+}
+@media (max-height: 520px) {
+  .sk-top { height: var(--k101-safe-top, 52px); }
+  #sk-panel { padding: 8px 12px; }
+  .sk-info p { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .node.born, .node.avail, #tree-lines path.born { animation: none; }
+  #tree-world.glide { transition: none; }
+}

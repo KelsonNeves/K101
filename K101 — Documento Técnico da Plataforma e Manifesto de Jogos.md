@@ -1,6 +1,6 @@
 # K101 — Documento Técnico da Plataforma e Manifesto de Jogos
 
-*Versão 1.2 · base: jogo "Defesa do Castelo" · hospedagem: GitHub Pages · domínio: k101.com.br*
+*Versão 1.3 · base: jogo "Defesa do Castelo" · hospedagem: GitHub Pages · domínio: k101.com.br*
 
 ## 1. Visão geral e decisões
 
@@ -362,12 +362,29 @@ export const K101 = {
   // Pede confirmação antes de sair: avisa o jogo (pausar) e mostra o popup. Só sai se o jogador confirmar.
   confirmExit() { exitDialog.open(); },
 
-  // Anúncios: por enquanto devolve "não exibido" na hora. A plataforma troca esta implementação depois,
-  // sem o jogo mudar. O jogo continua normalmente nos dois casos.
+  // Anúncios: gerencia anúncios em tela cheia (interstitials) sem banners no layout.
   ads: {
-    enabled: false,
-    async request(type, info = {}) { return { shown: false, rewarded: false }; },
-    slot(name) { /* futuro: preenche <div data-k101-slot="name"> */ }
+    enabled: true,
+    
+    // Função para verificar se deve exibir o anúncio na entrada (na 1ª abertura e depois a cada 3 aberturas)
+    checkEntryAd() {
+      const KEY = 'k101_global_game_opens';
+      let opens = parseInt(localStorage.getItem(KEY) || '0', 10);
+      opens += 1;
+      localStorage.setItem(KEY, opens.toString());
+
+      // Se for a 1ª vez (1) ou múltiplos de 3 (ex: 1, 4, 7, 10...)
+      if (opens === 1 || (opens - 1) % 3 === 0) {
+        return this.request('interstitial', { reason: 'entry' });
+      }
+      return Promise.resolve({ shown: false, skipped: true });
+    },
+
+    async request(type, info = {}) {
+      // Quando a conta AdSense/Ad Manager estiver ativa, a chamada real do bloco entra aqui.
+      // Por enquanto, avisa o jogo para pausar/despausar normalmente.
+      return { shown: false, rewarded: false };
+    }
   }
 };
 window.K101 = K101;
@@ -378,9 +395,6 @@ document.addEventListener("fullscreenchange", onFS);
 document.addEventListener("webkitfullscreenchange", onFS);
 
 /* ------------------------------ popup de confirmação de saída ------------------------------ */
-// Logo no centro, pergunta embaixo e dois botões: Cancelar e Sair.
-// Ao abrir emite "exit:open" (o jogo pausa e silencia); ao cancelar emite "exit:cancel"
-// (o jogo continua pausado até o jogador retomar pelo próprio botão); ao confirmar, vai ao catálogo.
 class K101Exit extends HTMLElement {
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
@@ -389,10 +403,8 @@ class K101Exit extends HTMLElement {
   :host { display: none; position: fixed; inset: 0; z-index: 2147483600; touch-action: none;
           -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   :host(.open) { display: grid; place-items: center; }
-  /* mesmo fundo escurecido dos popups do catálogo */
   .veil { position: absolute; inset: 0; background: var(--overlay);
           backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-  /* mesmo cartão do popup de jogo do catálogo (.frame) */
   .box { position: relative; width: min(340px, calc(100vw - 40px)); box-sizing: border-box; padding: 26px 22px 22px;
          border: var(--borda); border-radius: var(--raio-card);
          background: var(--brilho-popup), var(--background2); box-shadow: var(--sombra-popup);
@@ -404,9 +416,9 @@ class K101Exit extends HTMLElement {
            font: 800 16px/1 var(--fonte); border-radius: var(--raio-btn);
            border: var(--btn-borda-largura) solid transparent; transition: background .2s ease; }
   button:focus-visible { outline: var(--foco); outline-offset: 3px; }
-  .cancel { background: var(--btn2-fundo); color: var(--btn2-texto); border-color: var(--btn2-borda); }   /* BTN2: neutro */
+  .cancel { background: var(--btn2-fundo); color: var(--btn2-texto); border-color: var(--btn2-borda); }
   .cancel:hover { background: var(--btn2-fundo-hover); }
-  .leave { background: var(--btn3-fundo); color: var(--btn3-texto); border-color: var(--btn3-borda); }    /* BTN3: atenção */
+  .leave { background: var(--btn3-fundo); color: var(--btn3-texto); border-color: var(--btn3-borda); }
   .leave:hover { background: var(--btn3-fundo-hover); }
 </style>
 <div class="veil"></div>
@@ -428,8 +440,8 @@ class K101Exit extends HTMLElement {
       previous = document.activeElement;
       this.classList.add("open");
       K101._holds.add("exit");
-      K101.emit("exit:open");          // o jogo pausa e silencia
-      cancel.focus();                  // foco no botão seguro, para um Enter acidental não sair
+      K101.emit("exit:open");
+      cancel.focus();
     };
     const hide = () => {
       this.classList.remove("open");
@@ -442,7 +454,6 @@ class K101Exit extends HTMLElement {
     veil.addEventListener("click", hide);
     leave.addEventListener("click", () => { K101.emit("exit:confirm"); K101.goHome(); });
 
-    // Teclado: Esc cancela; Tab fica preso entre os dois botões; nada vaza para o jogo.
     this.addEventListener("keydown", (e) => {
       e.stopPropagation();
       if (e.key === "Escape") { e.preventDefault(); hide(); }
@@ -453,10 +464,8 @@ class K101Exit extends HTMLElement {
     });
     this.addEventListener("keyup", (e) => e.stopPropagation());
 
-    // Voltou pelo botão "voltar" do navegador (cache de página): não reaparece com o popup aberto.
     window.addEventListener("pageshow", (e) => { if (e.persisted && this.classList.contains("open")) hide(); });
 
-    // O toque no popup não "vaza" para o jogo.
     for (const ev of ["pointerdown", "pointerup", "pointermove", "touchstart", "touchmove", "touchend", "wheel", "contextmenu", "click"])
       this.addEventListener(ev, (e) => e.stopPropagation(), { passive: false });
   }
@@ -472,7 +481,6 @@ const exitDialog = {
 };
 
 /* ------------------------------ menu flutuante ------------------------------ */
-// Fechado: só o botão com a logo. Aberto: [logo → catálogo] [ícone de tela cheia] [x fechar].
 const ICON = {
   enter: '<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',
   exit:  '<path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/>',
@@ -489,12 +497,10 @@ class K101Menu extends HTMLElement {
   :host { position: fixed; top: max(env(safe-area-inset-top), 6px); left: 50%; transform: translateX(-50%);
           z-index: 2147483000; touch-action: manipulation; -webkit-user-select: none; user-select: none;
           -webkit-tap-highlight-color: transparent; font-family: var(--fonte); }
-  /* mesma "pílula de vidro" do menu do catálogo (.dock-bar) */
   .bar { display: flex; align-items: center; gap: 5px; padding: 4px; border-radius: var(--raio-pill);
          background: var(--vidro); border: var(--borda);
          backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
          opacity: .55; transition: opacity .15s; }
-  /* Só o estado aberto deixa a barra opaca; fechado é sempre translúcido. */
   .bar.open { opacity: 1; }
   button { all: unset; box-sizing: border-box; display: grid; place-items: center; cursor: pointer;
            width: 40px; height: 40px; border-radius: var(--raio-pill); color: var(--texto1); }
@@ -528,7 +534,7 @@ class K101Menu extends HTMLElement {
       logo.setAttribute("aria-label", label);
       logo.title = open ? label : "";
       clearTimeout(timer);
-      if (open) timer = setTimeout(() => setOpen(false), 5000);   // fecha sozinho
+      if (open) timer = setTimeout(() => setOpen(false), 5000);
       K101.emit(open ? "menu:open" : "menu:close");
     };
     const syncFS = () => {
@@ -538,15 +544,14 @@ class K101Menu extends HTMLElement {
       fs.title = on ? "Sair da tela cheia" : "Tela cheia";
     };
 
-    fs.hidden = !K101.fullscreen.supported;                       // iPhone/Safari: sem tela cheia
+    fs.hidden = !K101.fullscreen.supported;
     syncFS();
-    logo.addEventListener("click", () => (isOpen() ? (setOpen(false), K101.confirmExit()) : setOpen(true)));   // aberto: a logo leva ao catálogo
+    logo.addEventListener("click", () => (isOpen() ? (setOpen(false), K101.confirmExit()) : setOpen(true)));
     fs.addEventListener("click", () => { K101.fullscreen.toggle(); setOpen(false); });
     close.addEventListener("click", () => setOpen(false));
     K101.on("fullscreen:change", syncFS);
     document.addEventListener("pointerdown", (e) => { if (!e.composedPath().includes(this)) setOpen(false); }, true);
 
-    // O toque no menu não "vaza" para o jogo.
     for (const ev of ["pointerdown", "pointerup", "pointermove", "wheel", "contextmenu"])
       this.addEventListener(ev, (e) => e.stopPropagation());
   }
@@ -556,7 +561,7 @@ if (!customElements.get("k101-menu")) customElements.define("k101-menu", K101Men
 document.body.appendChild(document.createElement("k101-menu"));
 ```
 
-Notas: (a) como o `Input.js` do jogo escuta `pointerdown/up/move` direto no `<canvas>`, o menu (que está fora do canvas) já não interfere; o `stopPropagation` é uma proteção para jogos que escutem no `window`. (b) O arquivo é um módulo, portanto carrega de forma adiada e **não atrasa** a tela de carregamento. (c) Se o `<script>` falhar, `window.K101` não existe: o jogo deve sempre usar `window.K101?.…`.
+Notas: o bloco acima é o conteúdo real de `shared/k101.js` (v1.3 deste documento); se o arquivo mudar, atualize este bloco junto. (a) como o `Input.js` do jogo escuta `pointerdown/up/move` direto no `<canvas>`, o menu (que está fora do canvas) já não interfere; o `stopPropagation` é uma proteção para jogos que escutem no `window`. (b) O arquivo é um módulo, portanto carrega de forma adiada e **não atrasa** a tela de carregamento. (c) Se o `<script>` falhar, `window.K101` não existe: o jogo deve sempre usar `window.K101?.…`.
 
 Mais três regras: (d) o `<script>` do SDK precisa vir **depois** do `importmap` do jogo; um módulo carregado antes dele faz o navegador ignorar o `importmap`. (e) O SDK avisa o jogo por `CustomEvent` no `window` (`k101:menu:open`, `k101:ad:start` etc.), então o jogo pode ouvir sem importar nada e sem depender da ordem de carregamento. (f) O popup de saída é um segundo *custom element* (`k101-exit`), também com Shadow DOM, criado só na primeira vez que é pedido; o jogo não precisa de HTML nem de CSS para ele.
 
@@ -598,6 +603,8 @@ Evita que o jogador saia por engano. Ele aparece quando, com o menu aberto, o jo
 | `ad:end` | anúncio acabou | restaurar o áudio; manter pausado até o jogador confirmar |
 | `fullscreen:change` | entrou/saiu da tela cheia | refazer o `resize` do renderer |
 
+**Estado atual do SDK:** `K101.ads.request()` ainda é um *stub* (devolve `{ shown: false, rewarded: false }` na hora) e **não emite** `ad:start`/`ad:end`. O contrato vale mesmo assim: o jogo deve ouvir os dois eventos desde já, para continuar correto quando a rede de anúncios entrar.
+
 Para ouvir esses eventos sem importar o SDK, use o `window` com o prefixo `k101:`, por exemplo `window.addEventListener("k101:ad:start", () => { /* pausar e silenciar */ })`. Os mesmos nomes valem para `k101:menu:open`, `k101:menu:close`, `k101:ad:end`, `k101:exit:open`, `k101:exit:cancel`, `k101:exit:confirm` e `k101:fullscreen:change`.
 
 **Anúncio e saída ao mesmo tempo.** Os dois pedem pausa e silêncio, então o jogo deve usar um contador (ou um mudo externo por origem) em vez de um simples liga/desliga, para que o fim de um não religue o áudio enquanto o outro ainda estiver ativo. Na prática, `setExternalMute` deve ser chamado com `true` em `exit:open`/`ad:start` e só voltar a `false` quando nenhum dos dois estiver ativo.
@@ -606,9 +613,10 @@ Para ouvir esses eventos sem importar o SDK, use o `window` com o prefixo `k101:
 
 | Chamada | Uso |
 | --- | --- |
+| `K101.ads.checkEntryAd()` | **anúncio de entrada.** Chame **uma vez por abertura do jogo**, logo depois do toque do jogador em *Jogar/Continuar* na tela inicial. O SDK incrementa o contador global `k101_global_game_opens` (`localStorage`), e só pede o anúncio na 1ª abertura e depois a cada 3 (1, 4, 7, 10…); nas demais devolve `{ shown: false, skipped: true }`. Retorna uma Promise. O jogo não conta aberturas nem decide frequência. |
 | `K101.ads.request("interstitial", { reason })` | em pausas naturais (fim de partida, entre fases). Retorna `{ shown }`; pode ser `false` (sem anúncio, bloqueador, intervalo mínimo ainda não passou). O jogo segue normalmente nos dois casos. |
 | `K101.ads.request("rewarded", { reward })` | o jogador escolhe assistir para ganhar algo. Retorna `{ shown, rewarded }`; **só dá a recompensa se `rewarded === true`**. |
-| `K101.ads.slot(nome)` | preenche um espaço de banner reservado (`<div data-k101-slot="...">`) |
+| `K101.ads.slot(nome)` | **ainda não existe no SDK** (reservado para os banners). Chame sempre como `K101?.ads?.slot?.("loading")`; hoje não faz nada. Reserve o `<div data-k101-slot="...">` com altura fixa desde já. |
 | `K101.confirmExit()` | **forma recomendada** de um botão "Sair" do próprio jogo: abre o popup de confirmação (emite `exit:open`) e só sai se o jogador confirmar |
 | `K101.goHome()` | volta ao catálogo **imediatamente, sem confirmação**. Use só quando a saída já foi confirmada ou não há partida a perder (por exemplo, erro fatal). Para qualquer botão que o jogador possa tocar sem querer, use `confirmExit()` |
 | `K101.fullscreen.toggle()` | opcional: botão de tela cheia do próprio jogo |
@@ -616,7 +624,7 @@ Para ouvir esses eventos sem importar o SDK, use o `window` com o prefixo `k101:
 ### 8.3 Regras de anúncio (valem para todo jogo)
 
 1. **Nunca durante a jogabilidade.** Anúncio em tela cheia só em momentos de pausa natural, e sempre **depois** de uma ação do jogador.
-2. **O jogo não controla a frequência.** Ele pede; a plataforma decide se mostra (intervalo mínimo, limites por sessão). Assim o intervalo pode ser ajustado em um lugar só.
+2. **O jogo não controla a frequência.** Ele pede; a plataforma decide se mostra (intervalo mínimo, limites por sessão). Assim o intervalo pode ser ajustado em um lugar só. O anúncio de entrada já segue essa regra: o jogo chama `checkEntryAd()` e o SDK decide (1ª abertura e a cada 3). **Atenção:** `request("interstitial")` chamado direto ainda **não tem limite de frequência** no SDK atual; em jogos de rodadas curtas, use-o com moderação até a plataforma ganhar um intervalo mínimo.
 3. **Resposta imediata nunca pode quebrar o jogo.** `shown: false` é um caminho normal.
 4. **Banners ficam fora do `<canvas>`**: só em áreas reservadas de **altura fixa** (para não "pular" o layout), nos pontos declarados em `ads.banner` do `game.json` (ex.: `loading`, `end-screen`). Nunca sobre o HUD, sobre botões de ação ou encostado em botões que se tocam com frequência.
 5. **Sem anúncio** na tela do jogo em andamento, no menu de contexto, nas telas de tutorial nem enquanto o usuário não tiver tocado ao menos uma vez.
@@ -700,14 +708,15 @@ Este é o guia que todo jogo novo deve seguir para entrar no site.
 
 ### 9.4 Compatibilidade com anúncios
 
-- [ ] Ouvir `ad:start` / `ad:end` (pausar e silenciar o áudio).
+- [ ] Ouvir `ad:start` / `ad:end` (pausar e silenciar o áudio), mesmo que o SDK ainda não os emita.
+- [ ] Chamar `K101?.ads?.checkEntryAd?.()` **uma vez** por abertura, depois do toque em *Jogar/Continuar* (nunca antes de uma ação do jogador e nunca em loop). Não bloquear o jogo esperando: use um limite de tempo (por exemplo 3 s).
 - [ ] Chamar `K101.ads.request(...)` somente nos pontos declarados em `game.json → ads`.
-- [ ] Reservar visualmente espaço fixo para banners nos pontos `loading` e `end-screen`.
+- [ ] Reservar visualmente espaço fixo para banners nos pontos `loading` e `end-screen` e chamar `K101?.ads?.slot?.(nome)` só com o encadeamento opcional (o método ainda não existe).
 - [ ] Nunca dar recompensa sem `rewarded === true`.
 
 ### 9.5 Regras de convivência (todos os jogos dividem o mesmo domínio)
 
-- **Armazenamento local compartilhado.** `localStorage` é do domínio inteiro `k101.com.br`, não de cada jogo. **Toda chave deve começar com o slug**: `defesa-do-castelo:audio`, `defesa-do-castelo:record`. (O `Audio.js` já faz isso; confira recordes e configurações no restante do código.)
+- **Armazenamento local compartilhado.** `localStorage` é do domínio inteiro `k101.com.br`, não de cada jogo. **Toda chave deve começar com o slug** (única exceção: `k101_global_game_opens`, contador de aberturas que pertence ao SDK; o jogo nunca lê nem escreve nela): `defesa-do-castelo:audio`, `defesa-do-castelo:record`. (O `Audio.js` já faz isso; confira recordes e configurações no restante do código.)
 - **Sem CSS global destrutivo fora da página do jogo**: cada jogo é uma página própria, então não há conflito entre jogos, mas nada deve tentar alterar o menu (Shadow DOM) ou `/shared`.
 - **Bibliotecas externas:** fixar a versão exata (como seu `three@0.160.0`). Nunca usar "latest".
 - **Peso:** informar `approxDownloadMB`. Evitar arquivos individuais acima de \~20 MB; preferir texturas/modelos comprimidos.
@@ -801,7 +810,7 @@ async restart() {
 - **Capa:** falta `jogos/defesa-do-castelo/cover.webp` (16:9, 640×360), usada na prévia de link.
 - **Ícone e prints:** falta `jogos/defesa-do-castelo/icon.webp` (256×256) e a pasta `jogos/defesa-do-castelo/prints/` com as imagens (`01.webp`…, 16:9, 1280×720). Sem ícone, o card mostra a inicial do jogo; sem prints, o popup fica sem carrossel.
 - **Logo:** `shared/img/logo.svg` é provisório; troque pela sua logo mantendo o mesmo nome.
-- **Anúncios:** o SDK entrega o *contrato*. A integração real (AdSense, Google Ad Manager ou outra rede), o `ads.txt`, o aviso de consentimento e a política de privacidade são a próxima etapa.
+- **Anúncios:** o SDK entrega o *contrato* e o anúncio de entrada (`checkEntryAd`), mas `request()` ainda não exibe nada nem emite `ad:start`/`ad:end`; faltam o `ads.slot`, o intervalo mínimo para `request()` e a integração real (AdSense, Google Ad Manager ou outra rede), o `ads.txt`, o aviso de consentimento e a política de privacidade são a próxima etapa.
 - **Peso dos modelos 3D:** se a soma dos jogos se aproximar dos limites do GitHub Pages, mover `assets/` para um CDN (seção 4).
 - **Analytics (opcional):** uma métrica simples e sem cookies (por exemplo, Plausible ou Cloudflare Web Analytics) ajuda a saber quais jogos são abertos; pode ser carregada pelo próprio `k101.js`.
 

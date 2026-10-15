@@ -1,0 +1,137 @@
+/* hud.css — HUD, contagem, botão de ferramenta, menu radial, cursor e números flutuantes.
+   Visual de fazenda próprio. Usa as variáveis --c-* definidas em style.css. */
+#hud {
+  position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  --top: calc(var(--k101-safe-top, 0px) + 6px + env(safe-area-inset-top, 0px));
+}
+
+/* placas de madeira / papel */
+.hud-time, .hud-money, .hud-day, .hud-tool {
+  border: 3px solid var(--c-brown); background: var(--c-paper); box-shadow: 0 4px 0 var(--c-brown);
+  font-weight: 700; color: var(--c-brown);
+}
+
+.hud-time {
+  position: absolute; top: var(--top); left: calc(12px + env(safe-area-inset-left, 0px));
+  display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: var(--r-pill);
+}
+.hud-time .bar { width: clamp(80px, 22vw, 160px); height: 14px; border-width: 2px; box-shadow: inset 0 2px 0 rgba(0,0,0,.2); }
+#time-fill { height: 100%; width: 100%; transform-origin: left center; background: linear-gradient(180deg, var(--c-green-l), var(--c-green)); will-change: transform; }
+#time-text { font-size: 22px; min-width: 1.4em; text-align: right; }
+.hud-time small { color: var(--c-brown-2); }
+#hud.urgent .hud-time { animation: pulse .5s ease-in-out infinite alternate; background: #ffd9cf; border-color: var(--c-red-d); box-shadow: 0 4px 0 var(--c-red-d); }
+#hud.urgent #time-fill { background: linear-gradient(180deg, #ef7a66, var(--c-red)); }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+.hud-money {
+  position: absolute; top: var(--top); right: calc(12px + env(safe-area-inset-right, 0px));
+  display: flex; align-items: center; gap: 2px; padding: 6px 16px; border-radius: var(--r-pill); font-size: 22px;
+}
+.hud-money small { color: var(--c-brown-2); font-size: 12px; margin-right: 8px; font-weight: 600; }
+
+.hud-day {
+  position: absolute; top: calc(var(--top) + 54px); left: 50%; transform: translateX(-50%);
+  padding: 3px 16px; border-radius: var(--r-pill); font-size: 13px; letter-spacing: .1em;
+  background: var(--c-green); color: #fff; border-color: var(--c-brown);
+}
+
+.hud-tool {
+  position: absolute; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 2px; padding: 8px 16px; border-radius: 16px;
+}
+.hud-tool small { color: var(--c-brown-2); font-weight: 600; font-size: 12px; }
+body.touch .hud-tool { display: none; }
+
+/* botão de pausa: logo abaixo do dinheiro, clicável mesmo com o HUD sem eventos */
+.hud-pause {
+  all: unset; box-sizing: border-box; pointer-events: auto; cursor: pointer;
+  position: absolute; top: calc(var(--top) + 54px); right: calc(12px + env(safe-area-inset-right, 0px));
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: var(--c-paper); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
+  touch-action: manipulation; transition: transform .1s ease, box-shadow .1s ease, background .15s ease;
+}
+.hud-pause i { width: 6px; height: 18px; border-radius: 2px; background: var(--c-brown); }
+.hud-pause:hover { background: #fff0b8; }
+.hud-pause:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--c-brown); }
+.hud-pause:focus-visible { outline: var(--focus); outline-offset: 3px; }
+
+/* contagem 3-2-1 e «Fim do dia!» */
+#countdown {
+  position: fixed; left: 50%; top: calc(var(--k101-safe-top, 0px) + 18vh + env(safe-area-inset-top, 0px));
+  transform: translateX(-50%); z-index: 15; pointer-events: none;
+  font-size: clamp(52px, 14vw, 120px); font-weight: 700; white-space: nowrap; color: var(--c-cream);
+  -webkit-text-stroke: 4px var(--c-brown); paint-order: stroke fill;
+  text-shadow: 0 6px 0 var(--c-brown);
+}
+#countdown.tick { animation: tick .6s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes tick { from { transform: translateX(-50%) scale(1.7) rotate(-6deg); opacity: 0; } to { transform: translateX(-50%) scale(1) rotate(0); opacity: 1; } }
+
+/* botão de ferramenta (só toque): 64 px, centrado, com anel de ciclo */
+#tool-btn {
+  all: unset; box-sizing: border-box; position: fixed; z-index: 30; cursor: pointer;
+  left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center;
+  --p: 100%;
+  background:
+    radial-gradient(closest-side, var(--c-paper) calc(100% - 7px), transparent calc(100% - 6px)),
+    conic-gradient(var(--c-green) var(--p), rgba(74, 47, 26, .25) 0);
+  border: 3px solid var(--c-brown); box-shadow: 0 5px 0 var(--c-brown); touch-action: manipulation;
+}
+#tool-btn:active { transform: translateX(-50%) translateY(3px); box-shadow: 0 2px 0 var(--c-brown); }
+#tool-btn:focus-visible { outline: var(--focus); outline-offset: 3px; }
+#tool-btn img { width: 38px; height: 38px; object-fit: contain; pointer-events: none; }
+#tool-glyph { font-size: 26px; font-weight: 700; pointer-events: none; }
+
+/* cursor de PC: ícone da ferramenta atual segue o mouse */
+#cursor-icon {
+  position: fixed; left: 0; top: 0; width: 40px; height: 40px; z-index: 12; pointer-events: none;
+  object-fit: contain; will-change: transform; filter: drop-shadow(0 3px 0 rgba(74, 47, 26, .5));
+}
+body.touch #cursor-icon { display: none; }
+
+/* menu radial */
+#radial { position: fixed; inset: 0; z-index: 30; touch-action: none; }
+.rad-hub {
+  position: absolute; width: 16px; height: 16px; border-radius: 50%; transform: translate(-50%, -50%);
+  background: var(--c-gold); border: 3px solid var(--c-brown); pointer-events: none;
+}
+.rad-item {
+  all: unset; box-sizing: border-box; position: absolute; cursor: pointer;
+  width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--c-paper); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown); color: var(--c-brown);
+  transform: translate(var(--tx), var(--ty));
+  animation: rad-out .26s cubic-bezier(.3, 1.5, .5, 1) backwards; animation-delay: var(--delay, 0ms);
+  touch-action: manipulation; transition: background .12s ease;
+}
+.rad-item:hover, .rad-item:focus-visible { background: #fff0b8; }
+.rad-item:focus-visible { outline: var(--focus); outline-offset: 2px; }
+.rad-item.sel { background: var(--c-gold); }
+.rad-item img { width: 32px; height: 32px; object-fit: contain; pointer-events: none; }
+.rad-glyph { font-size: 24px; font-weight: 700; pointer-events: none; }
+.rad-label {
+  position: absolute; top: 100%; margin-top: 5px; padding: 1px 9px; white-space: nowrap; pointer-events: none;
+  font-size: 12px; font-weight: 700; border-radius: var(--r-pill); background: var(--c-brown); color: var(--c-cream);
+}
+@keyframes rad-out { from { transform: translate(0, 0) scale(.3); opacity: 0; } to { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 1; } }
+
+/* números flutuantes (um por ciclo de colheita) */
+#float-layer { position: fixed; inset: 0; z-index: 14; pointer-events: none; overflow: hidden; }
+.float-num {
+  position: absolute; transform: translate(-50%, -50%); font-size: 30px; font-weight: 700; white-space: nowrap;
+  color: var(--c-gold); -webkit-text-stroke: 3px var(--c-brown); paint-order: stroke fill;
+  text-shadow: 0 3px 0 var(--c-brown);
+  animation: float-up .9s ease-out forwards;
+}
+@keyframes float-up { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translate(-50%, -80%) scale(1.25); } to { transform: translate(-50%, -200%) scale(1.1); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  #hud.urgent .hud-time, #countdown.tick, .rad-item, .float-num { animation: none; }
+  .float-num { opacity: 1; }
+  #loading-fill { transition: none; }
+}
+@media (max-height: 520px) {
+  .hud-day { top: var(--top); }
+  .hud-money small { display: none; }
+}
