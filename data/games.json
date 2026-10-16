@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-15T03:19:06.226Z",
+  "generated": "2026-10-15T23:08:03.144Z",
   "games": [
     {
       "id": "defesa-do-castelo",
@@ -28,6 +28,35 @@
         "/jogos/defesa-do-castelo/prints/4.webp",
         "/jogos/defesa-do-castelo/prints/5.webp",
         "/jogos/defesa-do-castelo/prints/6.webp"
+      ]
+    },
+    {
+    "id": "colheita-infinita",
+      "title": "colheita infinita",
+      "tagline": "Construa torres, segure goblins e orcs na ponte e proteja o castelo. As ondas nunca acabam.",
+      "description": null,
+      "tags": [
+        "estratégia",
+        "Colheita",
+        "3D"
+      ],
+      "platforms": [
+        "desktop",
+        "mobile"
+      ],
+      "orientation": "landscape",
+      "version": "1.0.0",
+      "approxDownloadMB": 25,
+      "url": "/jogos/colheita-infinita/",
+      "cover": "/jogos/colheita-infinita/cover.webp",
+      "icon": "/jogos/colheita-infinita/icon.webp",
+      "screenshots": [
+        "/jogos/colheita-infinita/prints/1.webp",
+        "/jogos/colheita-infinita/prints/2.webp",
+        "/jogos/colheita-infinita/prints/3.webp",
+        "/jogos/colheita-infinita/prints/4.webp",
+        "/jogos/colheita-infinita/prints/5.webp",
+        "/jogos/colheita-infinita/prints/6.webp"
       ]
     }
   ]
