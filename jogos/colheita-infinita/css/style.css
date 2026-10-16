@@ -1,4 +1,6 @@
-/* style.css — identidade própria da Colheita Infinita: base, cenário, telas e botões.
+/* style.css — base, cores, componentes compartilhados (botões, pílulas, cartões) e telas simples.
+   Responsivo de verdade: celular em pé, celular deitado, tablet e PC. Nada flutua sobre o conteúdo:
+   cada tela é uma coluna (cabeçalho · conteúdo · rodapé) e só o conteúdo rola.
    Não usa variáveis do tema.css. Todas as cores e medidas vêm de :root abaixo. */
 :root {
   --c-cream: #fff4d6;
@@ -23,7 +25,25 @@
   --r-pill: 999px;
   --r-btn: 16px;
   --focus: 3px solid #1d6fd6;
+
+  /* áreas seguras (entalhe, barra do sistema, menu K101 no topo) */
+  --safe-t: calc(var(--k101-safe-top, 0px) + env(safe-area-inset-top, 0px));
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --pad: clamp(10px, 3.4vw, 20px);        /* margem lateral das telas */
+  --pad-l: calc(var(--pad) + var(--safe-l));
+  --pad-r: calc(var(--pad) + var(--safe-r));
+
+  /* altura que o HUD ocupa no topo do campo e espaço reservado embaixo (o Scene.js lê estes dois) */
+  --hud-h: 112px;
+  --inset-top: calc(var(--safe-t) + var(--hud-h));
+  --inset-bottom: 0px;
 }
+/* HUD de uma linha só: celular deitado ou tela larga */
+@media (max-height: 520px), (min-width: 900px) { :root { --hud-h: 66px; } }
+/* celular em pé: o botão de ferramenta ocupa a base da tela */
+@media (pointer: coarse) and (max-aspect-ratio: 1/1) { :root { --inset-bottom: calc(var(--safe-b) + 92px); } }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -35,16 +55,18 @@ html, body {
   overscroll-behavior: none;
   -webkit-user-select: none; user-select: none;
   -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
 }
 body.playing.on-field #c { cursor: none; }   /* só sobre o campo; fora dele o cursor normal aparece */
 body.over-drone #c { cursor: pointer; }   /* sobre um drone: cursor normal, clique seleciona */
 #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 img { -webkit-user-drag: none; user-select: none; }
+button { font-family: inherit; }
 
-/* ---------- cenário animado (carregamento e título) ---------- */
+/* ---------- cenário animado (carregamento, título, escolha) ---------- */
 .farm-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
   background: linear-gradient(180deg, var(--c-sky-1) 0%, var(--c-sky-2) 62%, #f7f3c4 100%); }
-.farm-bg .sun { position: absolute; top: 9%; right: 12%; width: clamp(70px, 14vw, 130px); aspect-ratio: 1; border-radius: 50%;
+.farm-bg .sun { position: absolute; top: 9%; right: 12%; width: clamp(60px, 14vw, 130px); aspect-ratio: 1; border-radius: 50%;
   background: radial-gradient(circle at 40% 35%, #fff3a8, var(--c-gold) 70%);
   box-shadow: 0 0 0 10px rgba(255, 224, 120, .35), 0 0 0 26px rgba(255, 224, 120, .18);
   animation: sun-pulse 5s ease-in-out infinite; }
@@ -62,32 +84,41 @@ img { -webkit-user-drag: none; user-select: none; }
 @keyframes drift { from { transform: translateX(0); } to { transform: translateX(160vw); } }
 @keyframes sun-pulse { 50% { transform: scale(1.06); } }
 
-/* ---------- overlays ---------- */
+/* ---------- overlays (telas cheias) ---------- */
 .ov {
   position: fixed; inset: 0; z-index: 20;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
-  padding: calc(var(--k101-safe-top, 0px) + env(safe-area-inset-top, 0px) + 8px) 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  padding: calc(var(--safe-t) + 10px) var(--pad-r) calc(var(--safe-b) + 18px) var(--pad-l);
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
   text-align: center;
   background: rgba(74, 47, 26, .55);
   backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
 }
+@supports (justify-content: safe center) { .ov { justify-content: safe center; } }   /* conteúdo maior que a tela rola em vez de cortar */
 #ov-loading, #ov-title, #ov-error { background: var(--c-sky-1); backdrop-filter: none; -webkit-backdrop-filter: none; }
-.ov > *:not(.farm-bg) { position: relative; z-index: 1; }
+.ov > *:not(.farm-bg) { position: relative; z-index: 1; flex: none; max-width: 100%; }
 .ov h1, .ov h2 { margin: 0; }
 
+/* telas de conteúdo (habilidades e loja): coluna fixa; só o miolo rola */
+.ov.screen {
+  justify-content: flex-start; align-items: stretch; gap: 0; padding: 0; text-align: left; overflow: hidden;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.ov.screen > * { max-width: none; }
+
 .logo-title {
-  font-size: clamp(34px, 9vw, 72px); font-weight: 700; line-height: 1; letter-spacing: .02em; text-wrap: balance;
+  font-size: clamp(32px, 9vw, 72px); font-weight: 700; line-height: 1.02; letter-spacing: .02em; text-wrap: balance;
   color: var(--c-cream);
   -webkit-text-stroke: 3px var(--c-brown); paint-order: stroke fill;
   text-shadow: 0 5px 0 var(--c-brown), 0 10px 0 rgba(74, 47, 26, .25);
   animation: logo-bob 3.2s ease-in-out infinite;
 }
 @keyframes logo-bob { 50% { transform: translateY(-6px) rotate(-1deg); } }
-.tagline { margin: 0; font-size: 20px; font-weight: 600; color: var(--c-brown);
-  padding: 4px 16px; border-radius: var(--r-pill); background: var(--c-glass); }
-.tip { margin: 6px 0 0; font-size: 13px; max-width: 360px; padding: 4px 12px; border-radius: var(--r-pill);
-  background: var(--c-glass); color: var(--c-brown-2); }
-#loading-text, #err-text { margin: 0; font-weight: 600; padding: 4px 14px; border-radius: var(--r-pill); background: var(--c-glass); }
+.tagline { margin: 0; font-size: clamp(15px, 4.2vw, 20px); font-weight: 600; color: var(--c-brown);
+  padding: 5px 16px; border-radius: var(--r-pill); background: var(--c-glass); text-wrap: balance; }
+.tip { margin: 4px 0 0; font-size: 13px; max-width: min(360px, 100%); padding: 5px 14px; border-radius: 16px;
+  background: var(--c-glass); color: var(--c-brown-2); text-wrap: balance; }
+#loading-text, #err-text { margin: 0; font-weight: 600; padding: 5px 14px; border-radius: 16px; background: var(--c-glass); text-wrap: balance; }
 
 /* barra de carregamento: sulco de terra com broto crescendo */
 .bar { width: min(320px, 70vw); height: 16px; border-radius: var(--r-pill); overflow: hidden;
@@ -99,10 +130,11 @@ img { -webkit-user-drag: none; user-select: none; }
 /* ---------- botões ---------- */
 .btn {
   all: unset; box-sizing: border-box; cursor: pointer; text-align: center;
-  display: inline-block; min-width: 120px; min-height: 46px; padding: 12px 22px;
-  font: 700 17px/1.1 var(--font); border-radius: var(--r-btn);
+  display: inline-block; min-width: 120px; min-height: 48px; padding: 12px 22px;
+  font: 700 17px/1.15 var(--font); border-radius: var(--r-btn);
   border: 3px solid var(--c-brown);
   box-shadow: 0 5px 0 var(--c-brown);
+  touch-action: manipulation;
   transition: transform .1s ease, box-shadow .1s ease, filter .15s ease;
 }
 .btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
@@ -112,22 +144,37 @@ img { -webkit-user-drag: none; user-select: none; }
 .btn1 { background: linear-gradient(180deg, #ffd45a, var(--c-gold)); color: var(--c-brown); }
 .btn2 { background: linear-gradient(180deg, #fffaf0, var(--c-paper-2)); color: var(--c-brown); }
 .btn3 { background: linear-gradient(180deg, #ef7a66, var(--c-red)); color: #fff; }
+.btn4 { background: linear-gradient(180deg, #8fd35a, var(--c-green)); color: #fff; text-shadow: 0 2px 0 rgba(74, 47, 26, .55); }   /* seguir para o próximo dia */
 .btn:disabled { opacity: .5; cursor: default; pointer-events: none; filter: grayscale(.5); }
 .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .col { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.menu-col { width: min(320px, 100%); }
+.menu-col .btn { width: 100%; min-width: 0; }
+
+/* ---------- pílulas de informação (dinheiro, dia) ---------- */
+.pill {
+  display: inline-flex; align-items: center; gap: 2px; min-height: 42px; padding: 4px 16px;
+  border: 3px solid var(--c-brown); border-radius: var(--r-pill); box-shadow: 0 4px 0 var(--c-brown);
+  background: var(--c-paper); color: var(--c-brown); font-weight: 700; white-space: nowrap;
+}
+.pill-money { font-size: 21px; font-variant-numeric: tabular-nums; min-width: 0; max-width: 100%; }
+.pill-money b { overflow: hidden; text-overflow: ellipsis; }
+.pill-day { font-size: 14px; letter-spacing: .1em; background: var(--c-green); color: #fff; text-shadow: 0 1px 0 rgba(74, 47, 26, .45); }
 
 /* ---------- cartões (resumo, confirmação) ---------- */
 .card {
-  width: min(390px, calc(100vw - 32px)); max-height: 100%; overflow: auto;
+  width: min(400px, 100%); max-height: 100%; overflow: auto;
   padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 12px; align-items: stretch;
   border: 4px solid var(--c-edge); border-radius: var(--r-card);
   background: repeating-linear-gradient(0deg, transparent 0 31px, rgba(139, 90, 43, .07) 31px 32px), var(--c-paper);
   box-shadow: 0 8px 0 var(--c-brown), 0 18px 40px var(--c-shadow);
   animation: card-in .35s cubic-bezier(.3, 1.4, .5, 1) backwards;
+  text-align: center;
 }
 @keyframes card-in { from { transform: translateY(24px) scale(.92); opacity: 0; } }
 .card.small p { margin: 0 0 6px; font-size: 19px; font-weight: 700; text-wrap: balance; }
 .card h2 { font-size: 26px; font-weight: 700; color: var(--c-green-d); }
+.card .btn.big { width: 100%; min-width: 0; }
 
 .sum-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 32vh; overflow: auto; }
 .sum-list li { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 12px; background: var(--c-paper-2); text-align: left;
@@ -135,27 +182,31 @@ img { -webkit-user-drag: none; user-select: none; }
 .sum-list li:nth-child(2) { animation-delay: .08s; } .sum-list li:nth-child(3) { animation-delay: .16s; } .sum-list li:nth-child(4) { animation-delay: .24s; }
 @keyframes row-in { from { transform: translateX(-16px); opacity: 0; } }
 .sum-list li.empty { justify-content: center; color: var(--c-brown-2); }
-.sum-list img { width: 32px; height: 32px; object-fit: contain; }
-.sum-list .l-name { flex: 1; }
-.sum-list .l-val { font-weight: 700; }
-.sum-line, .sum-money { display: flex; justify-content: space-between; align-items: baseline; }
+.sum-list img { width: 32px; height: 32px; object-fit: contain; flex: none; }
+.sum-list .l-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sum-list .l-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+.sum-line, .sum-money { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .sum-line { color: var(--c-brown-2); }
-.sum-money { font-size: 22px; font-weight: 700; padding-top: 8px; border-top: 3px dashed var(--c-edge); }
-.sum-money strong { font-size: 34px; color: var(--c-gold-d); text-shadow: 0 2px 0 var(--c-brown); -webkit-text-stroke: 1px var(--c-brown); }
+.sum-money { font-size: 20px; font-weight: 700; padding-top: 8px; border-top: 3px dashed var(--c-edge); }
+.sum-money strong { font-size: 34px; color: var(--c-gold-d); text-shadow: 0 2px 0 var(--c-brown); -webkit-text-stroke: 1px var(--c-brown); font-variant-numeric: tabular-nums; }
 .sum-best { margin: 0; min-height: 1.2em; color: var(--c-green-d); font-size: 15px; font-weight: 700; }
 #ov-summary .ad-slot { align-self: center; }
 
 /* moeda feita em CSS */
-.coin { display: inline-block; width: .95em; height: .95em; border-radius: 50%; margin: 0 .3em 0 0; vertical-align: -.12em;
+.coin { display: inline-block; flex: none; width: .95em; height: .95em; border-radius: 50%; margin: 0 .3em 0 0; vertical-align: -.12em;
   background: radial-gradient(circle at 35% 30%, #fff0a0, var(--c-gold) 60%, var(--c-gold-d));
   border: 2px solid var(--c-brown); box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); }
 
+/* ---------- celular deitado / telas baixas ---------- */
 @media (max-height: 520px) {
   .logo-title { font-size: clamp(26px, 6vw, 42px); }
-  .ov { gap: 10px; }
+  .ov { gap: 10px; padding-top: calc(var(--safe-t) + 6px); padding-bottom: calc(var(--safe-b) + 10px); }
   .ad-slot { height: 50px; }
   .card { padding: 14px 16px; gap: 8px; }
   .sum-list { max-height: 22vh; }
+  .menu-col { flex-direction: row; width: auto; }
+  .menu-col .btn { width: auto; min-width: 150px; }
+  .tip { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .farm-bg .sun, .farm-bg .cloud, .logo-title, .card, .sum-list li { animation: none; }

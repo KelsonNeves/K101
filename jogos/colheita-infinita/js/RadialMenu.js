@@ -18,6 +18,8 @@ export class RadialMenu {
     // PC: ao soltar o botão direito sobre um item, ele é escolhido (segurar, arrastar e soltar).
     window.addEventListener('pointerup', (e) => {
       if (!this.isOpen || e.pointerType !== 'mouse' || e.button !== 2) return;
+      // Clique rápido (soltou ainda em cima do centro, onde os itens acabaram de nascer): só abre, não escolhe nada.
+      if (this.center && Math.hypot(e.clientX - this.center.x, e.clientY - this.center.y) < 48) return;
       const item = document.elementFromPoint(e.clientX, e.clientY)?.closest('.rad-item');
       if (item) this.choose(item.dataset.key);
       // sem item: o menu fica aberto e o clique esquerdo escolhe
@@ -35,7 +37,7 @@ export class RadialMenu {
 
   open(x, y, mode = 'around') {
     const g = this.game;
-    if (g.state !== 'DAY' || g.paused || g.countdown > 0 || g.ending > 0) return;
+    if (g.state !== 'DAY' || g.paused || g.ending > 0) return;   // a contagem 3-2-1 NÃO bloqueia: dá para escolher a ferramenta antes de começar
     const items = g.radialItems();
     this.mode = mode;
     const { R, angles } = this.layout(items.length, mode);
@@ -50,7 +52,14 @@ export class RadialMenu {
 
     this.el.innerHTML = '';
     this.el.hidden = false;
-    if (mode === 'around') {
+    let host = this.el;
+    if (mode === 'fan') {
+      // Toque: bandeja acima do botão (os itens quebram em linhas e nunca saem da tela).
+      host = document.createElement('div');
+      host.className = 'rad-tray' + (x > innerWidth * 0.62 ? ' right' : '');
+      host.style.bottom = `${Math.max(8, innerHeight - y + 44)}px`;
+      this.el.appendChild(host);
+    } else {
       const hub = document.createElement('div');
       hub.className = 'rad-hub';
       hub.style.left = `${cx}px`; hub.style.top = `${cy}px`;
@@ -62,12 +71,14 @@ export class RadialMenu {
       b.className = 'rad-item' + (this.isSelected(it) ? ' sel' : '');
       b.dataset.key = it.key;
       b.setAttribute('aria-label', it.name);
-      const a = (angles[i] * Math.PI) / 180;
-      const tx = Math.cos(a) * R, ty = Math.sin(a) * R;
-      b.style.left = `${cx}px`; b.style.top = `${cy}px`;
-      b.style.setProperty('--tx', `${tx}px`);
-      b.style.setProperty('--ty', `${ty}px`);
-      b.style.setProperty('--delay', `${i * 60}ms`);
+      if (mode !== 'fan') {
+        const a = (angles[i] * Math.PI) / 180;
+        const tx = Math.cos(a) * R, ty = Math.sin(a) * R;
+        b.style.left = `${cx}px`; b.style.top = `${cy}px`;
+        b.style.setProperty('--tx', `${tx}px`);
+        b.style.setProperty('--ty', `${ty}px`);
+        b.style.setProperty('--delay', `${i * 60}ms`);
+      }
       const img = document.createElement('img');
       img.alt = ''; img.draggable = false; img.src = it.icon;
       const fallback = document.createElement('span');
@@ -78,8 +89,9 @@ export class RadialMenu {
       lab.className = 'rad-label'; lab.textContent = it.name;
       b.append(img, fallback, lab);
       b.addEventListener('click', (e) => { e.stopPropagation(); this.choose(it.key); });
-      this.el.appendChild(b);
+      host.appendChild(b);
     });
+    this.center = mode === 'around' ? { x: cx, y: cy } : null;
     this.isOpen = true;
     this.game.input.releaseAll();
   }

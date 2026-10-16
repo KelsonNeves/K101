@@ -18,6 +18,8 @@ export class Synth {
   }
 
   resume() { try { this.ensure()?.resume?.(); } catch { /* sem áudio */ } }
+  // Congela o relógio do WebAudio (nenhum efeito agendado toca depois). Não cria o contexto se ele ainda não existe.
+  suspend() { try { this.ctx?.suspend?.()?.catch?.(() => {}); } catch { /* sem áudio */ } }
   setVolume(v) { if (this.master) this.master.gain.value = v; }
 
   // Decodifica um .mp3/.ogg já baixado (ArrayBuffer). Devolve null se o arquivo for inválido.

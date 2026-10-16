@@ -1,7 +1,7 @@
 // Skills.js — DADOS da árvore. Edite aqui para criar, mover ou remover habilidades.
 import { FIELD_DIRS } from './Data.js';
 
-export const TREE = { spacing: 150, nodeSize: 84 };   // px por unidade de «at»
+export const TREE = { spacing: 150, nodeSize: 92 };   // px por unidade de «at»
 
 // `needs` (opcional): id de um item da loja que precisa estar comprado para a habilidade aparecer (ver isVisible em Game.js).
 // Atalho: cria uma fila de níveis encadeados (I, II, III…); cada nível é filho do anterior.

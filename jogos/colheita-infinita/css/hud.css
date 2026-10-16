@@ -1,51 +1,52 @@
-/* hud.css — HUD, contagem, botão de ferramenta, menu radial, cursor e números flutuantes.
-   Visual de fazenda próprio. Usa as variáveis --c-* definidas em style.css. */
-#hud {
-  position: fixed; inset: 0; z-index: 10; pointer-events: none;
-  --top: calc(var(--k101-safe-top, 0px) + 6px + env(safe-area-inset-top, 0px));
-}
+/* hud.css — HUD do dia, setas entre campos, botão de ferramenta, menu de ferramentas, cursor, drones e números flutuantes.
+   Regra de ouro: o HUD é uma grade (tempo · dinheiro · dia · pausa); nada se sobrepõe, e o campo é enquadrado
+   pelo Scene.js fora da área reservada (--inset-top / --inset-bottom). */
+#hud { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
 
-/* placas de madeira / papel */
-.hud-time, .hud-money, .hud-day, .hud-tool {
+/* ---------- barra do topo ---------- */
+.hud-bar {
+  position: absolute; left: 0; right: 0; top: 0;
+  display: grid; align-items: center; gap: 8px 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'time money' 'day pause';
+  padding: calc(var(--safe-t) + 8px) var(--pad-r) 0 var(--pad-l);
+}
+.hud-time, .hud-money, .hud-day {
   border: 3px solid var(--c-brown); background: var(--c-paper); box-shadow: 0 4px 0 var(--c-brown);
   font-weight: 700; color: var(--c-brown);
 }
 
 .hud-time {
-  position: absolute; top: var(--top); left: calc(12px + env(safe-area-inset-left, 0px));
-  display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: var(--r-pill);
+  grid-area: time; justify-self: start; width: min(100%, 230px); min-height: 52px;
+  display: flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: var(--r-pill);
 }
-.hud-time .bar { width: clamp(80px, 22vw, 160px); height: 14px; border-width: 2px; box-shadow: inset 0 2px 0 rgba(0,0,0,.2); }
+.hud-time .bar { flex: 1 1 auto; width: auto; min-width: 40px; height: 14px; border-width: 2px; box-shadow: inset 0 2px 0 rgba(0,0,0,.2); }
 #time-fill { height: 100%; width: 100%; transform-origin: left center; background: linear-gradient(180deg, var(--c-green-l), var(--c-green)); will-change: transform; }
-#time-text { font-size: 22px; min-width: 1.4em; text-align: right; }
-.hud-time small { color: var(--c-brown-2); }
+.hud-sec { flex: none; display: inline-flex; align-items: baseline; gap: 2px; font-variant-numeric: tabular-nums; }
+#time-text { font-size: 24px; line-height: 1; min-width: 1.3em; text-align: right; }
+.hud-sec small { color: var(--c-brown-2); font-size: 14px; }
 #hud.urgent .hud-time { animation: pulse .5s ease-in-out infinite alternate; background: #ffd9cf; border-color: var(--c-red-d); box-shadow: 0 4px 0 var(--c-red-d); }
 #hud.urgent #time-fill { background: linear-gradient(180deg, #ef7a66, var(--c-red)); }
-@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
 
 .hud-money {
-  position: absolute; top: var(--top); right: calc(12px + env(safe-area-inset-right, 0px));
-  display: flex; align-items: center; gap: 2px; padding: 6px 16px; border-radius: var(--r-pill); font-size: 22px;
+  grid-area: money; min-height: 52px; min-width: 0;
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0;
+  padding: 4px 16px; border-radius: 20px; line-height: 1.05; font-variant-numeric: tabular-nums;
 }
-.hud-money small { color: var(--c-brown-2); font-size: 12px; margin-right: 8px; font-weight: 600; }
+.hud-money small { color: var(--c-brown-2); font-size: 11px; font-weight: 600; letter-spacing: .02em; }
+.hud-money-v { display: inline-flex; align-items: center; font-size: 22px; }
 
 .hud-day {
-  position: absolute; top: calc(var(--top) + 54px); left: 50%; transform: translateX(-50%);
-  padding: 3px 16px; border-radius: var(--r-pill); font-size: 13px; letter-spacing: .1em;
-  background: var(--c-green); color: #fff; border-color: var(--c-brown);
+  grid-area: day; justify-self: start;
+  padding: 4px 16px; border-radius: var(--r-pill); font-size: 13px; letter-spacing: .1em;
+  background: var(--c-green); color: #fff; border-color: var(--c-brown); text-shadow: 0 1px 0 rgba(74, 47, 26, .45);
 }
 
-.hud-tool {
-  position: absolute; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  display: flex; flex-direction: column; gap: 2px; padding: 8px 16px; border-radius: 16px;
-}
-.hud-tool small { color: var(--c-brown-2); font-weight: 600; font-size: 12px; }
-body.touch .hud-tool { display: none; }
-
-/* botão de pausa: logo abaixo do dinheiro, clicável mesmo com o HUD sem eventos */
+/* botão de pausa: clicável mesmo com o HUD sem eventos */
 .hud-pause {
   all: unset; box-sizing: border-box; pointer-events: auto; cursor: pointer;
-  position: absolute; top: calc(var(--top) + 54px); right: calc(12px + env(safe-area-inset-right, 0px));
+  grid-area: pause; justify-self: end;
   width: 48px; height: 48px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; gap: 5px;
   background: var(--c-paper); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
@@ -56,21 +57,45 @@ body.touch .hud-tool { display: none; }
 .hud-pause:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--c-brown); }
 .hud-pause:focus-visible { outline: var(--focus); outline-offset: 3px; }
 
-/* contagem 3-2-1 e «Fim do dia!» */
+/* tela larga ou baixa: tudo numa linha só (sobra mais campo) */
+@media (max-height: 520px), (min-width: 900px) {
+  .hud-bar {
+    grid-template-columns: minmax(0, 200px) auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'time day . money pause';
+  }
+  .hud-time { width: 100%; }
+  .hud-money { justify-self: end; }
+}
+@media (min-width: 900px) { .hud-bar { grid-template-columns: minmax(0, 260px) auto minmax(0, 1fr) auto auto; } }
+
+/* dica de ferramenta (só PC): placa no canto de baixo */
+.hud-tool {
+  position: absolute; left: calc(14px + var(--safe-l)); bottom: calc(14px + var(--safe-b));
+  max-width: min(60vw, 320px);
+  display: flex; flex-direction: column; gap: 2px; padding: 8px 16px; border-radius: 16px;
+  border: 3px solid var(--c-brown); background: var(--c-paper); box-shadow: 0 4px 0 var(--c-brown);
+  font-weight: 700; color: var(--c-brown);
+}
+.hud-tool small { color: var(--c-brown-2); font-weight: 600; font-size: 12px; }
+body.touch .hud-tool { display: none; }
+
+/* ---------- contagem 3-2-1 e «Fim do dia!» ---------- */
 #countdown {
-  position: fixed; left: 50%; top: calc(var(--k101-safe-top, 0px) + 18vh + env(safe-area-inset-top, 0px));
+  position: fixed; left: 50%; top: calc(var(--safe-t) + var(--hud-h) + 4vh);
   transform: translateX(-50%); z-index: 15; pointer-events: none;
-  font-size: clamp(52px, 14vw, 120px); font-weight: 700; white-space: nowrap; color: var(--c-cream);
+  max-width: 96vw; text-align: center;
+  font-size: clamp(48px, 14vw, 120px); font-weight: 700; white-space: nowrap; color: var(--c-cream);
   -webkit-text-stroke: 4px var(--c-brown); paint-order: stroke fill;
   text-shadow: 0 6px 0 var(--c-brown);
 }
 #countdown.tick { animation: tick .6s cubic-bezier(.3, 1.4, .5, 1); }
 @keyframes tick { from { transform: translateX(-50%) scale(1.7) rotate(-6deg); opacity: 0; } to { transform: translateX(-50%) scale(1) rotate(0); opacity: 1; } }
+@media (max-height: 520px) { #countdown { font-size: clamp(40px, 12vh, 80px); } }
 
-/* botão de ferramenta (só toque): 64 px, centrado, com anel de ciclo */
+/* ---------- botão de ferramenta (só toque): 68 px, base da tela ---------- */
 #tool-btn {
   all: unset; box-sizing: border-box; position: fixed; z-index: 30; cursor: pointer;
-  left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  left: 50%; margin-left: -34px; bottom: calc(14px + var(--safe-b));
   width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center;
   --p: 100%;
   background:
@@ -78,10 +103,12 @@ body.touch .hud-tool { display: none; }
     conic-gradient(var(--c-green) var(--p), rgba(74, 47, 26, .25) 0);
   border: 3px solid var(--c-brown); box-shadow: 0 5px 0 var(--c-brown); touch-action: manipulation;
 }
-#tool-btn:active { transform: translateX(-50%) translateY(3px); box-shadow: 0 2px 0 var(--c-brown); }
+#tool-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--c-brown); }
 #tool-btn:focus-visible { outline: var(--focus); outline-offset: 3px; }
 #tool-btn img { width: 38px; height: 38px; object-fit: contain; pointer-events: none; }
 #tool-glyph { font-size: 26px; font-weight: 700; pointer-events: none; }
+/* celular deitado: o polegar fica na direita */
+@media (min-aspect-ratio: 3/2) { #tool-btn { left: auto; margin-left: 0; right: calc(16px + var(--safe-r)); } }
 
 /* cursor de PC: ícone da ferramenta atual segue o mouse */
 #cursor-icon {
@@ -90,7 +117,7 @@ body.touch .hud-tool { display: none; }
 }
 body.touch #cursor-icon { display: none; }
 
-/* menu radial */
+/* ---------- menu de ferramentas ---------- */
 #radial { position: fixed; inset: 0; z-index: 30; touch-action: none; }
 .rad-hub {
   position: absolute; width: 16px; height: 16px; border-radius: 50%; transform: translate(-50%, -50%);
@@ -116,7 +143,23 @@ body.touch #cursor-icon { display: none; }
 }
 @keyframes rad-out { from { transform: translate(0, 0) scale(.3); opacity: 0; } to { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 1; } }
 
-/* números flutuantes (um por ciclo de colheita) */
+/* toque: as ferramentas vêm numa bandeja acima do botão (nunca saem da tela nem se atropelam) */
+.rad-tray {
+  position: absolute; left: 50%; transform: translateX(-50%); max-height: 70vh; overflow: auto;
+  width: max-content; max-width: min(94vw, 460px);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 12px;
+  padding: 14px 14px 32px; border: 4px solid var(--c-edge); border-radius: var(--r-card);
+  background: var(--c-paper); box-shadow: 0 6px 0 var(--c-brown), 0 14px 30px var(--c-shadow);
+  animation: tray-in .22s cubic-bezier(.3, 1.4, .5, 1) backwards;
+}
+.rad-tray.right { left: auto; right: calc(12px + var(--safe-r)); transform: none; }
+.rad-tray .rad-item { position: relative; margin: 0; transform: none; animation: none; flex: none; width: 60px; height: 60px; }
+.rad-tray .rad-label { top: 100%; margin-top: 4px; }
+@keyframes tray-in { from { opacity: 0; transform: translateX(-50%) translateY(16px) scale(.92); } }
+.rad-tray.right { animation-name: tray-in-r; }
+@keyframes tray-in-r { from { opacity: 0; transform: translateY(16px) scale(.92); } }
+
+/* ---------- números flutuantes (um por ciclo de colheita) ---------- */
 #float-layer { position: fixed; inset: 0; z-index: 14; pointer-events: none; overflow: hidden; }
 .float-num {
   position: absolute; transform: translate(-50%, -50%); font-size: 30px; font-weight: 700; white-space: nowrap;
@@ -127,19 +170,17 @@ body.touch #cursor-icon { display: none; }
 @keyframes float-up { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translate(-50%, -80%) scale(1.25); } to { transform: translate(-50%, -200%) scale(1.1); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  #hud.urgent .hud-time, #countdown.tick, .rad-item, .float-num { animation: none; }
+  #hud.urgent .hud-time, #countdown.tick, .rad-item, .rad-tray, .float-num { animation: none; }
   .float-num { opacity: 1; }
   #loading-fill { transition: none; }
 }
-@media (max-height: 520px) {
-  .hud-day { top: var(--top); }
-  .hud-money small { display: none; }
-}
 
-/* setas de navegação entre campos (nas bordas da tela; só aparecem quando há um campo vizinho) */
+/* ---------- setas entre campos ----------
+   Celular deitado / PC: nas bordas, no meio da altura (sobra espaço dos lados).
+   Celular em pé: nos cantos de baixo e no centro, onde há terreno livre — o campo ocupa a largura toda. */
 .nav {
   all: unset; box-sizing: border-box; pointer-events: auto; cursor: pointer; position: absolute;
-  width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
   background: var(--c-paper); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
   touch-action: manipulation; transition: transform .1s ease, box-shadow .1s ease, background .15s ease;
 }
@@ -150,11 +191,11 @@ body.touch #cursor-icon { display: none; }
 .nav-left::before  { transform: translateX(3px) rotate(135deg); }
 .nav-up::before    { transform: translateY(3px) rotate(-135deg); }
 .nav-down::before  { transform: translateY(-3px) rotate(45deg); }
-.nav-right { right: calc(10px + env(safe-area-inset-right, 0px)); top: 50%; margin-top: -28px; }
-.nav-left  { left: calc(10px + env(safe-area-inset-left, 0px)); top: 50%; margin-top: -28px; }
-.nav-up    { left: 50%; margin-left: -28px; top: calc(var(--top) + 90px); }
-.nav-down  { left: 50%; margin-left: -28px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
-body.touch .nav-down { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }   /* acima do botão de ferramenta */
+.nav-right { right: calc(10px + var(--safe-r)); top: 50%; margin-top: -26px; }
+.nav-left  { left: calc(10px + var(--safe-l)); top: 50%; margin-top: -26px; }
+.nav-up    { left: 50%; margin-left: -26px; top: calc(var(--safe-t) + var(--hud-h) + 2px); }
+.nav-down  { left: 50%; margin-left: -26px; bottom: calc(14px + var(--safe-b)); }
+body.touch .nav-down { bottom: calc(98px + var(--safe-b)); }                 /* acima do botão de ferramenta */
 .nav:hover { background: #fff0b8; }
 .nav:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--c-brown); }
 .nav:focus-visible { outline: var(--focus); outline-offset: 3px; }
@@ -167,11 +208,27 @@ body.touch .nav-down { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } 
 @keyframes nav-ready { 50% { box-shadow: 0 4px 0 var(--c-brown), 0 0 0 7px rgba(244, 185, 47, .55); } }
 @media (prefers-reduced-motion: reduce) { .nav.ready { animation: none; } }
 
-/* painel de seleção do drone (campo de trabalho e, no semeador, a semente) */
+/* celular em pé */
+@media (max-aspect-ratio: 1/1) {
+  .nav-left, .nav-right { top: auto; margin-top: 0; bottom: calc(22px + var(--safe-b)); }   /* alinhados ao centro do botão de ferramenta */
+  .nav-left { left: calc(16px + var(--safe-l)); }
+  .nav-right { right: calc(16px + var(--safe-r)); }
+  .hud-tool { left: 50%; transform: translateX(-50%); bottom: calc(76px + var(--safe-b)); text-align: center; align-items: center; }
+}
+/* celular deitado, estreito: a seta de cima não pode bater no «DIA» */
+@media (max-height: 520px) {
+  .nav-up { top: calc(var(--safe-t) + 8px); }
+  .nav-down { bottom: calc(10px + var(--safe-b)); }
+}
+@media (max-height: 520px) and (max-width: 760px) {
+  .nav-up { top: calc(var(--safe-t) + var(--hud-h) - 2px); }
+}
+
+/* ---------- painel de seleção do drone (campo de trabalho e, no semeador, a semente) ---------- */
 #drone-layer { position: fixed; inset: 0; z-index: 13; pointer-events: none; }
 .drone-panel {
   position: absolute; left: 0; top: 0; display: flex; flex-direction: row; align-items: center; gap: 12px;
-  max-width: min(94vw, 400px); padding: 10px 12px; will-change: transform; pointer-events: auto;
+  width: max-content; max-width: min(94vw, 400px); padding: 10px 12px; will-change: transform; pointer-events: auto;
   background: var(--c-brown); color: var(--c-cream); border-radius: 18px; box-shadow: 0 6px 18px var(--c-shadow);
 }
 .dp-title { font-size: 15px; font-weight: 700; text-align: center; }
@@ -205,8 +262,8 @@ body.touch .nav-down { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } 
 .dp-opt:active { transform: translateY(2px); }
 .dp-opt:focus-visible { outline: var(--focus); outline-offset: 2px; }
 .dp-opt.sel { background: var(--c-gold); border-color: var(--c-gold-d); }
-.dp-pill { min-height: 36px; padding: 0 12px; border-radius: var(--r-pill); font: 700 13px/1 var(--font); }
-.dp-seedbtn { width: 40px; height: 40px; border-radius: 50%; }
+.dp-pill { min-height: 38px; padding: 0 12px; border-radius: var(--r-pill); font: 700 13px/1 var(--font); }
+.dp-seedbtn { width: 42px; height: 42px; border-radius: 50%; }
 .db-seed { display: grid; place-items: center; width: 24px; height: 24px; pointer-events: none; }
 .db-seed img { width: 24px; height: 24px; object-fit: contain; }
 .db-glyph { font-size: 16px; font-weight: 700; color: var(--c-brown); }

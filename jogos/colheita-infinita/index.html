@@ -6,6 +6,7 @@
   <title>COLHEITA INFINITA — K101</title>
   <meta name='k101-game' content='colheita-infinita'>
   <meta name='k101-safe-top' content='52'>
+  <meta name='theme-color' content='#8fd3f0'>
 
   <link rel='canonical' href='https://k101.com.br/jogos/colheita-infinita/'>
   <meta property='og:type' content='website'>
@@ -45,6 +46,29 @@
 <body>
   <canvas id='c'></canvas>
 
+  <!-- Ícones reutilizados nas abas e na tela de escolha -->
+  <svg width='0' height='0' style='position:absolute' aria-hidden='true' focusable='false'>
+    <symbol id='i-tree' viewBox='0 0 96 96'>
+      <rect x='42' y='52' width='12' height='32' rx='3' fill='#8b5a2b' stroke='#4a2f1a' stroke-width='5'/>
+      <circle cx='33' cy='46' r='15' fill='#7ac04e' stroke='#4a2f1a' stroke-width='5'/>
+      <circle cx='63' cy='45' r='14' fill='#7ac04e' stroke='#4a2f1a' stroke-width='5'/>
+      <circle cx='48' cy='32' r='22' fill='#62ad40' stroke='#4a2f1a' stroke-width='5'/>
+      <circle cx='40' cy='28' r='4' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
+      <circle cx='56' cy='38' r='4' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
+      <circle cx='30' cy='46' r='3.5' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
+    </symbol>
+    <symbol id='i-shop' viewBox='0 0 96 96'>
+      <rect x='16' y='42' width='64' height='42' fill='#c9a96b' stroke='#4a2f1a' stroke-width='5'/>
+      <rect x='10' y='62' width='76' height='12' rx='3' fill='#8b5a2b' stroke='#4a2f1a' stroke-width='5'/>
+      <circle cx='34' cy='56' r='6' fill='#d9533f' stroke='#4a2f1a' stroke-width='3'/>
+      <circle cx='50' cy='56' r='6' fill='#f4b92f' stroke='#4a2f1a' stroke-width='3'/>
+      <circle cx='66' cy='56' r='6' fill='#62ad40' stroke='#4a2f1a' stroke-width='3'/>
+      <path d='M8 42 L16 14 H80 L88 42 Z' fill='#fff4d6'/>
+      <path d='M16 14 H32 L28 42 H8 Z M48 14 H64 L68 42 H48 Z' fill='#d9533f'/>
+      <path d='M8 42 L16 14 H80 L88 42 Z' fill='none' stroke='#4a2f1a' stroke-width='5' stroke-linejoin='round'/>
+    </symbol>
+  </svg>
+
   <!-- Telas (z-index 20 no máximo; o menu K101 fica acima) -->
   <div id='ov-loading' class='ov'>        <!-- visível desde o primeiro byte -->
     <div class='farm-bg' aria-hidden='true'><i class='sun'></i><i class='cloud c1'></i><i class='cloud c2'></i><i class='hill h2'></i><i class='hill h1'></i><i class='hill h3'></i><i class='rows'></i></div>
@@ -68,7 +92,7 @@
     <div class='farm-bg' aria-hidden='true'><i class='sun'></i><i class='cloud c1'></i><i class='cloud c2'></i><i class='cloud c3'></i><i class='hill h2'></i><i class='hill h1'></i><i class='hill h3'></i><i class='rows'></i></div>
     <h1 class='logo-title'>COLHEITA INFINITA</h1>
     <p class='tagline'>Plante, regue e colha. Evolua sem parar.</p>
-    <div class='col'>
+    <div class='col menu-col'>
       <button id='btn-play' class='btn btn1 big' type='button'>Jogar</button>
       <button id='btn-new' class='btn btn2' type='button' hidden>Novo jogo</button>
     </div>
@@ -77,8 +101,10 @@
 
   <div id='ov-pause' class='ov' hidden>
     <h2 class='logo-title'>Pausado</h2>
-    <button id='btn-resume' class='btn btn1 big' type='button'>Continuar</button>
-    <button id='btn-quit' class='btn btn2' type='button'>Voltar ao início</button>
+    <div class='col menu-col'>
+      <button id='btn-resume' class='btn btn1 big' type='button'>Continuar</button>
+      <button id='btn-quit' class='btn btn2' type='button'>Voltar ao início</button>
+    </div>
     <p id='quit-tip' class='tip' hidden>Toque de novo para confirmar: o dia em andamento será perdido.</p>
   </div>
 
@@ -94,50 +120,36 @@
     </div>
   </div>
 
-  <!-- Tela de escolha após o resumo do dia: dois ícones, sem botões de texto. -->
+  <!-- Tela de escolha após o resumo do dia: dois cartões grandes e o botão de seguir. -->
   <div id='ov-hub' class='ov' hidden>
     <div class='farm-bg' aria-hidden='true'><i class='sun'></i><i class='cloud c1'></i><i class='cloud c2'></i><i class='hill h2'></i><i class='hill h1'></i><i class='hill h3'></i><i class='rows'></i></div>
     <div class='row'>
-      <span class='sk-money'><i class='coin'></i><b id='hub-money'>0</b></span>
-      <span id='hub-day' class='sk-day'>DIA 1</span>
+      <span class='pill pill-money'><i class='coin'></i><b id='hub-money'>0</b></span>
+      <span id='hub-day' class='pill pill-day'>DIA 1</span>
     </div>
     <h2 class='logo-title hub-title'>Para onde vamos?</h2>
     <div class='hub-choices'>
       <button id='hub-skills' class='hub-item hub-skills' type='button' aria-label='Árvore de habilidades'>
-        <svg class='hub-svg' viewBox='0 0 96 96' aria-hidden='true'>
-        <rect x='42' y='52' width='12' height='32' rx='3' fill='#8b5a2b' stroke='#4a2f1a' stroke-width='4'/>
-        <circle cx='33' cy='46' r='15' fill='#7ac04e' stroke='#4a2f1a' stroke-width='4'/>
-        <circle cx='63' cy='45' r='14' fill='#7ac04e' stroke='#4a2f1a' stroke-width='4'/>
-        <circle cx='48' cy='32' r='22' fill='#62ad40' stroke='#4a2f1a' stroke-width='4'/>
-        <circle cx='40' cy='28' r='4' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
-        <circle cx='56' cy='38' r='4' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
-        <circle cx='30' cy='46' r='3.5' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
-      </svg>
+        <svg class='hub-svg' aria-hidden='true'><use href='#i-tree'/></svg>
         <b>Habilidades</b><small>Evolua seu jeito de plantar</small>
       </button>
       <button id='hub-shop' class='hub-item hub-shop' type='button' aria-label='Loja'>
-        <svg class='hub-svg' viewBox='0 0 96 96' aria-hidden='true'>
-        <rect x='16' y='42' width='64' height='42' fill='#c9a96b' stroke='#4a2f1a' stroke-width='4'/>
-        <rect x='10' y='62' width='76' height='12' rx='3' fill='#8b5a2b' stroke='#4a2f1a' stroke-width='4'/>
-        <circle cx='34' cy='56' r='6' fill='#d9533f' stroke='#4a2f1a' stroke-width='3'/>
-        <circle cx='50' cy='56' r='6' fill='#f4b92f' stroke='#4a2f1a' stroke-width='3'/>
-        <circle cx='66' cy='56' r='6' fill='#62ad40' stroke='#4a2f1a' stroke-width='3'/>
-        <path d='M8 42 L16 14 H80 L88 42 Z' fill='#fff4d6' stroke='#4a2f1a' stroke-width='4' stroke-linejoin='round'/>
-        <path d='M16 14 H32 L28 42 H8 Z M48 14 H64 L68 42 H48 Z' fill='#d9533f'/>
-        <path d='M32 14 H48 L48 42 H28 Z M64 14 H80 L88 42 H68 Z' fill='#fff4d6'/>
-        <path d='M8 42 L16 14 H80 L88 42 Z' fill='none' stroke='#4a2f1a' stroke-width='4' stroke-linejoin='round'/>
-      </svg>
+        <svg class='hub-svg' aria-hidden='true'><use href='#i-shop'/></svg>
         <b>Loja</b><small>Drones para ajudar na fazenda</small>
       </button>
     </div>
-    <button id='btn-hub-next' class='btn btn1 big' type='button'>Próximo dia</button>
+    <button id='btn-hub-next' class='btn btn4 big' type='button'>Próximo dia</button>
   </div>
 
-  <div id='ov-skills' class='ov' hidden>
-    <header class='sk-top'>
-      <span class='sk-money'><i class='coin'></i><b id='sk-money'>0</b></span>
-      <span class='place place-tree'>Árvore de habilidades</span>
-      <span id='sk-day' class='sk-day'>DIA 1</span>
+  <!-- Árvore de habilidades: cabeçalho (dinheiro · abas · dia), mapa e rodapé com detalhes + ações. Nada flutua sobre o conteúdo. -->
+  <div id='ov-skills' class='ov screen' hidden>
+    <header class='topbar'>
+      <span class='pill pill-money'><i class='coin'></i><b id='sk-money'>0</b></span>
+      <nav class='tabs' aria-label='Seções'>
+        <span class='tab on' aria-current='page'><svg class='tab-ic' aria-hidden='true'><use href='#i-tree'/></svg><span>Habilidades</span></span>
+        <button id='go-shop' class='tab' type='button'><svg class='tab-ic' aria-hidden='true'><use href='#i-shop'/></svg><span>Loja</span></button>
+      </nav>
+      <span id='sk-day' class='pill pill-day'>DIA 1</span>
     </header>
     <div id='tree-viewport'>
       <div id='tree-world'>
@@ -150,30 +162,33 @@
         <button id='sk-center' type='button' aria-label='Recentralizar'>◎</button>
       </div>
     </div>
-    <section id='sk-panel' aria-live='polite'>
-      <div class='sk-info'>
+    <footer class='dock'>
+      <section id='sk-panel' class='dock-info' aria-live='polite'>
         <h3 id='sk-name'>Árvore de habilidades</h3>
         <p id='sk-desc'></p>
         <p id='sk-effects' class='sk-eff'></p>
+      </section>
+      <div class='dock-actions'>
+        <button id='sk-buy' class='btn btn1' type='button' disabled>Desbloquear</button>
+        <button id='btn-next-day' class='btn btn4' type='button'>Próximo dia</button>
       </div>
-      <button id='sk-buy' class='btn btn1' type='button' disabled>Desbloquear</button>
-    </section>
-    <button id='go-shop' class='nav nav-right' type='button' aria-label='Ir para a Loja'><span class='nav-label'>Loja</span></button>
-    <footer class='sk-foot'>
-      <button id='btn-next-day' class='btn btn1 big' type='button'>Próximo dia</button>
     </footer>
   </div>
 
-  <div id='ov-shop' class='ov' hidden>
-    <header class='sk-top'>
-      <span class='sk-money'><i class='coin'></i><b id='shop-money'>0</b></span>
-      <span class='place place-shop'>Loja</span>
-      <span id='shop-day' class='sk-day'>DIA 1</span>
+  <div id='ov-shop' class='ov screen' hidden>
+    <header class='topbar'>
+      <span class='pill pill-money'><i class='coin'></i><b id='shop-money'>0</b></span>
+      <nav class='tabs' aria-label='Seções'>
+        <button id='go-skills' class='tab' type='button'><svg class='tab-ic' aria-hidden='true'><use href='#i-tree'/></svg><span>Habilidades</span></button>
+        <span class='tab on' aria-current='page'><svg class='tab-ic' aria-hidden='true'><use href='#i-shop'/></svg><span>Loja</span></span>
+      </nav>
+      <span id='shop-day' class='pill pill-day'>DIA 1</span>
     </header>
     <div id='shop-list' class='sh-list'></div>
-    <button id='go-skills' class='nav nav-left' type='button' aria-label='Voltar para as Habilidades'><span class='nav-label'>Habilidades</span></button>
-    <footer class='sk-foot'>
-      <button id='btn-shop-next' class='btn btn1 big' type='button'>Próximo dia</button>
+    <footer class='dock dock-solo'>
+      <div class='dock-actions'>
+        <button id='btn-shop-next' class='btn btn4' type='button'>Próximo dia</button>
+      </div>
     </footer>
   </div>
 
@@ -188,17 +203,19 @@
   </div>
 
   <div id='hud' hidden>
-    <div class='hud-time'>
-      <div class='bar'><div id='time-fill'></div></div>
-      <span id='time-text'>30</span><small>s</small>
+    <div class='hud-bar'>
+      <div class='hud-time'>
+        <div class='bar'><div id='time-fill'></div></div>
+        <span class='hud-sec'><b id='time-text'>30</b><small>s</small></span>
+      </div>
+      <div class='hud-money'><small>colhido hoje</small><span class='hud-money-v'><i class='coin'></i><b id='money-text'>0</b></span></div>
+      <div id='hud-day' class='hud-day'>DIA 1</div>
+      <button id='btn-pause' class='hud-pause' type='button' aria-label='Pausar'><i></i><i></i></button>
     </div>
-    <div id='hud-day' class='hud-day'>DIA 1</div>
-    <div class='hud-money'><small>colhido hoje</small><i class='coin'></i><b id='money-text'>0</b></div>
     <button id='nav-up' class='nav nav-up' type='button' hidden></button>
     <button id='nav-down' class='nav nav-down' type='button' hidden></button>
     <button id='nav-left' class='nav nav-left' type='button' hidden></button>
     <button id='nav-right' class='nav nav-right' type='button' hidden></button>
-    <button id='btn-pause' class='hud-pause' type='button' aria-label='Pausar'><i></i><i></i></button>
     <div class='hud-tool'>
       <span id='tool-name'></span>
       <small id='tool-hint'>Botão direito: ferramentas</small>

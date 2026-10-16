@@ -121,8 +121,11 @@ export class Game {
     // Contagem 3-2-1 antes de começar
     if (this.countdown > 0) {
       this.countdown -= realDt;
-      if (this.countdown > 0) this.ui.setCountdown(String(Math.ceil(this.countdown)));
-      else { this.countdown = 0; this.ui.setCountdown(null); }
+      if (this.countdown > 0) {
+        const n = Math.ceil(this.countdown);
+        this.ui.setCountdown(String(n));
+        if (n !== this.lastCount) { this.lastCount = n; Sound.play('count', 3 - n); }   // 3 → 2 → 1: cada número mais agudo
+      } else { this.countdown = 0; this.ui.setCountdown(null); Sound.play('go'); }
       return;
     }
     // «Fim do dia!» por 1 s, ferramentas paradas
@@ -227,7 +230,8 @@ export class Game {
     this.charge = 0; this.fired = false;
     this.dayHarvest = {}; this.dayMoney = 0;
     this.timeLeft = this.S.dayLength;
-    this.ending = 0; this.countdown = 3; this.lastTick = -1;
+    this.ending = 0; this.countdown = 3; this.lastTick = -1; this.lastCount = 3;
+    Sound.play('count', 0);                                // «3»
     this.playedDay = this.day;
     if (!this.S.unlockedCrops.includes(this.selection.crop)) this.selection.crop = this.S.unlockedCrops[0];
     this.scene.setField(this.fields[0], true);
@@ -391,7 +395,7 @@ export class Game {
         this.togglePause();
       } else if (e.key.startsWith('Arrow') && !this.paused) {
         this.goDir(e.key.slice(5).toLowerCase());
-      } else if (/^[1-9]$/.test(e.key) && !this.paused && this.countdown <= 0) {
+      } else if (/^[1-9]$/.test(e.key) && !this.paused) {
         const it = this.radialItems()[Number(e.key) - 1];
         if (it) this.selectItem(it);
       }

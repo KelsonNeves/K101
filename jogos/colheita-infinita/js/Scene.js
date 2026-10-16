@@ -65,6 +65,10 @@ export class Scene {
     this.m = new THREE.Matrix4();
 
     this.cols = 6; this.rows = 6;
+    this.insetTop = 0; this.insetBottom = 0;             // faixas cobertas pelo HUD (px): o campo é enquadrado fora delas
+    this.probe = document.createElement('div');          // mede --inset-top / --inset-bottom (style.css) já em pixels
+    this.probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:var(--inset-top,0px);padding-bottom:var(--inset-bottom,0px)';
+    document.body.appendChild(this.probe);
     this.focus = new THREE.Vector3();                    // para onde a câmera olha agora
     this.focusTarget = new THREE.Vector3();              // e para onde ela está indo (campo em vista)
     this.resize();
@@ -76,6 +80,14 @@ export class Scene {
     this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, this.maxPixelRatio));
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
+    // Área livre entre o HUD (em cima) e o botão de ferramenta (embaixo): o campo é centralizado nela.
+    const cs = getComputedStyle(this.probe);
+    this.insetTop = Math.max(0, parseFloat(cs.paddingTop) || 0);
+    this.insetBottom = Math.max(0, parseFloat(cs.paddingBottom) || 0);
+    if (this.insetTop + this.insetBottom > h * 0.6) { this.insetTop = 0; this.insetBottom = 0; }   // tela minúscula: ignora
+    const shift = (this.insetTop - this.insetBottom) / 2;
+    if (Math.abs(shift) > 0.5) this.camera.setViewOffset(w, h, 0, -shift, w, h);
+    else this.camera.clearViewOffset();
     this.camera.updateProjectionMatrix();
     this.fit(this.cols, this.rows);
   }
@@ -87,7 +99,8 @@ export class Scene {
     const vFov = THREE.MathUtils.degToRad(this.camera.fov);
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * this.camera.aspect);
     const needH = (w / 2) / Math.tan(hFov / 2);
-    const needV = ((d * Math.sin(TILT)) / 2 + 0.6) / Math.tan(vFov / 2);
+    const free = Math.max(0.3, 1 - (this.insetTop + this.insetBottom) / innerHeight);   // fração da altura que sobra para o campo
+    const needV = ((d * Math.sin(TILT)) / 2 + 0.6) / Math.tan(vFov / 2) / free;
     this.targetDist = Math.max(needH, needV) * 1.15;
   }
 

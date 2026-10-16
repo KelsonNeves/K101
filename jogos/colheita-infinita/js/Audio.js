@@ -15,6 +15,7 @@ let music = null, musicStarted = false;
 
 const synth = new Synth();
 let muted = false, volume = 0.8, external = false;
+let away = document.hidden;        // página em segundo plano (minimizada, outra aba, tela bloqueada): tudo em silêncio
 
 try {
   const d = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -23,13 +24,33 @@ try {
 
 const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ muted, volume })); } catch { /* nada */ } };
 const apply = () => {
-  const off = muted || external;
+  const off = muted || external || away;
   synth.setVolume(off ? 0 : volume);
   if (!music) return;
   music.volume = off ? 0 : volume * MUSIC_GAIN;
   if (off) music.pause();                                          // iOS ignora .volume: pausa de verdade
   else if (musicStarted) music.play().catch(() => {});
 };
+
+// O jogo só fala enquanto está na tela: ao minimizar / trocar de aba / bloquear o celular, a música PAUSA
+// (não só os efeitos) e o contexto WebAudio é suspenso. Ao voltar, tudo retoma de onde parou.
+const goAway = () => {
+  if (away) return;
+  away = true;
+  apply();
+  synth.suspend();
+};
+const comeBack = () => {
+  if (document.hidden) return;
+  away = false;
+  synth.resume();
+  apply();
+};
+document.addEventListener('visibilitychange', () => (document.hidden ? goAway() : comeBack()));
+addEventListener('pagehide', goAway);
+addEventListener('pageshow', comeBack);
+document.addEventListener('freeze', goAway);
+document.addEventListener('resume', comeBack);
 
 // Depois do 1º toque (o navegador só libera o áudio por gesto): decodifica os efeitos e inicia a música.
 function startAudio() {
@@ -44,12 +65,12 @@ function startAudio() {
 
 export const Sound = {
   // Chamado no toque em Jogar/Continuar (gesto do usuário libera o áudio).
-  unlock() { synth.resume(); startAudio(); },
-  play(name) {
-    if (muted || external) return;
+  unlock() { if (!away) synth.resume(); startAudio(); },
+  play(name, arg) {
+    if (muted || external || away) return;
     try {
       if (bufs[name]) synth.playBuffer(bufs[name], { gain: 0.9, rate: 0.96 + Math.random() * 0.08 });   // leve variação de tom
-      else SFX[name]?.(synth);
+      else SFX[name]?.(synth, arg);
     } catch { /* áudio é opcional */ }
   },
   setExternalMute(on) { external = !!on; apply(); },
@@ -70,6 +91,8 @@ export const Sound = {
       const a = new Audio(BASE + MUSIC_FILE);
       a.loop = true; a.preload = 'auto';
       a.addEventListener('error', () => { if (music === a) music = null; });
+      // Teclas de mídia / notificação do sistema não podem religar a música fora do jogo.
+      a.addEventListener('play', () => { if (muted || external || away) a.pause(); });
       music = a;
     } catch { /* sem áudio */ }
     apply();

@@ -8,5 +8,8 @@ export const SFX = {
   dayEnd:  (s) => { [523, 659, 784, 1047].forEach((f, i) => s.tone({ freq: f, dur: 0.22, type: 'triangle', gain: 0.14, delay: i * 0.11 })); },
   unlock:  (s) => { [392, 523, 659].forEach((f, i) => s.tone({ freq: f, dur: 0.16, type: 'sine', gain: 0.16, delay: i * 0.07 })); },
   click:   (s) => { s.tone({ freq: 620, dur: 0.05, type: 'triangle', gain: 0.1 }); },
+  // contagem 3-2-1: sininho alegre (nota sobe a cada número) e fanfarra curta no «já!»
+  count:   (s, step = 0) => { const f = [659, 784, 988][step] ?? 784; s.tone({ freq: f, dur: 0.22, type: 'sine', gain: 0.2 }); s.tone({ freq: f * 2, dur: 0.14, type: 'triangle', gain: 0.08 }); s.tone({ freq: f * 3, dur: 0.08, type: 'sine', gain: 0.04, delay: 0.02 }); },
+  go:      (s) => { [523, 659, 784, 1047, 1319].forEach((f, i) => { s.tone({ freq: f, dur: 0.24, type: 'triangle', gain: 0.17, delay: i * 0.065 }); s.tone({ freq: f * 2, dur: 0.12, type: 'sine', gain: 0.05, delay: i * 0.065 }); }); s.noise({ dur: 0.18, gain: 0.06, freq: 5000, q: 1, delay: 0.25 }); },
   ready:   (s) => { s.tone({ freq: 1200, dur: 0.04, type: 'sine', gain: 0.05 }); }
 };

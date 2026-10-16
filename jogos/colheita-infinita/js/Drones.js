@@ -427,7 +427,7 @@ export class DroneSwarm {
     if (key !== this.panelKey || p.hidden) { this.panelKey = key; this.buildPanel(d); p.hidden = false; }
     const w = p.offsetWidth, h = p.offsetHeight;
     const x = Math.min(innerWidth - w / 2 - 8, Math.max(w / 2 + 8, s.x));
-    const y = Math.max(h + 64, s.y);                                  // fica acima do drone, sem passar do topo
+    const y = Math.max(h + this.game.scene.insetTop + 8, s.y);        // fica acima do drone, sem passar por baixo do HUD
     p.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -100%)`;
   }
 
