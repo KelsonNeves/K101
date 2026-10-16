@@ -1,9 +1,12 @@
 // Game.js — máquina de estados, loop, ciclo das ferramentas, relógio, pausa e ponte com window.K101.
 // Não desenha nada: quem desenha são Scene/Plants/Cursor/Vfx (3D) e UI/SkillTree (HTML).
-import { MAX_COLS, MAX_ROWS, TOOLS, RADIAL_TIME_SCALE, STAT_KEYS } from './Data.js';
+import { MAX_CELLS, TOOLS, RADIAL_TIME_SCALE, STAT_KEYS } from './Data.js';
 import { CROPS } from './Crops.js';
 import { SKILLS, SKILL_BY_ID, validateSkills } from './Skills.js';
 import { computeStats } from './Stats.js';
+import { ITEM_BY_ID, SHOP_ITEMS, validateShop } from './Shop.js';
+import { layoutFields, neighbors } from './Fields.js';
+import { DroneSwarm } from './Drones.js';
 import { Grid } from './Grid.js';
 import { Scene } from './Scene.js';
 import { PlantRenderer } from './Plants.js';
@@ -15,21 +18,23 @@ import { Save } from './Save.js';
 import { Sound } from './Audio.js';
 
 // Regra de visibilidade da árvore: a única que decide o que aparece.
-export const isVisible = (g, s) => s.parent === null || g.owned.has(s.parent);
+// `needs` = item da loja exigido (ex.: a fila «Terra do arado 1» só aparece depois de comprar o Arado 1).
+export const isVisible = (g, s) => (s.parent === null || g.owned.has(s.parent)) && (!s.needs || g.owned.has(s.needs));
 export const visibleIds = (g) => SKILLS.filter((s) => isVisible(g, s)).map((s) => s.id);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export class Game {
-  constructor({ ui, models }) {
+  constructor({ ui, models, droneModels }) {
     this.ui = ui;
     this.canvas = document.getElementById('c');
     this.reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    validateSkills(SKILLS, CROPS, STAT_KEYS);
+    validateSkills(SKILLS, CROPS, STAT_KEYS, new Set(SHOP_ITEMS.map((i) => i.id)));
+    validateShop();
 
     this.scene = new Scene(this.canvas);
-    this.plants = new PlantRenderer(this.scene.scene, models, MAX_COLS * MAX_ROWS);
+    this.plants = new PlantRenderer(this.scene.scene, models, MAX_CELLS);
     this.grid = new Grid({ reduceMotion: this.reduceMotion });
     this.vfx = new Vfx(this.scene);
     this.save = new Save(this);
@@ -40,6 +45,9 @@ export class Game {
     // Estado persistente
     this.day = 1; this.money = 0; this.owned = new Set(); this.best = { earned: 0, day: 0 };
     this.S = computeStats(this.owned);
+    this.fields = layoutFields(this.S);   // [principal, ...arados comprados]
+    this.activeField = 0;                 // campo em vista
+    this.drones = new DroneSwarm(this, droneModels);
 
     // Estado do dia
     this.state = 'LOADING';
@@ -99,10 +107,12 @@ export class Game {
     this.last = t;
     const frozen = this.paused || window.K101?.blocked;
     if (this.state === 'DAY' && !frozen) this.updateDay(dt * this.timeScale(), dt);
+    this.drones.updateHover();         // drone sob o mouse (o Cursor precisa saber)
     this.cursor.update(this);          // posição, anel e progresso (não depende do dt do dia)
     this.plants.update(this.grid.cells);
     this.scene.updateSoil(this.grid.cells, this.cursor.hl);
     this.vfx.update(frozen ? 0 : dt);
+    this.drones.render(frozen ? 0 : dt);
     this.ui.syncControls(this);
     this.scene.render();
   }
@@ -124,6 +134,7 @@ export class Game {
 
     this.timeLeft -= dt;
     this.grid.update(dt, this.S);
+    this.drones.update(dt);
     this.updateCharge(dt);                             // segurar = carregar o ciclo; ao encher, usa a ferramenta
     this.scene.setDayProgress(1 - Math.max(0, this.timeLeft) / this.S.dayLength);
 
@@ -136,7 +147,16 @@ export class Game {
 
   /* ------------------------------ ferramentas ------------------------------ */
   // Tempo de um ciclo da ferramenta atual (s).
-  cycleTime() { return this.S[TOOLS[this.selection.tool].group].cooldown; }
+  // Semear fica mais lento e com raio menor a cada planta nova (Crops.js: plantMult / radiusMult).
+  cycleTime() {
+    const sel = this.selection, group = TOOLS[sel.tool].group;
+    return this.S[group].cooldown * (sel.tool === 'plant' ? CROPS[sel.crop].plantMult : 1);
+  }
+
+  toolRadius() {
+    const sel = this.selection, group = TOOLS[sel.tool].group;
+    return this.S[group].radius * (sel.tool === 'plant' ? CROPS[sel.crop].radiusMult : 1);
+  }
 
   // Segurar carrega o ciclo; a ferramenta só é usada quando ele enche, e a carga recomeça do zero.
   // Soltar o botão/dedo cancela a carga: o primeiro uso não tem vantagem sobre os seguintes.
@@ -156,8 +176,8 @@ export class Game {
     const p = this.input.inside ? this.cursor.groundPoint(this.input.pos.x, this.input.pos.y, this.scene.camera) : null;
     if (!p) return false;
     const point = { x: p.x, z: p.z };
-    const radius = this.S[group].radius;
-    const targets = this.grid.cellsInCircle(point.x, point.z, radius).filter((c) => tool.canTarget(c, this));
+    const radius = this.toolRadius();
+    const targets = this.grid.cellsInCircle(point.x, point.z, radius, this.activeField).filter((c) => tool.canTarget(c, this));
     if (!targets.length) return false;                 // sem alvo: não gasta o ciclo
     this.fireValue = 0;
     for (const c of targets) tool.apply(c, this);
@@ -200,20 +220,24 @@ export class Game {
     this.state = 'DAY';
     this.paused = false;
     this.S = computeStats(this.owned);
-    this.grid.reset(this.S.grid.cols, this.S.grid.rows);   // a grade começa vazia em todo dia
+    this.fields = layoutFields(this.S);
+    this.activeField = 0;                                  // todo dia começa olhando o campo principal
+    this.grid.reset(this.fields);                          // todos os campos começam vazios em todo dia
+    this.drones.reset();
     this.charge = 0; this.fired = false;
     this.dayHarvest = {}; this.dayMoney = 0;
     this.timeLeft = this.S.dayLength;
     this.ending = 0; this.countdown = 3; this.lastTick = -1;
     this.playedDay = this.day;
     if (!this.S.unlockedCrops.includes(this.selection.crop)) this.selection.crop = this.S.unlockedCrops[0];
-    this.scene.fit(this.S.grid.cols, this.S.grid.rows);
+    this.scene.setField(this.fields[0], true);
     this.scene.setDayProgress(0);
     this.radial.close();
     this.ui.showOnly(null);
     this.ui.showHud(true);
     this.ui.toolChanged();
     this.ui.hudTick(this);
+    this.ui.syncNav(this, true);
     this.ui.setCountdown('3');
   }
 
@@ -241,12 +265,57 @@ export class Game {
     this.ending = 0;
     this.ui.setCountdown(null);
     this.ui.showHud(false);
-    this.ui.showSummary({ day: playedDay, lines, total, best: this.best, newBest }, () => this.openSkills());
+    this.ui.showSummary({ day: playedDay, lines, total, best: this.best, newBest }, () => this.openHub());
+  }
+
+  // Intervalo entre os dias: HUB (escolher) ⇄ HABILIDADES ⇄ LOJA. Na ordem da esquerda para a direita:
+  // habilidades à esquerda, loja à direita (as setas das telas seguem essa ordem).
+  openHub() {
+    this.state = 'HUB';
+    this.ui.showHub();
   }
 
   openSkills() {
     this.state = 'SKILLS';
     this.ui.showSkills();
+  }
+
+  openShop() {
+    if (this.state !== 'HUB' && this.state !== 'SKILLS' && this.state !== 'SHOP') return;
+    this.state = 'SHOP';
+    this.ui.showShop();
+  }
+
+  // Compra na loja: arados e drones moram no mesmo conjunto `owned` das habilidades (e vão para o mesmo save).
+  buyItem(id) {
+    const it = ITEM_BY_ID[id];
+    if (!it || this.owned.has(id) || this.money < it.cost) return false;
+    if (it.requires && !this.owned.has(it.requires)) return false;
+    this.money -= it.cost;
+    this.owned.add(id);
+    this.S = computeStats(this.owned);                 // vale a partir do próximo dia
+    this.save.write();
+    this.ui.shop.refresh();
+    Sound.play('unlock');
+    return true;
+  }
+
+  /* ----------------------------- navegação entre campos ----------------------------- */
+  // Troca o campo em vista: a câmera desliza até ele. Os outros campos continuam crescendo e os drones, trabalhando.
+  goField(id) {
+    if (this.state !== 'DAY' || this.paused || this.ending > 0 || !this.fields[id] || id === this.activeField) return;
+    this.activeField = id;
+    this.input.releaseAll();
+    this.radial.close();
+    this.charge = 0;
+    this.scene.setField(this.fields[id]);
+    this.ui.syncNav(this, true);
+    Sound.play('click');
+  }
+
+  goDir(dir) {
+    const n = neighbors(this.fields, this.activeField).find((o) => o.dir === dir);
+    if (n) this.goField(n.field.id);
   }
 
   nextDay() { Sound.play('click'); this.startDay(); }
@@ -269,7 +338,7 @@ export class Game {
     } catch { /* sem anúncio: segue o jogo */ }
     this.entering = false;
     if (!continueGame) this.resetProgress();
-    if (continueGame && this.day > 1) this.openSkills();   // quem volta pode gastar o dinheiro antes do próximo dia
+    if (continueGame && this.day > 1) this.openHub();      // quem volta escolhe: loja ou habilidades, antes do próximo dia
     else this.startDay();
   }
 
@@ -296,13 +365,32 @@ export class Game {
 
   togglePause() { this.paused ? this.resume() : this.pause(); }
 
+  // Da pausa de volta ao título. O progresso salvo fica como está (o dia em andamento não conta).
+  quitToTitle() {
+    if (this.state !== 'DAY' || !this.paused) return;
+    this.paused = false;
+    this.input.releaseAll();
+    this.radial.close();
+    this.ui.showPause(false);
+    this.ui.setCountdown(null);
+    this.save.write();
+    this.showTitle();
+  }
+
   installKeys() {
     addEventListener('keydown', (e) => {
+      // No intervalo: seta direita = loja, seta esquerda = habilidades.
+      if (!e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (e.key === 'ArrowRight' && this.state === 'SKILLS') return this.openShop();
+        if (e.key === 'ArrowLeft' && this.state === 'SHOP') return this.openSkills();
+      }
       if (this.state !== 'DAY' || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === 'Escape') {
         if (this.radial.isOpen) this.radial.close(); else this.togglePause();
       } else if (e.key === 'p' || e.key === 'P') {
         this.togglePause();
+      } else if (e.key.startsWith('Arrow') && !this.paused) {
+        this.goDir(e.key.slice(5).toLowerCase());
       } else if (/^[1-9]$/.test(e.key) && !this.paused && this.countdown <= 0) {
         const it = this.radialItems()[Number(e.key) - 1];
         if (it) this.selectItem(it);

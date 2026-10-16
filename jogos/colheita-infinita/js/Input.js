@@ -17,6 +17,7 @@ export class Input {
       if (this.activeId !== null) return;
       this.setPos(e);
       if (game.radial.isOpen) return;
+      if (e.button === 0 && game.drones.pointerDown(e.clientX, e.clientY)) return;   // clicou num drone: abre o painel, não usa a ferramenta
       if (this.type === 'mouse' && e.button === 2) {        // direito: menu radial em volta do cursor
         game.radial.open(e.clientX, e.clientY, 'around');
         return;

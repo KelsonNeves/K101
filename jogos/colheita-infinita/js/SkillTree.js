@@ -11,6 +11,7 @@ const fmtNum = (v) => v.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 
 export function describeEffect(e) {
   if (e.unlock === 'crop') return `Libera ${CROPS[e.id]?.name ?? e.id}`;
+  if (e.unlock === 'plow') return `Libera o arado ${e.index + 1}`;
   const label = STAT_LABELS[e.stat] ?? e.stat;
   if (e.add !== undefined) return `${e.add >= 0 ? '+' : '−'}${fmtNum(Math.abs(e.add))} ${label}`;
   if (e.mul !== undefined) {

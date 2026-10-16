@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { CROPS } from './Crops.js';
 import { loadCropModels } from './Plants.js';
+import { loadDroneModels } from './Drones.js';
 import { Sound } from './Audio.js';
 import { UI } from './UI.js';
 import { Game } from './Game.js';
@@ -16,13 +17,14 @@ async function boot() {
     const report = () => ui.setLoading(0.05 + 0.9 * (modelsPct * 0.8 + audioPct * 0.2));
     manager.onProgress = (_u, loaded, total) => { modelsPct = total ? loaded / total : 1; report(); };
 
-    const [models] = await Promise.all([
+    const [models, droneModels] = await Promise.all([
       loadCropModels(Object.values(CROPS), manager),
+      loadDroneModels(manager),
       Sound.load((p) => { audioPct = p; report(); })
     ]);
 
     ui.setLoading(0.98, 'Preparando a fazenda…');
-    const game = new Game({ ui, models });
+    const game = new Game({ ui, models, droneModels });
     window.__game = game;                                   // útil no console durante o desenvolvimento
 
     if (location.search.includes('debug')) {

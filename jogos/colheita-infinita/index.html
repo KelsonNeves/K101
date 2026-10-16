@@ -23,6 +23,7 @@
   <link rel='stylesheet' href='css/style.css'>
   <link rel='stylesheet' href='css/hud.css'>
   <link rel='stylesheet' href='css/tree.css'>
+  <link rel='stylesheet' href='css/shop.css'>
 
   <script type='importmap'>
   { "imports": {
@@ -77,6 +78,8 @@
   <div id='ov-pause' class='ov' hidden>
     <h2 class='logo-title'>Pausado</h2>
     <button id='btn-resume' class='btn btn1 big' type='button'>Continuar</button>
+    <button id='btn-quit' class='btn btn2' type='button'>Voltar ao início</button>
+    <p id='quit-tip' class='tip' hidden>Toque de novo para confirmar: o dia em andamento será perdido.</p>
   </div>
 
   <div id='ov-summary' class='ov' hidden>
@@ -91,9 +94,49 @@
     </div>
   </div>
 
+  <!-- Tela de escolha após o resumo do dia: dois ícones, sem botões de texto. -->
+  <div id='ov-hub' class='ov' hidden>
+    <div class='farm-bg' aria-hidden='true'><i class='sun'></i><i class='cloud c1'></i><i class='cloud c2'></i><i class='hill h2'></i><i class='hill h1'></i><i class='hill h3'></i><i class='rows'></i></div>
+    <div class='row'>
+      <span class='sk-money'><i class='coin'></i><b id='hub-money'>0</b></span>
+      <span id='hub-day' class='sk-day'>DIA 1</span>
+    </div>
+    <h2 class='logo-title hub-title'>Para onde vamos?</h2>
+    <div class='hub-choices'>
+      <button id='hub-skills' class='hub-item hub-skills' type='button' aria-label='Árvore de habilidades'>
+        <svg class='hub-svg' viewBox='0 0 96 96' aria-hidden='true'>
+        <rect x='42' y='52' width='12' height='32' rx='3' fill='#8b5a2b' stroke='#4a2f1a' stroke-width='4'/>
+        <circle cx='33' cy='46' r='15' fill='#7ac04e' stroke='#4a2f1a' stroke-width='4'/>
+        <circle cx='63' cy='45' r='14' fill='#7ac04e' stroke='#4a2f1a' stroke-width='4'/>
+        <circle cx='48' cy='32' r='22' fill='#62ad40' stroke='#4a2f1a' stroke-width='4'/>
+        <circle cx='40' cy='28' r='4' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
+        <circle cx='56' cy='38' r='4' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
+        <circle cx='30' cy='46' r='3.5' fill='#f4b92f' stroke='#4a2f1a' stroke-width='2'/>
+      </svg>
+        <b>Habilidades</b><small>Evolua seu jeito de plantar</small>
+      </button>
+      <button id='hub-shop' class='hub-item hub-shop' type='button' aria-label='Loja'>
+        <svg class='hub-svg' viewBox='0 0 96 96' aria-hidden='true'>
+        <rect x='16' y='42' width='64' height='42' fill='#c9a96b' stroke='#4a2f1a' stroke-width='4'/>
+        <rect x='10' y='62' width='76' height='12' rx='3' fill='#8b5a2b' stroke='#4a2f1a' stroke-width='4'/>
+        <circle cx='34' cy='56' r='6' fill='#d9533f' stroke='#4a2f1a' stroke-width='3'/>
+        <circle cx='50' cy='56' r='6' fill='#f4b92f' stroke='#4a2f1a' stroke-width='3'/>
+        <circle cx='66' cy='56' r='6' fill='#62ad40' stroke='#4a2f1a' stroke-width='3'/>
+        <path d='M8 42 L16 14 H80 L88 42 Z' fill='#fff4d6' stroke='#4a2f1a' stroke-width='4' stroke-linejoin='round'/>
+        <path d='M16 14 H32 L28 42 H8 Z M48 14 H64 L68 42 H48 Z' fill='#d9533f'/>
+        <path d='M32 14 H48 L48 42 H28 Z M64 14 H80 L88 42 H68 Z' fill='#fff4d6'/>
+        <path d='M8 42 L16 14 H80 L88 42 Z' fill='none' stroke='#4a2f1a' stroke-width='4' stroke-linejoin='round'/>
+      </svg>
+        <b>Loja</b><small>Drones para ajudar na fazenda</small>
+      </button>
+    </div>
+    <button id='btn-hub-next' class='btn btn1 big' type='button'>Próximo dia</button>
+  </div>
+
   <div id='ov-skills' class='ov' hidden>
     <header class='sk-top'>
       <span class='sk-money'><i class='coin'></i><b id='sk-money'>0</b></span>
+      <span class='place place-tree'>Árvore de habilidades</span>
       <span id='sk-day' class='sk-day'>DIA 1</span>
     </header>
     <div id='tree-viewport'>
@@ -115,8 +158,22 @@
       </div>
       <button id='sk-buy' class='btn btn1' type='button' disabled>Desbloquear</button>
     </section>
+    <button id='go-shop' class='nav nav-right' type='button' aria-label='Ir para a Loja'><span class='nav-label'>Loja</span></button>
     <footer class='sk-foot'>
       <button id='btn-next-day' class='btn btn1 big' type='button'>Próximo dia</button>
+    </footer>
+  </div>
+
+  <div id='ov-shop' class='ov' hidden>
+    <header class='sk-top'>
+      <span class='sk-money'><i class='coin'></i><b id='shop-money'>0</b></span>
+      <span class='place place-shop'>Loja</span>
+      <span id='shop-day' class='sk-day'>DIA 1</span>
+    </header>
+    <div id='shop-list' class='sh-list'></div>
+    <button id='go-skills' class='nav nav-left' type='button' aria-label='Voltar para as Habilidades'><span class='nav-label'>Habilidades</span></button>
+    <footer class='sk-foot'>
+      <button id='btn-shop-next' class='btn btn1 big' type='button'>Próximo dia</button>
     </footer>
   </div>
 
@@ -137,6 +194,10 @@
     </div>
     <div id='hud-day' class='hud-day'>DIA 1</div>
     <div class='hud-money'><small>colhido hoje</small><i class='coin'></i><b id='money-text'>0</b></div>
+    <button id='nav-up' class='nav nav-up' type='button' hidden></button>
+    <button id='nav-down' class='nav nav-down' type='button' hidden></button>
+    <button id='nav-left' class='nav nav-left' type='button' hidden></button>
+    <button id='nav-right' class='nav nav-right' type='button' hidden></button>
     <button id='btn-pause' class='hud-pause' type='button' aria-label='Pausar'><i></i><i></i></button>
     <div class='hud-tool'>
       <span id='tool-name'></span>
@@ -145,6 +206,7 @@
   </div>
   <div id='countdown' hidden></div>
   <div id='float-layer' aria-hidden='true'></div>
+  <div id='drone-layer'></div>                                              <!-- painel de seleção dos drones -->
 
   <button id='tool-btn' hidden aria-label='Ferramentas' type='button'>   <!-- só no toque -->
     <img id='tool-icon' alt='' draggable='false'><span id='tool-glyph' hidden></span>

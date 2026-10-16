@@ -1,25 +1,27 @@
-// Grid.js — dados das células e transições (semear, regar, crescer, colher). Sem Three.js.
+// Grid.js — dados das células de TODOS os campos e transições (semear, regar, crescer, colher). Sem Three.js.
 import { CELL } from './Data.js';
 import { CROPS } from './Crops.js';
 
 export class Grid {
   constructor({ reduceMotion = false } = {}) {
-    this.cols = 0; this.rows = 0; this.cells = [];
+    this.cells = [];
     this.reduceMotion = reduceMotion;
   }
 
-  // Cria uma grade vazia centrada na origem.
-  reset(cols, rows) {
-    this.cols = cols; this.rows = rows; this.cells = [];
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        this.cells.push({
-          col, row,
-          x: (col - (cols - 1) / 2) * CELL,
-          z: (row - (rows - 1) / 2) * CELL,
-          state: 'empty', crop: null, t: 0, stage: 1, pop: 1,
-          rot: 0, size: 1
-        });
+  // `fields` vem de Fields.layoutFields: [{ id, cols, rows, x, z }]. Cada campo é centrado no seu (x, z).
+  reset(fields) {
+    this.cells = [];
+    for (const f of fields) {
+      for (let row = 0; row < f.rows; row++) {
+        for (let col = 0; col < f.cols; col++) {
+          this.cells.push({
+            field: f.id, col, row,
+            x: f.x + (col - (f.cols - 1) / 2) * CELL,
+            z: f.z + (row - (f.rows - 1) / 2) * CELL,
+            state: 'empty', crop: null, t: 0, stage: 1, pop: 1,
+            rot: 0, size: 1
+          });
+        }
       }
     }
   }
@@ -37,6 +39,7 @@ export class Grid {
 
   harvest(c) { Object.assign(c, { state: 'empty', crop: null, t: 0, stage: 1, pop: 1 }); }
 
+  // Todos os campos crescem ao mesmo tempo, mesmo o que o jogador não está olhando.
   update(dt, S) {
     for (const c of this.cells) {
       if (c.state === 'growing') {
@@ -50,12 +53,14 @@ export class Grid {
     }
   }
 
-  cellsInCircle(x, z, r) {
+  // `field` (opcional): só as células desse campo.
+  cellsInCircle(x, z, r, field = null) {
     const r2 = r * r, out = [];
     for (const c of this.cells) {
+      if (field !== null && c.field !== field) continue;
       const dx = c.x - x, dz = c.z - z;
       if (dx * dx + dz * dz <= r2) out.push(c);
     }
-    return out;                                                    // máx. 144 células: varrer todas é barato
+    return out;                                                    // máx. 720 células: varrer todas é barato
   }
 }

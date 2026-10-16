@@ -15,6 +15,13 @@ export class Cursor {
     this.iconKey = '';
     this.icon = document.getElementById('cursor-icon');
     this.hl = new Set();                          // células que seriam afetadas (brilho no solo)
+    this.iconOn = false;                          // ícone visível agora?
+
+    // O ícone é posicionado direto no evento do mouse (e não no quadro do jogo), para andar exatamente
+    // junto com o cursor, sem atraso. Deslocamento p/ baixo e p/ a direita: não cobre a seta do sistema.
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'mouse') this.placeIcon(e.clientX, e.clientY);
+    }, { passive: true });
 
     const ringGeo = new THREE.RingGeometry(0.94, 1.0, 96);
     this.ringMat = new THREE.ShaderMaterial({
@@ -75,22 +82,31 @@ export class Cursor {
       const p = this.groundPoint(input.pos.x, input.pos.y, game.scene.camera);
       if (p) this.worldPoint = p.clone();
     }
-    const vis = show && !!this.worldPoint;
+    // O anel só aparece com o cursor realmente sobre o campo em vista (com meia célula de folga).
+    const f = game.fields[game.activeField];
+    const onField = !!this.worldPoint && !!f
+      && Math.abs(this.worldPoint.x - f.x) <= f.cols / 2 + 0.5
+      && Math.abs(this.worldPoint.z - f.z) <= f.rows / 2 + 0.5;
+    const overDrone = !!game.drones.hover;           // sobre um drone: clique seleciona, então o anel some
+    const vis = show && onField && !overDrone;
     this.group.visible = vis;
 
-    // Ícone da ferramenta: só com mouse
-    const iconOn = input.type === 'mouse' && dayActive && input.inside;
+    // Mouse: sobre o arado, o cursor do sistema some e ficam só o anel (raio) e o ícone da ferramenta.
+    // Fora do arado, o cursor normal fica sempre visível. O ícone aparece nos dois casos, ao lado do cursor.
+    document.body.classList.toggle('on-field', vis && input.type === 'mouse');
+    document.body.classList.toggle('over-drone', show && overDrone && input.type === 'mouse');
+    this.iconOn = input.type === 'mouse' && show;
     if (this.icon) {
-      this.icon.hidden = !iconOn;
-      if (iconOn) {
-        this.icon.style.transform = `translate3d(${input.pos.x}px, ${input.pos.y}px, 0) translate(-50%, -50%)`;
+      this.icon.hidden = !this.iconOn;
+      if (this.iconOn) {
+        this.placeIcon(input.pos.x, input.pos.y);
         this.syncIcon(game);
       }
     }
     if (!vis) return;
 
     const sel = game.selection, tool = TOOLS[sel.tool], group = tool.group;
-    const radius = game.S[group].radius;
+    const radius = game.toolRadius();
     const prog = this.progress(game);
     if (fired && !game.reduceMotion) this.pulse = 1;        // pulso no instante em que a ferramenta é usada
     this.pulse = Math.max(0, this.pulse - 1 / 9);          // ~150 ms a 60 fps
@@ -104,9 +120,13 @@ export class Cursor {
     this.disc.material.color.setHex(color);
 
     // Células que seriam afetadas ganham brilho
-    for (const c of game.grid.cellsInCircle(this.worldPoint.x, this.worldPoint.z, radius)) {
+    for (const c of game.grid.cellsInCircle(this.worldPoint.x, this.worldPoint.z, radius, game.activeField)) {
       if (tool.canTarget(c, game)) this.hl.add(c);
     }
+  }
+
+  placeIcon(x, y) {
+    if (this.icon) this.icon.style.transform = `translate3d(${x + 16}px, ${y + 16}px, 0)`;
   }
 
   syncIcon(game) {

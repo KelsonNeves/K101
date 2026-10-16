@@ -1,0 +1,129 @@
+/* shop.css — loja (arados e drones). Usa as variáveis --c-* de style.css. */
+#ov-shop {
+  justify-content: flex-start; align-items: stretch; gap: 0; padding: 0; text-align: left;
+  background: #c9a96b;
+}
+#ov-shop::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(90deg, #d2b27a 0 44px, #c9a96b 44px 88px);
+}
+#ov-shop > * { position: relative; z-index: 1; }
+
+.sh-tabs { display: flex; gap: 10px; justify-content: center; padding: 6px 14px 10px; }
+.sh-tab {
+  all: unset; box-sizing: border-box; cursor: pointer; min-width: 120px; min-height: 44px; padding: 10px 22px; text-align: center;
+  font: 700 17px/1.1 var(--font); border-radius: var(--r-btn); color: var(--c-brown);
+  background: var(--c-paper-2); border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
+  transition: transform .1s ease, box-shadow .1s ease, background .15s ease;
+}
+.sh-tab:hover { background: #fff0b8; }
+.sh-tab.on { background: var(--c-gold); transform: translateY(2px); box-shadow: 0 2px 0 var(--c-brown); }
+.sh-tab:focus-visible { outline: var(--focus); outline-offset: 3px; }
+
+.sh-list {
+  flex: 1; min-height: 0; overflow: auto; display: grid; gap: 14px; align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  padding: 4px calc(14px + env(safe-area-inset-right, 0px)) 14px calc(14px + env(safe-area-inset-left, 0px));
+}
+.sh-card {
+  display: flex; flex-direction: column; gap: 10px; padding: 14px 16px;
+  background: var(--c-paper); border: 4px solid var(--c-edge); border-radius: var(--r-card); box-shadow: 0 6px 0 var(--c-brown);
+  animation: card-in .35s cubic-bezier(.3, 1.4, .5, 1) backwards;
+}
+.sh-head { display: flex; gap: 12px; align-items: center; }
+.sh-ico { flex: none; width: 56px; height: 56px; display: grid; place-items: center; border-radius: 16px; background: var(--c-paper-2); border: 3px solid var(--c-brown); }
+.sh-ico img { width: 40px; height: 40px; object-fit: contain; pointer-events: none; }
+.sh-glyph { font-size: 28px; font-weight: 700; }
+.sh-info h3 { margin: 0; font-size: 20px; font-weight: 700; color: var(--c-green-d); }
+.sh-info p { margin: 2px 0 0; font-size: 13px; color: var(--c-brown-2); }
+.sh-info .sh-status { color: var(--c-brown); font-weight: 700; }
+
+.sh-row { display: flex; align-items: center; gap: 10px; }
+.sh-label { flex: none; width: 86px; font-size: 13px; font-weight: 700; color: var(--c-brown-2); }
+.sh-pips { display: flex; flex-wrap: wrap; gap: 8px; }
+.sh-pip {
+  all: unset; box-sizing: border-box; cursor: pointer; min-width: 64px; min-height: 48px; padding: 6px 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; text-align: center;
+  border-radius: 14px; border: 3px solid var(--c-brown); box-shadow: 0 4px 0 var(--c-brown);
+  background: var(--c-paper-2); color: var(--c-brown); transition: transform .1s ease, box-shadow .1s ease, filter .15s ease;
+}
+.sh-pip b { font-size: 14px; font-weight: 700; }
+.sh-pip small { font-size: 12px; font-weight: 600; color: var(--c-brown-2); }
+.sh-pip.avail { background: #fff3b0; animation: avail-glow 1.6s ease-in-out infinite; }
+.sh-pip.avail:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.sh-pip.avail:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--c-brown); }
+.sh-pip.poor { opacity: .65; cursor: default; }
+.sh-pip.locked { opacity: .4; cursor: default; filter: grayscale(.6); }
+.sh-pip.owned { background: var(--c-green-l); cursor: default; }
+.sh-pip:focus-visible { outline: var(--focus); outline-offset: 3px; }
+
+@media (max-width: 560px) {
+  .sh-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sh-label { width: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .sh-card, .sh-pip.avail { animation: none; } }
+
+.sk-foot { gap: 12px; flex-wrap: wrap; }
+
+/* ---------- onde estou? placas com o nome do lugar (árvore de habilidades e loja) ---------- */
+.place {
+  flex: 1 1 auto; min-width: 0; text-align: center; margin: 0 4px; padding: 4px 14px;
+  font-size: 15px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border: 3px solid var(--c-brown); border-radius: 12px; box-shadow: 0 4px 0 var(--c-brown);
+}
+.place-tree { background: var(--c-green-d); color: var(--c-cream); }
+.place-shop { background: var(--c-red); color: var(--c-cream); }
+
+/* a loja é uma barraca: toldo listrado no topo com a borda recortada */
+#ov-shop .sk-top {
+  position: relative; z-index: 2;
+  background: repeating-linear-gradient(90deg, var(--c-red) 0 28px, var(--c-cream) 28px 56px);
+  border-bottom: 4px solid var(--c-brown);
+}
+#ov-shop .sk-top::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 15px; pointer-events: none;
+  background:
+    radial-gradient(circle at 14px 0, var(--c-red) 14px, transparent 15px) 0 0 / 56px 15px repeat-x,
+    radial-gradient(circle at 42px 0, var(--c-cream) 14px, transparent 15px) 0 0 / 56px 15px repeat-x;
+  filter: drop-shadow(0 3px 0 var(--c-brown));
+}
+#ov-shop .sh-list { padding-top: 26px; }   /* espaço sob o toldo */
+
+/* setas entre habilidades (esquerda) e loja (direita) */
+.ov > .nav,
+#ov-shop > .nav,
+#ov-skills > .nav { position: absolute; z-index: 5; }   /* o id de «#ov-shop > *» (position: relative) não pode vencer aqui */
+.nav .nav-label {
+  position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); pointer-events: none;
+  padding: 1px 10px; white-space: nowrap; font-size: 12px; font-weight: 700; border-radius: var(--r-pill);
+  background: var(--c-brown); color: var(--c-cream);
+}
+.ov > .nav-right { animation: nudge-r 1.6s ease-in-out infinite; }
+.ov > .nav-left { animation: nudge-l 1.6s ease-in-out infinite; }
+@keyframes nudge-r { 50% { transform: translateX(5px); } }
+@keyframes nudge-l { 50% { transform: translateX(-5px); } }
+
+/* ---------- tela de escolha (depois do resumo do dia) ---------- */
+#ov-hub { background: var(--c-sky-1); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hub-title { font-size: clamp(30px, 7vw, 56px); }
+.hub-choices { display: flex; gap: clamp(16px, 5vw, 48px); justify-content: center; flex-wrap: wrap; }
+.hub-item {
+  all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  width: clamp(150px, 38vw, 220px); padding: 16px 14px 14px; border-radius: 28px; text-align: center; color: var(--c-brown);
+  border: 4px solid var(--c-brown); box-shadow: 0 8px 0 var(--c-brown), 0 18px 30px var(--c-shadow);
+  transition: transform .12s ease, box-shadow .12s ease, filter .15s ease;
+}
+.hub-item b { font-size: clamp(20px, 4.5vw, 26px); font-weight: 700; }
+.hub-item small { font-size: 13px; font-weight: 600; color: var(--c-brown-2); }
+.hub-svg { width: clamp(84px, 22vw, 120px); height: auto; transition: transform .2s cubic-bezier(.3, 1.6, .5, 1); }
+.hub-skills { background: linear-gradient(180deg, #d8f2fb 0 38%, #a6d86b 38%); }     /* céu e campo */
+.hub-shop { background: repeating-linear-gradient(90deg, #fff4d6 0 24px, #f7cdc5 24px 48px); }   /* toldo */
+.hub-item:hover, .hub-item:focus-visible { transform: translateY(-6px); filter: brightness(1.05); }
+.hub-item:hover .hub-svg, .hub-item:focus-visible .hub-svg { transform: scale(1.12) rotate(-3deg); }
+.hub-item:active { transform: translateY(4px); box-shadow: 0 3px 0 var(--c-brown); }
+.hub-item:focus-visible { outline: var(--focus); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .ov > .nav-right, .ov > .nav-left { animation: none; }
+  .hub-svg, .hub-item { transition: none; }
+}
+@media (max-height: 560px) { .hub-svg { width: 70px; } .hub-item { padding: 10px; } }

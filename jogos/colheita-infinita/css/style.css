@@ -36,7 +36,8 @@ html, body {
   -webkit-user-select: none; user-select: none;
   -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
 }
-body.playing #c { cursor: none; }
+body.playing.on-field #c { cursor: none; }   /* só sobre o campo; fora dele o cursor normal aparece */
+body.over-drone #c { cursor: pointer; }   /* sobre um drone: cursor normal, clique seleciona */
 #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 img { -webkit-user-drag: none; user-select: none; }
 

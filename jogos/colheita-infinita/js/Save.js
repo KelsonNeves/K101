@@ -1,5 +1,6 @@
 // Save.js — localStorage com prefixo do slug. Tudo em try/catch (modo privado / cota cheia).
 import { SKILL_BY_ID } from './Skills.js';
+import { ITEM_BY_ID } from './Shop.js';
 
 const KEY = 'colheita-infinita:save';
 
@@ -15,7 +16,7 @@ export class Save {
       return {
         day: Math.max(1, d.day | 0),
         money: Math.max(0, Number(d.money) || 0),
-        owned: (Array.isArray(d.owned) ? d.owned : []).filter((id) => SKILL_BY_ID[id]),   // ids antigos são ignorados
+        owned: (Array.isArray(d.owned) ? d.owned : []).filter((id) => SKILL_BY_ID[id] || ITEM_BY_ID[id]),   // ids antigos são ignorados
         best: { earned: Number(d.best?.earned) || 0, day: d.best?.day | 0 }
       };
     } catch { return null; }

@@ -1,6 +1,6 @@
-// Scene.js — renderer, câmera, luzes, chão e solo instanciado.
+// Scene.js — renderer, câmera (que desliza de um campo para outro), luzes, chão e solo instanciado.
 import * as THREE from 'three';
-import { MAX_COLS, MAX_ROWS, PALETTE } from './Data.js';
+import { MAX_CELLS, PALETTE } from './Data.js';
 
 const TILT = THREE.MathUtils.degToRad(55);
 
@@ -34,6 +34,7 @@ export class Scene {
       s.left = -9; s.right = 9; s.top = 9; s.bottom = -9; s.near = 1; s.far = 40;
     }
     this.scene.add(this.sun);
+    this.scene.add(this.sun.target);                     // o sol acompanha o campo em vista (sombras)
     this.sunMorning = new THREE.Color(0xfff6e0);
     this.sunEvening = new THREE.Color(0xffb36a);
 
@@ -50,7 +51,7 @@ export class Scene {
     // Solo: UMA InstancedMesh com cor por instância.
     const soilGeo = new THREE.BoxGeometry(0.94, 0.1, 0.94);
     soilGeo.translate(0, -0.05, 0);                       // topo em y = 0
-    this.soil = new THREE.InstancedMesh(soilGeo, new THREE.MeshLambertMaterial({ color: 0xffffff }), MAX_COLS * MAX_ROWS);
+    this.soil = new THREE.InstancedMesh(soilGeo, new THREE.MeshLambertMaterial({ color: 0xffffff }), MAX_CELLS);
     this.soil.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     this.soil.count = 0;
     this.soil.frustumCulled = false;
@@ -64,6 +65,8 @@ export class Scene {
     this.m = new THREE.Matrix4();
 
     this.cols = 6; this.rows = 6;
+    this.focus = new THREE.Vector3();                    // para onde a câmera olha agora
+    this.focusTarget = new THREE.Vector3();              // e para onde ela está indo (campo em vista)
     this.resize();
     this.placeCamera();
   }
@@ -88,9 +91,19 @@ export class Scene {
     this.targetDist = Math.max(needH, needV) * 1.15;
   }
 
+  // Campo em vista: enquadra o tamanho dele e leva a câmera até o centro dele (instant = sem deslizar).
+  setField(f, instant = false) {
+    this.fit(f.cols, f.rows);
+    this.focusTarget.set(f.x, 0, f.z);
+    if (instant) { this.focus.copy(this.focusTarget); this.dist = this.targetDist; }
+  }
+
   placeCamera() {
-    this.camera.position.set(0, Math.sin(TILT) * this.dist, Math.cos(TILT) * this.dist);
-    this.camera.lookAt(0, 0, 0);
+    const { x, z } = this.focus;
+    this.camera.position.set(x, Math.sin(TILT) * this.dist, z + Math.cos(TILT) * this.dist);
+    this.camera.lookAt(x, 0, z);
+    this.sun.position.set(x + 5, 12, z + 6);
+    this.sun.target.position.set(x, 0, z);
   }
 
   // p: 0 (manhã clara) → 1 (fim de tarde alaranjada)
@@ -122,6 +135,7 @@ export class Scene {
 
   render() {
     this.dist += (this.targetDist - this.dist) * 0.1;            // a grade «cresce» suavemente
+    this.focus.lerp(this.focusTarget, 0.12);                     // a câmera desliza até o campo vizinho
     this.placeCamera();
     this.renderer.render(this.scene, this.camera);
   }

@@ -20,6 +20,23 @@ export class Synth {
   resume() { try { this.ensure()?.resume?.(); } catch { /* sem áudio */ } }
   setVolume(v) { if (this.master) this.master.gain.value = v; }
 
+  // Decodifica um .mp3/.ogg já baixado (ArrayBuffer). Devolve null se o arquivo for inválido.
+  async decode(arrayBuffer) {
+    const ctx = this.ensure();
+    if (!ctx) return null;
+    try { return await ctx.decodeAudioData(arrayBuffer.slice(0)); } catch { return null; }
+  }
+
+  // Toca um áudio decodificado (pode sobrepor várias vezes: drones usam o mesmo som).
+  playBuffer(buf, { gain = 0.9, rate = 1 } = {}) {
+    const ctx = this.ensure();
+    if (!ctx || !this.master || !buf) return;
+    const src = ctx.createBufferSource(), g = ctx.createGain();
+    src.buffer = buf; src.playbackRate.value = rate; g.gain.value = gain;
+    src.connect(g); g.connect(this.master);
+    src.start();
+  }
+
   // Tom com envelope: freq (ou [de, para]), duração (s), tipo de onda, ganho.
   tone({ freq = 440, to = null, dur = 0.12, type = 'sine', gain = 0.2, delay = 0 }) {
     const ctx = this.ensure();

@@ -3,14 +3,18 @@ import { TOOLS } from './Data.js';
 import { CROPS } from './Crops.js';
 import { Sound } from './Audio.js';
 import { SkillTree } from './SkillTree.js';
+import { ShopUI } from './ShopUI.js';
+import { neighbors } from './Fields.js';
 import { fmtMoney } from './Game.js';
 
 const $ = (id) => document.getElementById(id);
-const OVERLAYS = ['ov-title', 'ov-pause', 'ov-summary', 'ov-skills', 'ov-error', 'ov-confirm'];
+const OVERLAYS = ['ov-title', 'ov-pause', 'ov-summary', 'ov-hub', 'ov-skills', 'ov-shop', 'ov-error', 'ov-confirm'];
+const NAV_DIRS = ['up', 'down', 'left', 'right'];
 
 export class UI {
   constructor() {
     this.skills = null;
+    this.shop = null;
     this.hintGone = false;
     this.cache = {};
     this.countdownText = null;
@@ -43,11 +47,24 @@ export class UI {
     $('btn-new').hidden = !hasSave;
   }
 
-  showPause(on) { $('ov-pause').hidden = !on; if (on) $('btn-resume').focus?.(); }
+  showPause(on) {
+    $('ov-pause').hidden = !on;
+    this.disarmQuit();
+    if (on) $('btn-resume').focus?.();
+  }
+
+  // «Voltar ao início» pede um segundo toque, para ninguém perder o dia por engano.
+  disarmQuit() {
+    clearTimeout(this.quitTimer);
+    this.quitArmed = false;
+    const b = $('btn-quit'), tip = $('quit-tip');
+    if (b) b.textContent = 'Voltar ao início';
+    if (tip) tip.hidden = true;
+  }
 
   showHud(on) {
     $('hud').hidden = !on;
-    if (!on) { $('tool-btn').hidden = true; $('countdown').hidden = true; this.countdownText = null; }
+    if (!on) { $('tool-btn').hidden = true; $('countdown').hidden = true; this.countdownText = null; this.syncNav(this.game, true); }
   }
 
   setCountdown(text) {
@@ -99,6 +116,7 @@ export class UI {
       const p = Math.round(g.cursor.progress(g) * 100);
       if (this.cache.p !== p) { this.cache.p = p; btn.style.setProperty('--p', `${p}%`); }
     }
+    this.syncNav(g);
     document.body.classList.toggle('touch', touch);
     document.body.classList.toggle('playing', day && !g.paused);
   }
@@ -160,21 +178,66 @@ export class UI {
     this.onContinue = onContinue;
   }
 
+  showHub() {
+    this.showOnly('ov-hub');
+    $('hub-money').textContent = fmtMoney(this.game.money);
+    $('hub-day').textContent = `DIA ${this.game.day}`;
+    $('hub-skills').focus?.();
+  }
+
   showSkills() {
     this.showOnly('ov-skills');
     this.skills.open();
+  }
+
+  showShop() {
+    this.showOnly('ov-shop');
+    this.shop.open();
+  }
+
+  /* ------------------------- setas de navegação entre campos ------------------------- */
+  // Mostra só as setas que levam a um campo vizinho; a seta ganha um destaque quando há plantas maduras lá.
+  syncNav(g, force = false) {
+    if (!g) return;
+    const ns = g.state === 'DAY' ? neighbors(g.fields, g.activeField) : [];
+    const key = `${g.activeField}|${ns.map((n) => `${n.dir}${n.field.id}`).join(',')}`;
+    if (force || key !== this.cache.nav) {
+      this.cache.nav = key;
+      for (const dir of NAV_DIRS) {
+        const btn = $(`nav-${dir}`), n = ns.find((o) => o.dir === dir);
+        btn.hidden = !n;
+        if (n) { btn.dataset.field = n.field.id; btn.setAttribute('aria-label', `Ir para ${n.field.name}`); btn.title = n.field.name; }
+        this.cache[`ready-${dir}`] = undefined;
+      }
+    }
+    if (!ns.length) return;
+    const ripe = {};
+    for (const c of g.grid.cells) if (c.state === 'ripe') ripe[c.field] = (ripe[c.field] ?? 0) + 1;
+    for (const n of ns) {
+      const ready = (ripe[n.field.id] ?? 0) > 0;
+      if (this.cache[`ready-${n.dir}`] !== ready) { this.cache[`ready-${n.dir}`] = ready; $(`nav-${n.dir}`).classList.toggle('ready', ready); }
+    }
   }
 
   /* ----------------------------------- ligações ----------------------------------- */
   bind(game) {
     this.game = game;
     this.skills = new SkillTree(game);
+    this.shop = new ShopUI(game);
 
     $('btn-play').addEventListener('click', () => { Sound.unlock(); Sound.play('click'); game.enter(game.hasSave); });
     $('btn-new').addEventListener('click', () => { Sound.unlock(); Sound.play('click'); $('ov-confirm').hidden = false; });
     $('conf-no').addEventListener('click', () => { $('ov-confirm').hidden = true; });
     $('conf-yes').addEventListener('click', () => { $('ov-confirm').hidden = true; game.enter(false); });
     $('btn-resume').addEventListener('click', () => { Sound.play('click'); game.resume(); });
+    $('btn-quit').addEventListener('click', () => {
+      Sound.play('click');
+      if (this.quitArmed) { this.disarmQuit(); game.quitToTitle(); return; }
+      this.quitArmed = true;
+      $('btn-quit').textContent = 'Confirmar: voltar ao início';
+      $('quit-tip').hidden = false;
+      this.quitTimer = setTimeout(() => this.disarmQuit(), 4000);
+    });
     $('btn-pause').addEventListener('click', (e) => { Sound.play('click'); game.pause(); e.currentTarget.blur(); });
     $('btn-continue').addEventListener('click', () => {
       if ($('btn-continue').disabled) return;
@@ -182,6 +245,17 @@ export class UI {
       this.onContinue?.();
     });
     $('btn-retry').addEventListener('click', () => location.reload());
+
+    // Intervalo entre os dias: tela de escolha e setas entre Habilidades (esquerda) e Loja (direita).
+    $('hub-skills').addEventListener('click', () => { Sound.play('click'); game.openSkills(); });
+    $('hub-shop').addEventListener('click', () => { Sound.play('click'); game.openShop(); });
+    $('go-shop').addEventListener('click', () => { Sound.play('click'); game.openShop(); });
+    $('go-skills').addEventListener('click', () => { Sound.play('click'); game.openSkills(); });
+    $('btn-hub-next').addEventListener('click', () => game.nextDay());
+    $('btn-shop-next').addEventListener('click', () => game.nextDay());
+
+    // Setas nas bordas: trocam o campo em vista.
+    for (const dir of NAV_DIRS) $(`nav-${dir}`).addEventListener('click', (e) => { game.goField(Number(e.currentTarget.dataset.field)); e.currentTarget.blur(); });
 
     // Botão inferior do celular: abre o menu radial em leque para cima, na posição dele.
     $('tool-btn').addEventListener('click', () => {
