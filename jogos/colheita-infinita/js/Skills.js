@@ -80,11 +80,11 @@ export const SKILLS = [
     { n: 3, dir: 'em cima',    parent: 'semear-raio-3', at: [1, -3], step: [1, 0],  cost: 1200, sizes: [60, 750, 1500, 3000, 6000] },
     { n: 4, dir: 'embaixo',    parent: 'crescer-3',    at: [1, 5],  step: [0, 1],  cost: 1200, sizes: [60, 750, 1500, 3000, 6000] }
   ].flatMap((p) => [
-    { id: `arado-${p.n}`, parent: p.parent, at: p.at, name: `Arado ${p.n}`, icon: 'terra-grade.webp', cost: p.cost,
+    { id: `arado-${p.n}`, parent: p.parent, at: p.at, name: `Arado ${p.n}`, icon: 'terra-arado.webp', cost: p.cost,
       desc: `Um novo campo ${p.dir} do principal, começando em 3×3. Chegue nele pela seta na borda da tela.`,
       effects: [{ unlock: 'plow', index: p.n - 1 }] },
     ...chain({ id: `arado${p.n}-terra`, parent: `arado-${p.n}`, at: [p.at[0] + p.step[0], p.at[1] + p.step[1]], step: p.step,
-      name: `Terra do arado ${p.n}`, desc: `O arado ${p.n} (${p.dir}) ganha 2 colunas e 2 linhas.`, icon: 'terra-grade.webp',
+      name: `Terra do arado ${p.n}`, desc: `O arado ${p.n} (${p.dir}) ganha 2 colunas e 2 linhas.`, icon: 'terra-arado.webp',
       costs: p.sizes, effects: [{ stat: `plows.${p.n - 1}.cols`, add: 2 }, { stat: `plows.${p.n - 1}.rows`, add: 2 }] })
   ])
 ];
