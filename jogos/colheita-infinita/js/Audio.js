@@ -1,5 +1,5 @@
 // Audio.js — API de som do jogo. Chave de armazenamento: colheita-infinita:audio.
-// Arquivos opcionais em assets/audio/: agua.mp3 (aguar), colher.mp3 (colher) e musica.mp3 (fundo, em loop).
+// Arquivos opcionais em assets/audio/: agua.mp3 (aguar), colher.mp3 (colher), moeda.mp3 (planta entrando no placar) e musica.mp3 (fundo, em loop).
 // Qualquer arquivo ausente cai no som sintetizado do Synth.js. O mudo externo (anúncio / popup de saída)
 // NÃO altera o volume nem o mudo salvo pelo jogador.
 import { Synth } from './Synth.js';
@@ -7,7 +7,7 @@ import { SFX } from './Sfx.js';
 
 const KEY = 'colheita-infinita:audio';
 const BASE = 'assets/audio/';
-const SFX_FILES = { water: 'agua.mp3', harvest: 'colher.mp3' };   // nome do efeito (Sfx.js) → arquivo
+const SFX_FILES = { water: 'agua.mp3', harvest: 'colher.mp3', coinIn: 'moeda.mp3' };   // nome do efeito (Sfx.js) → arquivo
 const MUSIC_FILE = 'musica.mp3';
 const MUSIC_GAIN = 0.35;                                          // a música fica mais baixa que os efeitos
 const raw = {}, bufs = {}, decoding = new Set();

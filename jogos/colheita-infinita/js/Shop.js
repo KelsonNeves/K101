@@ -7,10 +7,10 @@ const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 const fmt = (v) => v.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 
 // ---- preços (balanceamento) ----
-const DRONE_COSTS = { plant: 300, water: 300, harvest: 450 };
-const DRONE_SPEED_COSTS = [120, 260, 520, 1000, 1900];          // -15% no ciclo por nível
-const DRONE_RANGE_COSTS = [150, 320, 650, 1300];                // +0,25 de alcance por nível
-const DRONE_FLEET_COSTS = [600, 1500];                          // +1 drone do mesmo tipo (máx. 3)
+const DRONE_COSTS = { plant: 350, water: 350, harvest: 350 };
+const DRONE_SPEED_COSTS = [250, 1000, 2500, 5000, 10000];          // -15% no ciclo por nível
+const DRONE_RANGE_COSTS = [250, 1000, 2500, 5000, 10000];                // +0,25 de alcance por nível
+const DRONE_FLEET_COSTS = [1000, 3000];                          // +1 drone do mesmo tipo (máx. 3)
 
 export const SHOP_ITEMS = [];   // todos os itens compráveis
 export const SHOP_CARDS = [];   // como a loja agrupa os itens na tela

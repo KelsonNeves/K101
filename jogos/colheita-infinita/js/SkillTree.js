@@ -237,7 +237,8 @@ export class SkillTree {
     eff.textContent = s.desc ? effects.join(' · ') : '';
     if (g.owned.has(s.id)) { buy.disabled = true; buy.textContent = 'Desbloqueada'; }
     else if (g.money < s.cost) { buy.disabled = true; buy.textContent = `Faltam ${fmtMoney(s.cost - g.money)}`; }
-    else { buy.disabled = false; buy.textContent = s.cost === 0 ? 'Desbloquear · grátis' : `Desbloquear · ${fmtMoney(s.cost)}`; }
+    else { buy.disabled = false; buy.textContent = s.cost === 0 ? 'Desbloquear' : `Desbloquear · ${fmtMoney(s.cost)}`; }
+    g.ui.syncSkillTip?.();                               // dica do tutorial acompanha a seleção
   }
 
   // Chamado por Game.buy().

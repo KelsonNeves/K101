@@ -1,6 +1,7 @@
 // Scene.js — renderer, câmera (que desliza de um campo para outro), luzes, chão e solo instanciado.
 import * as THREE from 'three';
 import { MAX_CELLS, PALETTE } from './Data.js';
+import { Decor } from './Decor.js';
 
 const TILT = THREE.MathUtils.degToRad(55);
 
@@ -47,6 +48,8 @@ export class Scene {
     ground.position.y = -0.1;
     ground.receiveShadow = true;
     this.scene.add(ground);
+
+    this.decor = new Decor(this.scene, { low: this.low });   // grama, flores, pedras, arbustos e árvores
 
     // Solo: UMA InstancedMesh com cor por instância.
     const soilGeo = new THREE.BoxGeometry(0.94, 0.1, 0.94);

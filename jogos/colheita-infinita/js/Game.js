@@ -15,7 +15,9 @@ import { Input } from './Input.js';
 import { RadialMenu } from './RadialMenu.js';
 import { Vfx } from './Vfx.js';
 import { Save } from './Save.js';
+import * as THREE from 'three';
 import { Sound } from './Audio.js';
+import { Tutorial, tutorialDone, setTutorialDone } from './Tutorial.js';
 
 // Regra de visibilidade da árvore: a única que decide o que aparece.
 // `needs` = item da loja exigido (ex.: a fila «Terra do arado 1» só aparece depois de comprar o Arado 1).
@@ -59,6 +61,7 @@ export class Game {
     this.dayHarvest = {}; this.dayMoney = 0; this.fireValue = 0;
     this.lastTick = -1; this.last = undefined;
     this.playedDay = 1;
+    this.tut = null;                 // tutorial do 1º dia (null = desligado)
 
     this.hasSave = false;
     const saved = this.save.read();
@@ -135,7 +138,7 @@ export class Game {
       return;
     }
 
-    this.timeLeft -= dt;
+    if (!this.tut) this.timeLeft -= dt;                // tutorial: o tempo não corre
     this.grid.update(dt, this.S);
     this.drones.update(dt);
     this.updateCharge(dt);                             // segurar = carregar o ciclo; ao encher, usa a ferramenta
@@ -145,7 +148,8 @@ export class Game {
     const sec = Math.ceil(this.timeLeft);
     if (this.timeLeft > 0 && sec <= 5 && sec !== this.lastTick) { this.lastTick = sec; Sound.play('tick'); }
     this.ui.hudTick(this);
-    if (this.timeLeft <= 0) this.endDay();
+    if (this.tut) this.tut.update();
+    else if (this.timeLeft <= 0) this.endDay();
   }
 
   /* ------------------------------ ferramentas ------------------------------ */
@@ -195,11 +199,15 @@ export class Game {
   harvestCell(c) {
     const crop = CROPS[c.crop];
     const value = crop.value * this.S.valueMult;
+    const cropId = c.crop;
     const h = (this.dayHarvest[c.crop] ??= { qty: 0, value: 0 });
     h.qty += 1; h.value += value;
     this.dayMoney += value;
     this.fireValue += value;                           // um único número flutuante por ciclo
+    // A planta «sai» da célula: o ícone voa até o placar de moedas (o valor só entra no placar quando ele chega).
+    this.ui.harvestFly(cropId, this.scene.worldToScreen(new THREE.Vector3(c.x, 0.6, c.z)), value, (this.flyCount++ % 12) * 50);
     this.grid.harvest(c);
+    if (this.tut) this.tut.harvested++;
   }
 
   radialItems() {
@@ -212,6 +220,7 @@ export class Game {
   }
 
   selectItem(it) {
+    if (this.tut && !this.tut.allows(it)) { this.ui.nudgeTutorial(); return; }   // tutorial: só a ferramenta do passo
     this.selection = it.tool === 'plant' ? { tool: 'plant', crop: it.crop } : { tool: it.tool, crop: this.selection.crop };
     this.charge = 0;                                   // trocar de ferramenta recomeça a carga
     this.ui.toolChanged(true);
@@ -226,14 +235,25 @@ export class Game {
     this.fields = layoutFields(this.S);
     this.activeField = 0;                                  // todo dia começa olhando o campo principal
     this.grid.reset(this.fields);                          // todos os campos começam vazios em todo dia
+    this.scene.decor.build(this.fields);                   // o cenário desvia dos campos de hoje
     this.drones.reset();
     this.charge = 0; this.fired = false;
-    this.dayHarvest = {}; this.dayMoney = 0;
+    this.dayHarvest = {}; this.dayMoney = 0; this.flyCount = 0;
+    this.ui.resetMoney();
     this.timeLeft = this.S.dayLength;
-    this.ending = 0; this.countdown = 3; this.lastTick = -1; this.lastCount = 3;
-    Sound.play('count', 0);                                // «3»
+    this.ending = 0; this.lastTick = -1; this.lastCount = 3;
+    this.tut = (!tutorialDone() && this.day === 1) ? new Tutorial(this) : null;   // todo jogo novo começa pelo tutorial
+    if (this.tut) {
+      this.countdown = 0;                                  // sem contagem e sem relógio: o jogador está aprendendo
+      this.selection = { tool: 'plant', crop: 'trigo' };   // já começa com o trigo na mão
+    } else {
+      this.countdown = 3;
+      Sound.play('count', 0);                              // «3»
+    }
     this.playedDay = this.day;
     if (!this.S.unlockedCrops.includes(this.selection.crop)) this.selection.crop = this.S.unlockedCrops[0];
+    if (this.tut) this.tut.update(); else this.ui.setTutorial(null);   // liga/desliga o painel (e reserva espaço no topo)
+    this.scene.resize();
     this.scene.setField(this.fields[0], true);
     this.scene.setDayProgress(0);
     this.radial.close();
@@ -242,7 +262,7 @@ export class Game {
     this.ui.toolChanged();
     this.ui.hudTick(this);
     this.ui.syncNav(this, true);
-    this.ui.setCountdown('3');
+    this.ui.setCountdown(this.tut ? null : '3');
   }
 
   endDay() {
@@ -251,6 +271,26 @@ export class Game {
     this.radial.close();
     this.ui.setCountdown('Fim do dia!');
     Sound.play('dayEnd');
+  }
+
+  sound(name) { Sound.play(name); }
+
+  // Fim do tutorial (concluído ou pulado): mesma saída do fim de um dia, com outra mensagem.
+  finishTutorial() {
+    this.tut = null;
+    this.ui.setTutorial(null);
+    this.scene.resize();
+    this.input.releaseAll();
+    this.radial.close();
+    this.ending = 1;
+    this.ui.setCountdown('Muito bem!');
+    Sound.play('dayEnd');
+  }
+
+  skipTutorial() {
+    if (!this.tut) return;
+    setTutorialDone(true);
+    this.finishTutorial();
   }
 
   openSummary() {
@@ -269,15 +309,12 @@ export class Game {
     this.ending = 0;
     this.ui.setCountdown(null);
     this.ui.showHud(false);
-    this.ui.showSummary({ day: playedDay, lines, total, best: this.best, newBest }, () => this.openHub());
+    this.ui.showSummary({ day: playedDay, lines, total, best: this.best, newBest }, () => this.openSkills());   // sem tela de escolha: vai direto às habilidades
   }
 
   // Intervalo entre os dias: HUB (escolher) ⇄ HABILIDADES ⇄ LOJA. Na ordem da esquerda para a direita:
   // habilidades à esquerda, loja à direita (as setas das telas seguem essa ordem).
-  openHub() {
-    this.state = 'HUB';
-    this.ui.showHub();
-  }
+  openHub() { this.openSkills(); }                       // a tela de escolha foi removida: habilidades e loja se alternam pelas abas
 
   openSkills() {
     this.state = 'SKILLS';
@@ -341,7 +378,7 @@ export class Game {
       if (ad) await Promise.race([Promise.resolve(ad).catch(() => {}), sleep(3000)]);
     } catch { /* sem anúncio: segue o jogo */ }
     this.entering = false;
-    if (!continueGame) this.resetProgress();
+    if (!continueGame) { this.resetProgress(); setTutorialDone(false); }   // jogo novo = tutorial de novo
     if (continueGame && this.day > 1) this.openHub();      // quem volta escolhe: loja ou habilidades, antes do próximo dia
     else this.startDay();
   }
@@ -377,6 +414,8 @@ export class Game {
     this.radial.close();
     this.ui.showPause(false);
     this.ui.setCountdown(null);
+    this.tut = null;
+    this.ui.setTutorial(null);
     this.save.write();
     this.showTitle();
   }
@@ -411,6 +450,7 @@ export class Game {
     this.owned.add(id);
     this.S = computeStats(this.owned);                 // vale a partir do próximo dia
     this.save.write();
+    if (id === 'raiz') this.ui.skillTipDone();
     this.ui.skills.refresh({ born: visibleIds(this).filter((v) => !before.has(v)), from: id });
     Sound.play('unlock');
     return true;

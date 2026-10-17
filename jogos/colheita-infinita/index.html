@@ -156,6 +156,11 @@
         <svg id='tree-lines' width='1' height='1' aria-hidden='true'></svg>
         <div id='tree-nodes'></div>
       </div>
+      <aside id='sk-tip' class='sk-tip' hidden aria-live='polite'>
+        <span class='tut-step'>Passo 6 de 6</span>
+        <b id='sk-tip-title' class='tut-title'></b>
+        <p id='sk-tip-text' class='tut-text'></p>
+      </aside>
       <div class='sk-zoom'>
         <button id='sk-zin' type='button' aria-label='Aproximar'>+</button>
         <button id='sk-zout' type='button' aria-label='Afastar'>−</button>
@@ -205,11 +210,20 @@
   <div id='hud' hidden>
     <div class='hud-bar'>
       <div class='hud-time'>
-        <div class='bar'><div id='time-fill'></div></div>
+        <div class='hud-track'>
+          <div class='bar'><div id='time-fill'></div></div>
+          <svg id='sun' class='sun-ico' viewBox='0 0 40 40' aria-hidden='true'>
+            <g class='rays'>
+              <path d='M20 2v5'/><path d='M20 33v5'/><path d='M2 20h5'/><path d='M33 20h5'/>
+              <path d='M7.3 7.3l3.5 3.5'/><path d='M29.2 29.2l3.5 3.5'/><path d='M7.3 32.7l3.5-3.5'/><path d='M29.2 10.8l3.5-3.5'/>
+            </g>
+            <circle cx='20' cy='20' r='9'/>
+          </svg>
+        </div>
         <span class='hud-sec'><b id='time-text'>30</b><small>s</small></span>
+        <div id='hud-day' class='hud-day'>DIA 1</div>
       </div>
-      <div class='hud-money'><small>colhido hoje</small><span class='hud-money-v'><i class='coin'></i><b id='money-text'>0</b></span></div>
-      <div id='hud-day' class='hud-day'>DIA 1</div>
+      <div id='hud-money' class='hud-money'><small>colhido hoje</small><span class='hud-money-v'><i class='coin' id='money-coin'></i><b id='money-text'>0</b></span></div>
       <button id='btn-pause' class='hud-pause' type='button' aria-label='Pausar'><i></i><i></i></button>
     </div>
     <button id='nav-up' class='nav nav-up' type='button' hidden></button>
@@ -221,6 +235,17 @@
       <small id='tool-hint'>Botão direito: ferramentas</small>
     </div>
   </div>
+  <!-- Tutorial do 1º dia -->
+  <aside id='tut' hidden aria-live='polite'>
+    <div class='tut-head'>
+      <span id='tut-step' class='tut-step'>Passo 1 de 5</span>
+      <span id='tut-dots' class='tut-dots' aria-hidden='true'></span>
+      <button id='tut-skip' class='tut-skip' type='button'>Pular</button>
+    </div>
+    <b id='tut-title' class='tut-title'></b>
+    <p id='tut-text' class='tut-text'></p>
+    <div id='tut-prog' class='tut-prog'><div class='tut-bar'><div id='tut-fill'></div></div><span id='tut-count'>0/9</span></div>
+  </aside>
   <div id='countdown' hidden></div>
   <div id='float-layer' aria-hidden='true'></div>
   <div id='drone-layer'></div>                                              <!-- painel de seleção dos drones -->

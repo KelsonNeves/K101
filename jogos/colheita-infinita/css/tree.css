@@ -139,3 +139,14 @@ button.tab:focus-visible { outline: var(--focus); outline-offset: 2px; }
   .node.born, .node.avail, #tree-lines path.born { animation: none; }
   #tree-world.glide { transition: none; }
 }
+
+/* dica do tutorial (passo 6): faixa no topo do mapa, sem capturar toques */
+.sk-tip {
+  position: absolute; z-index: 4; left: 50%; top: 10px; transform: translateX(-50%); pointer-events: none;
+  width: min(calc(100% - 2 * var(--pad)), 460px); display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  padding: 10px 14px 12px; border: 4px solid var(--c-edge); border-radius: var(--r-card); background: var(--c-paper);
+  box-shadow: 0 6px 0 var(--c-brown), 0 12px 24px var(--c-shadow);
+}
+.sk-tip .tut-text { flex: none; }
+@media (max-height: 520px) { .sk-tip { top: 6px; padding: 6px 12px 8px; } .sk-tip .tut-text { font-size: 12.5px; } .sk-tip .tut-title { font-size: 15px; } }
+@media (min-aspect-ratio: 1/1) { .sk-tip { left: calc(var(--pad) + var(--safe-l)); transform: none; width: min(300px, 34vw); } }

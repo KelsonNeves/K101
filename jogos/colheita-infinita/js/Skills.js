@@ -25,60 +25,60 @@ export const SKILLS = [
 
   // NORTE — semear
   ...chain({ id: 'semear-raio', parent: 'raiz', at: [0, -1], step: [0, -1], name: 'Semeadura ampla',
-    icon: 'semear-raio.webp', costs: [20, 45, 90, 180], effects: [{ stat: 'plant.radius', add: 0.375 }] }),
+    icon: 'semear-raio.webp', costs: [20, 100, 1000, 2500], effects: [{ stat: 'plant.radius', add: 0.375 }] }),
   ...chain({ id: 'semear-ciclo', parent: 'semear-raio-1', at: [1, -1], step: [1, 0], name: 'Semeadura rápida',
-    icon: 'semear-ciclo.webp', costs: [30, 60, 120], effects: [{ stat: 'plant.cooldown', mul: 0.9 }] }),
+    icon: 'semear-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'plant.cooldown', mul: 1 }] }),
 
   // LESTE — aguar
   ...chain({ id: 'agua-raio', parent: 'raiz', at: [1, 0], step: [1, 0], name: 'Regador amplo',
-    icon: 'agua-raio.webp', costs: [20, 45, 90, 180], effects: [{ stat: 'water.radius', add: 0.375 }] }),
+    icon: 'agua-raio.webp', costs: [20, 100, 1000, 2500], effects: [{ stat: 'water.radius', add: 0.375 }] }),
   ...chain({ id: 'agua-ciclo', parent: 'agua-raio-1', at: [1, 1], step: [1, 0], name: 'Regador rápido',
-    icon: 'agua-ciclo.webp', costs: [30, 60, 120], effects: [{ stat: 'water.cooldown', mul: 0.9 }] }),
+    icon: 'agua-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'water.cooldown', mul: 1 }] }),
   ...chain({ id: 'crescer', parent: 'agua-ciclo-1', at: [1, 2], step: [0, 1], name: 'Terra fértil',
     desc: 'As plantas crescem 15% mais rápido.',
-    icon: 'crescer.webp', costs: [40, 90, 200], effects: [{ stat: 'growthSpeed', mul: 1.15 }] }),
+    icon: 'crescer.webp', costs: [40, 500, 2000], effects: [{ stat: 'growthSpeed', mul: 1.15 }] }),
 
   // SUL — colher
   ...chain({ id: 'colher-raio', parent: 'raiz', at: [0, 1], step: [0, 1], name: 'Foice larga',
-    icon: 'colher-raio.webp', costs: [20, 45, 90, 180], effects: [{ stat: 'harvest.radius', add: 0.375 }] }),
+    icon: 'colher-raio.webp', costs: [20, 100, 1000, 2500], effects: [{ stat: 'harvest.radius', add: 0.375 }] }),
   ...chain({ id: 'colher-ciclo', parent: 'colher-raio-1', at: [-1, 1], step: [-1, 0], name: 'Foice rápida',
-    icon: 'colher-ciclo.webp', costs: [30, 60, 120], effects: [{ stat: 'harvest.cooldown', mul: 0.9 }] }),
+    icon: 'colher-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'harvest.cooldown', mul: 1 }] }),
   // Duração do dia: «Dia mais longo» soma 40 s por nível (5 níveis) e «Amanhecer cedo» ramifica do nível II e multiplica (3 níveis).
   // Tudo comprado: (30 + 5×40) × 1,1³ ≈ 306 s (~5 min). Alcance: raio 1,0 + 4 × 0,375 = 2,5 (o mesmo do último nível antigo).
   ...chain({ id: 'dia-longo', parent: 'colher-ciclo-1', at: [-1, 2], step: [0, 1], name: 'Dia mais longo',
     desc: 'O dia dura 40 segundos a mais.',
-    icon: 'dia-longo.webp', costs: [50, 120, 260, 500, 900], effects: [{ stat: 'dayLength', add: 40 }] }),
+    icon: 'dia-longo.webp', costs: [50, 500, 1200, 2500, 5000], effects: [{ stat: 'dayLength', add: 40 }] }),
   ...chain({ id: 'dia-sol', parent: 'dia-longo-2', at: [-2, 3], step: [-1, 0], name: 'Amanhecer cedo',
     desc: 'O dia dura 10% mais.',
-    icon: 'dia-sol.webp', costs: [150, 350, 700], effects: [{ stat: 'dayLength', mul: 1.1 }] }),
+    icon: 'dia-sol.webp', costs: [150, 500, 2500], effects: [{ stat: 'dayLength', mul: 1.1 }] }),
 
   // OESTE — terra e plantas
   ...chain({ id: 'terra-grade', parent: 'raiz', at: [-1, 0], step: [-1, 0], name: 'Mais terra',
     desc: 'A grade ganha 2 colunas e 2 linhas.',
-    icon: 'terra-grade.webp', costs: [40, 100, 220, 450, 900],
+    icon: 'terra-grade.webp', costs: [40, 150, 1000, 2500, 5000],
     effects: [{ stat: 'grid.cols', add: 2 }, { stat: 'grid.rows', add: 2 }] }),
   { id: 'milho', parent: 'terra-grade-1', at: [-1, -1], name: 'Milho', icon: 'milho.webp', cost: 60,
     desc: 'Libera o milho.', effects: [{ unlock: 'crop', id: 'milho' }] },
-  { id: 'cenoura', parent: 'milho', at: [-2, -1], name: 'Cenoura', icon: 'cenoura.webp', cost: 150,
+  { id: 'cenoura', parent: 'milho', at: [-2, -1], name: 'Cenoura', icon: 'cenoura.webp', cost: 500,
     desc: 'Libera a cenoura.',
     effects: [{ unlock: 'crop', id: 'cenoura' }] },
-  { id: 'tomate', parent: 'cenoura', at: [-3, -1], name: 'Tomate', icon: 'tomate.webp', cost: 320,
+  { id: 'tomate', parent: 'cenoura', at: [-3, -1], name: 'Tomate', icon: 'tomate.webp', cost: 2500,
     desc: 'Libera o tomate.',
     effects: [{ unlock: 'crop', id: 'tomate' }] },
-  { id: 'indigo', parent: 'tomate', at: [-4, -1], name: 'Índigo', icon: 'indigo.webp', cost: 500,
+  { id: 'indigo', parent: 'tomate', at: [-4, -1], name: 'Índigo', icon: 'indigo.webp', cost: 5000,
     desc: 'Libera o indigo.',
     effects: [{ unlock: 'crop', id: 'indigo' }] },
   ...chain({ id: 'preco', parent: 'milho', at: [-1, -2], step: [0, -1], name: 'Preço justo',
     desc: 'As colheitas valem 15% mais.',
-    icon: 'preco.webp', costs: [80, 200], effects: [{ stat: 'valueMult', mul: 1.15 }] }),
+    icon: 'preco.webp', costs: [80, 350], effects: [{ stat: 'valueMult', mul: 1.15 }] }),
 
   // ARADOS — cada arado extra se COMPRA aqui (nó «Arado N») e o tamanho dele cresce na fila «Terra do arado N».
   // Os nós de tamanho nascem do nó de compra, então só aparecem depois que o arado é comprado.
   ...[
-    { n: 1, dir: 'à direita',  parent: 'agua-ciclo-2', at: [2, 2],  step: [0, 1],  cost: 200,  sizes: [60, 140, 300, 650, 1300] },
-    { n: 2, dir: 'à esquerda', parent: 'tomate',       at: [-3, -2], step: [0, -1], cost: 600,  sizes: [90, 210, 450, 900, 1800] },
-    { n: 3, dir: 'em cima',    parent: 'semear-raio-3', at: [1, -3], step: [1, 0],  cost: 1500, sizes: [140, 320, 700, 1400, 2800] },
-    { n: 4, dir: 'embaixo',    parent: 'crescer-3',    at: [1, 5],  step: [0, 1],  cost: 3500, sizes: [200, 450, 1000, 2000, 4000] }
+    { n: 1, dir: 'à direita',  parent: 'agua-ciclo-2', at: [2, 2],  step: [0, 1],  cost: 1200,  sizes: [60, 750, 1500, 3000, 6000] },
+    { n: 2, dir: 'à esquerda', parent: 'tomate',       at: [-3, -2], step: [0, -1], cost: 1200,  sizes: [60, 750, 1500, 3000, 6000] },
+    { n: 3, dir: 'em cima',    parent: 'semear-raio-3', at: [1, -3], step: [1, 0],  cost: 1200, sizes: [60, 750, 1500, 3000, 6000] },
+    { n: 4, dir: 'embaixo',    parent: 'crescer-3',    at: [1, 5],  step: [0, 1],  cost: 1200, sizes: [60, 750, 1500, 3000, 6000] }
   ].flatMap((p) => [
     { id: `arado-${p.n}`, parent: p.parent, at: p.at, name: `Arado ${p.n}`, icon: 'terra-grade.webp', cost: p.cost,
       desc: `Um novo campo ${p.dir} do principal, começando em 3×3. Chegue nele pela seta na borda da tela.`,

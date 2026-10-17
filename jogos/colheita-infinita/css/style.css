@@ -36,12 +36,14 @@
   --pad-r: calc(var(--pad) + var(--safe-r));
 
   /* altura que o HUD ocupa no topo do campo e espaço reservado embaixo (o Scene.js lê estes dois) */
-  --hud-h: 112px;
+  --hud-base: 148px;                      /* só o HUD: dia + dinheiro em duas linhas */
+  --hud-h: var(--hud-base);
   --inset-top: calc(var(--safe-t) + var(--hud-h));
   --inset-bottom: 0px;
 }
 /* HUD de uma linha só: celular deitado ou tela larga */
-@media (max-height: 520px), (min-width: 900px) { :root { --hud-h: 66px; } }
+@media (max-height: 520px), (min-width: 900px) { :root { --hud-base: 96px; } }
+@media (max-height: 520px) { :root { --hud-base: 84px; } }
 /* celular em pé: o botão de ferramenta ocupa a base da tela */
 @media (pointer: coarse) and (max-aspect-ratio: 1/1) { :root { --inset-bottom: calc(var(--safe-b) + 92px); } }
 

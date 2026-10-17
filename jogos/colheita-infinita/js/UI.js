@@ -77,17 +77,118 @@ export class UI {
     el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');   // reinicia a animação
   }
 
+  /* --------------------------------- tutorial --------------------------------- */
+  // t = { step, steps, title, text, count, max, pulse } ou null (desliga). Só mexe no DOM quando algo muda.
+  setTutorial(t) {
+    const el = $('tut'), on = !!t;
+    if (this.tutOn !== on) {
+      this.tutOn = on;
+      document.body.classList.toggle('tut-on', on);
+      $('hud').classList.toggle('tut', on);
+      el.hidden = !on;
+      this.game?.scene.resize();                           // o painel ocupa o topo no celular em pé: reenquadra o campo
+    }
+    if (!t) { this.cache.tut = ''; $('tool-btn').classList.remove('tut-pulse'); document.querySelector('.hud-tool')?.classList.remove('tut-pulse'); return; }
+    const key = JSON.stringify(t);
+    if (key === this.cache.tut) return;
+    this.cache.tut = key;
+    $('tut-step').textContent = `Passo ${t.step + 1} de ${t.steps}`;
+    $('tut-title').textContent = t.title;
+    $('tut-text').textContent = t.text;
+    const prog = $('tut-prog');
+    prog.hidden = t.max === null;
+    if (t.max !== null) {
+      $('tut-count').textContent = `${t.count}/${t.max}`;
+      $('tut-fill').style.width = `${Math.round((t.count / t.max) * 100)}%`;
+    }
+    const dots = $('tut-dots');
+    if (dots.children.length !== t.steps) { dots.textContent = ''; for (let i = 0; i < t.steps; i++) dots.appendChild(document.createElement('i')); }
+    [...dots.children].forEach((d, i) => { d.className = i < t.step ? 'done' : i === t.step ? 'now' : ''; });
+    $('tool-btn').classList.toggle('tut-pulse', t.pulse === 'btn');
+    document.querySelector('.hud-tool')?.classList.toggle('tut-pulse', t.pulse === 'tool');
+  }
+
+  // Escolheu a ferramenta errada no tutorial: o painel balança.
+  nudgeTutorial() {
+    const el = $('tut');
+    el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    Sound.play('tick');
+  }
+
   /* ----------------------------------- HUD ----------------------------------- */
   hudTick(g) {
-    const t = Math.max(0, g.timeLeft), frac = t / g.S.dayLength;
+    const t = Math.max(0, g.timeLeft), frac = t / g.S.dayLength, elapsed = 1 - frac;
     const sec = String(Math.ceil(t));
     if (this.cache.sec !== sec) { $('time-text').textContent = sec; this.cache.sec = sec; }
-    $('time-fill').style.transform = `scaleX(${frac.toFixed(4)})`;
+    $('time-fill').style.transform = `scaleX(${elapsed.toFixed(4)})`;         // a barra enche e o sol anda junto
+    const sx = `${(elapsed * 100).toFixed(1)}%`;
+    if (this.cache.sx !== sx) { this.cache.sx = sx; $('sun').style.setProperty('--sx', sx); }
+    $('hud').classList.toggle('late', elapsed > 0.7);                         // fim de tarde: sol alaranjado
     $('hud').classList.toggle('urgent', t > 0 && t <= 5);
     const day = `DIA ${g.playedDay}`;
     if (this.cache.day !== day) { $('hud-day').textContent = day; this.cache.day = day; }
-    const money = fmtMoney(g.dayMoney);
-    if (this.cache.money !== money) { $('money-text').textContent = money; this.cache.money = money; }
+  }
+
+  /* ----------------- dinheiro de hoje: colheita voa até o placar ----------------- */
+  // Começo do dia: placar zerado e sem plantas voando.
+  resetMoney() {
+    this.moneyShown = 0; this.moneyTarget = 0; this.flying = 0;
+    $('money-text').textContent = '0';
+    $('float-layer').querySelectorAll('.fly').forEach((e) => e.remove());
+  }
+
+  // Uma planta colhida: o ícone nasce na célula, paira um instante e voa até a moeda do placar.
+  // `delay` (ms) escalona várias colheitas do mesmo golpe. Ao chegar, o valor entra no placar (com som).
+  harvestFly(cropId, screen, value, delay = 0) {
+    const layer = $('float-layer'), coin = $('money-coin');
+    if (!layer || !coin || this.flying >= 36 || !screen) { this.coinArrive(value, !screen || this.flying >= 36); return; }   // muita coisa voando: entra direto
+    const r = coin.getBoundingClientRect(), tx = r.left + r.width / 2, ty = r.top + r.height / 2;
+    const x0 = screen.x, y0 = screen.y;
+    let el;
+    if (cropId) { el = document.createElement('img'); el.src = `assets/icons/crops/${cropId}.webp`; el.alt = ''; el.draggable = false; el.onerror = () => { const d = document.createElement('div'); d.className = 'fly'; el.replaceWith(d); }; }
+    else el = document.createElement('div');
+    el.className = 'fly';
+    el.style.opacity = '0';
+    layer.appendChild(el);
+    this.flying++;
+    const hop = 46, mx = (x0 + tx) / 2 + (tx > x0 ? -30 : 30), my = Math.min(y0 - hop, ty) - 60;     // curva suave até o placar
+    const T = (x, y, s) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${s})`;
+    const done = () => { if (el.isConnected) el.remove(); this.flying = Math.max(0, this.flying - 1); this.coinArrive(value); };
+    if (!el.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(done, delay + 200); return; }
+    const anim = el.animate([
+      { transform: T(x0, y0, 0.3), opacity: 0, offset: 0, easing: 'cubic-bezier(.2,1.4,.4,1)' },
+      { transform: T(x0, y0 - hop, 1.25), opacity: 1, offset: 0.22, easing: 'ease-in-out' },       // pula para fora da célula
+      { transform: T(x0, y0 - hop - 6, 1.15), opacity: 1, offset: 0.42, easing: 'cubic-bezier(.5,0,.9,.5)' },   // paira
+      { transform: T(mx, my, 0.9), opacity: 1, offset: 0.72, easing: 'cubic-bezier(.2,.6,.4,1)' },
+      { transform: T(tx, ty, 0.4), opacity: 0.95, offset: 1 }
+    ], { duration: 1150, delay, fill: 'both' });
+    anim.onfinish = done;
+    anim.oncancel = () => { if (el.isConnected) { el.remove(); this.flying = Math.max(0, this.flying - 1); } };
+  }
+
+  // O valor chegou ao placar: toca o som (sobe de tom em sequência), o placar dá um pulinho e o número rola até o novo total.
+  coinArrive(value, silent = false) {
+    this.moneyTarget = (this.moneyTarget ?? 0) + value;
+    const now = performance.now();
+    if (!silent) {
+      this.coinStep = now - (this.lastCoin ?? 0) < 450 ? (this.coinStep ?? 0) + 1 : 0;
+      this.lastCoin = now;
+      if (now - (this.lastCoinSound ?? 0) > 40) { this.lastCoinSound = now; Sound.play('coinIn', this.coinStep); }   // efeito sonoro «coinIn» (assets/audio/moeda.mp3)
+      const box = $('hud-money');
+      box.classList.remove('bump'); void box.offsetWidth; box.classList.add('bump');
+    }
+    if (!this.moneyAnim) this.moneyAnim = requestAnimationFrame((t) => this.rollMoney(t));
+  }
+
+  rollMoney(t) {
+    const dt = Math.min(0.05, (t - (this.moneyLast ?? t)) / 1000);
+    this.moneyLast = t;
+    const diff = this.moneyTarget - this.moneyShown;
+    this.moneyShown = Math.abs(diff) < 0.5 ? this.moneyTarget : this.moneyShown + diff * Math.min(1, dt * 9);   // rola rápido no começo e assenta no fim
+    const txt = fmtMoney(Math.round(this.moneyShown * 10) / 10);
+    if (txt !== this.cache.money) { this.cache.money = txt; $('money-text').textContent = txt; }
+    if (this.moneyShown !== this.moneyTarget) this.moneyAnim = requestAnimationFrame((n) => this.rollMoney(n));
+    else { this.moneyAnim = 0; this.moneyLast = undefined; }
   }
 
   // Ferramenta atual: nome (PC) e ícone do botão inferior (celular).
@@ -187,8 +288,34 @@ export class UI {
 
   showSkills() {
     this.showOnly('ov-skills');
+    this.tipDone = false;
     this.skills.open();
+    this.syncSkillTip();
   }
+
+  // Passo 6 do tutorial: enquanto a 1ª habilidade (grátis) não foi desbloqueada, a árvore explica como fazer.
+  syncSkillTip() {
+    const g = this.game, tip = $('sk-tip'), buy = $('sk-buy');
+    if (!g) return;
+    const learning = !g.owned.has('raiz');
+    const touch = g.input.type === 'touch';
+    clearTimeout(this.tipTimer);
+    if (learning) {
+      tip.hidden = false;
+      $('sk-tip-title').textContent = 'Desbloqueie sua 1ª habilidade';
+      $('sk-tip-text').textContent = this.skills.selected === 'raiz'
+        ? `Cada célula desta árvore melhora a fazenda. ${touch ? 'Toque' : 'Clique'} em “Desbloquear”, embaixo: a primeira é grátis!`
+        : `${touch ? 'Toque' : 'Clique'} na célula brilhante “Mãos na terra” para ver os detalhes.`;
+    } else if (this.tipDone) {
+      tip.hidden = false;
+      $('sk-tip-title').textContent = 'Muito bem!';
+      $('sk-tip-text').textContent = 'Novas habilidades apareceram. Gaste seu dinheiro nelas e, quando quiser, toque em “Próximo dia”.';
+      this.tipTimer = setTimeout(() => { this.tipDone = false; tip.hidden = true; }, 7000);
+    } else tip.hidden = true;
+    buy.classList.toggle('tut-pulse', learning && this.skills.selected === 'raiz' && !buy.disabled);
+  }
+
+  skillTipDone() { this.tipDone = true; }
 
   showShop() {
     this.showOnly('ov-shop');
@@ -238,6 +365,7 @@ export class UI {
       $('quit-tip').hidden = false;
       this.quitTimer = setTimeout(() => this.disarmQuit(), 4000);
     });
+    $('tut-skip').addEventListener('click', () => { Sound.play('click'); game.skipTutorial(); });
     $('btn-pause').addEventListener('click', (e) => { Sound.play('click'); game.pause(); e.currentTarget.blur(); });
     $('btn-continue').addEventListener('click', () => {
       if ($('btn-continue').disabled) return;

@@ -3,45 +3,62 @@
    pelo Scene.js fora da área reservada (--inset-top / --inset-bottom). */
 #hud { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
 
-/* ---------- barra do topo ---------- */
+/* ---------- barra do topo ----------
+   Centro: o «dia» (sol que anda sobre a barra de tempo + etiqueta DIA n). Embaixo dele, o dinheiro de hoje.
+   Canto: pausa. Em tela larga/baixa tudo vai para uma linha: dinheiro · dia · pausa. */
 .hud-bar {
   position: absolute; left: 0; right: 0; top: 0;
-  display: grid; align-items: center; gap: 8px 10px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: 'time money' 'day pause';
-  padding: calc(var(--safe-t) + 8px) var(--pad-r) 0 var(--pad-l);
+  display: grid; align-items: start; justify-items: center; gap: 8px 8px;
+  grid-template-columns: minmax(52px, 1fr) minmax(0, 320px) minmax(52px, 1fr);
+  grid-template-areas: '. time pause' 'money money money';
+  padding: calc(var(--safe-t) + 6px) var(--pad-r) 0 var(--pad-l);
 }
-.hud-time, .hud-money, .hud-day {
+.hud-time, .hud-money {
   border: 3px solid var(--c-brown); background: var(--c-paper); box-shadow: 0 4px 0 var(--c-brown);
   font-weight: 700; color: var(--c-brown);
 }
 
+/* painel do dia */
 .hud-time {
-  grid-area: time; justify-self: start; width: min(100%, 230px); min-height: 52px;
-  display: flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: var(--r-pill);
+  grid-area: time; width: 100%; position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'track sec' 'day day';
+  align-items: center; column-gap: 10px; row-gap: 3px;
+  padding: 30px 16px 8px; border-radius: 24px;
 }
-.hud-time .bar { flex: 1 1 auto; width: auto; min-width: 40px; height: 14px; border-width: 2px; box-shadow: inset 0 2px 0 rgba(0,0,0,.2); }
-#time-fill { height: 100%; width: 100%; transform-origin: left center; background: linear-gradient(180deg, var(--c-green-l), var(--c-green)); will-change: transform; }
-.hud-sec { flex: none; display: inline-flex; align-items: baseline; gap: 2px; font-variant-numeric: tabular-nums; }
+.hud-track { grid-area: track; position: relative; min-width: 0; }
+.hud-track .bar { width: 100%; height: 16px; border-width: 3px; box-shadow: inset 0 2px 0 rgba(0,0,0,.2); }
+#time-fill { height: 100%; width: 100%; transform-origin: left center; transform: scaleX(0); background: linear-gradient(180deg, #ffe27a, var(--c-gold)); will-change: transform; }   /* enche conforme o dia passa */
+.hud-sec { grid-area: sec; display: inline-flex; align-items: baseline; gap: 2px; font-variant-numeric: tabular-nums; }
 #time-text { font-size: 24px; line-height: 1; min-width: 1.3em; text-align: right; }
 .hud-sec small { color: var(--c-brown-2); font-size: 14px; }
+/* o sol percorre a barra: nasce à esquerda e se põe à direita */
+.sun-ico { position: absolute; left: var(--sx, 0%); top: -27px; width: 38px; height: 38px; margin-left: -19px; overflow: visible; pointer-events: none; will-change: left; filter: drop-shadow(0 2px 0 rgba(74, 47, 26, .35)); }
+.sun-ico .rays { transform-origin: 20px 20px; animation: sun-spin 14s linear infinite; }
+.sun-ico circle { fill: #ffd44d; stroke: #4a2f1a; stroke-width: 3; }
+.sun-ico .rays path { stroke: #f4a82f; stroke-width: 3.2; stroke-linecap: round; fill: none; }
+#hud.late .sun-ico circle { fill: #ff9d3d; }
+#hud.late .sun-ico .rays path { stroke: #e0662b; }
+@keyframes sun-spin { to { transform: rotate(360deg); } }
 #hud.urgent .hud-time { animation: pulse .5s ease-in-out infinite alternate; background: #ffd9cf; border-color: var(--c-red-d); box-shadow: 0 4px 0 var(--c-red-d); }
 #hud.urgent #time-fill { background: linear-gradient(180deg, #ef7a66, var(--c-red)); }
-@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
-
-.hud-money {
-  grid-area: money; min-height: 52px; min-width: 0;
-  display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0;
-  padding: 4px 16px; border-radius: 20px; line-height: 1.05; font-variant-numeric: tabular-nums;
-}
-.hud-money small { color: var(--c-brown-2); font-size: 11px; font-weight: 600; letter-spacing: .02em; }
-.hud-money-v { display: inline-flex; align-items: center; font-size: 22px; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.04); } }
 
 .hud-day {
-  grid-area: day; justify-self: start;
-  padding: 4px 16px; border-radius: var(--r-pill); font-size: 13px; letter-spacing: .1em;
-  background: var(--c-green); color: #fff; border-color: var(--c-brown); text-shadow: 0 1px 0 rgba(74, 47, 26, .45);
+  grid-area: day; justify-self: center;
+  padding: 2px 18px; border-radius: var(--r-pill); font-size: 13px; letter-spacing: .12em; line-height: 1.5;
+  background: var(--c-green); color: #fff; border: 2px solid var(--c-brown); text-shadow: 0 1px 0 rgba(74, 47, 26, .45);
 }
+
+/* dinheiro de hoje: as plantas colhidas voam até a moeda daqui */
+.hud-money {
+  grid-area: money; min-height: 46px; min-width: 0;
+  display: flex; align-items: center; gap: 10px; padding: 4px 18px; border-radius: var(--r-pill);
+  font-variant-numeric: tabular-nums;
+}
+.hud-money small { color: var(--c-brown-2); font-size: 12px; font-weight: 600; }
+.hud-money-v { display: inline-flex; align-items: center; font-size: 24px; line-height: 1; }
+.hud-money.bump { animation: money-bump .22s ease-out; }
+@keyframes money-bump { 40% { transform: scale(1.12); } }
 
 /* botão de pausa: clicável mesmo com o HUD sem eventos */
 .hud-pause {
@@ -57,16 +74,23 @@
 .hud-pause:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--c-brown); }
 .hud-pause:focus-visible { outline: var(--focus); outline-offset: 3px; }
 
-/* tela larga ou baixa: tudo numa linha só (sobra mais campo) */
+/* tela larga ou baixa: uma linha só (sobra mais campo) — dinheiro à esquerda, dia no centro, pausa à direita */
 @media (max-height: 520px), (min-width: 900px) {
-  .hud-bar {
-    grid-template-columns: minmax(0, 200px) auto minmax(0, 1fr) auto auto;
-    grid-template-areas: 'time day . money pause';
-  }
-  .hud-time { width: 100%; }
-  .hud-money { justify-self: end; }
+  .hud-bar { grid-template-columns: minmax(0, 1fr) minmax(0, 340px) minmax(52px, 1fr); grid-template-areas: 'money time pause'; align-items: start; }
+  .hud-money { justify-self: start; }
 }
-@media (min-width: 900px) { .hud-bar { grid-template-columns: minmax(0, 260px) auto minmax(0, 1fr) auto auto; } }
+@media (max-height: 520px) {
+  .hud-time { padding: 24px 14px 5px; row-gap: 1px; }
+  .sun-ico { width: 32px; height: 32px; margin-left: -16px; top: -22px; }
+  .hud-money small { display: none; }
+  .hud-money { min-height: 40px; padding: 2px 14px; }
+  .hud-money-v { font-size: 20px; }
+  #time-text { font-size: 20px; }
+}
+
+/* voo da planta colhida até o dinheiro */
+.fly { position: absolute; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; object-fit: contain; pointer-events: none; will-change: transform, opacity; filter: drop-shadow(0 3px 0 rgba(74, 47, 26, .45)); }
+div.fly { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff0a0, var(--c-gold) 60%, var(--c-gold-d)); border: 3px solid var(--c-brown); }
 
 /* dica de ferramenta (só PC): placa no canto de baixo */
 .hud-tool {
@@ -267,3 +291,45 @@ body.touch .nav-down { bottom: calc(98px + var(--safe-b)); }                 /* 
 .db-seed { display: grid; place-items: center; width: 24px; height: 24px; pointer-events: none; }
 .db-seed img { width: 24px; height: 24px; object-fit: contain; }
 .db-glyph { font-size: 16px; font-weight: 700; color: var(--c-brown); }
+
+/* ---------- tutorial do 1º dia ---------- */
+#hud.tut .hud-track, #hud.tut .hud-sec { display: none; }   /* sem relógio no tutorial: só a etiqueta do dia */
+#hud.tut .hud-time { padding-top: 8px; width: auto; justify-self: center; }
+#tut {
+  position: fixed; z-index: 11; pointer-events: none;
+  left: 50%; transform: translateX(-50%); top: calc(var(--safe-t) + var(--hud-base));
+  width: min(calc(100vw - 2 * var(--pad)), 440px); height: 176px; overflow: hidden;
+  display: flex; flex-direction: column; gap: 4px; padding: 10px 14px 12px;
+  border: 4px solid var(--c-edge); border-radius: var(--r-card); background: var(--c-paper);
+  box-shadow: 0 6px 0 var(--c-brown), 0 12px 24px var(--c-shadow);
+}
+.tut-head { display: flex; align-items: center; gap: 8px; }
+.tut-step { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--c-green); padding: 2px 10px; border-radius: var(--r-pill); white-space: nowrap; }
+.tut-dots { display: flex; gap: 5px; flex: 1; }
+.tut-dots i { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--c-brown); background: transparent; }
+.tut-dots i.done { background: var(--c-green); }
+.tut-dots i.now { background: var(--c-gold); }
+.tut-skip { all: unset; pointer-events: auto; cursor: pointer; touch-action: manipulation; font-size: 12px; font-weight: 700; color: var(--c-brown-2); padding: 4px 8px; border-radius: 10px; }
+.tut-skip:hover { background: var(--c-paper-2); }
+.tut-skip:focus-visible { outline: var(--focus); }
+.tut-title { font-size: 18px; line-height: 1.1; color: var(--c-green-d); }
+.tut-text { margin: 0; font-size: 14px; line-height: 1.3; color: var(--c-brown); font-weight: 600; flex: 1; overflow: hidden; }
+.tut-prog { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tut-bar { flex: 1; height: 12px; border: 2px solid var(--c-brown); border-radius: var(--r-pill); background: var(--c-paper-2); overflow: hidden; }
+#tut-fill { height: 100%; width: 0; background: linear-gradient(180deg, var(--c-green-l), var(--c-green)); transition: width .2s ease; }
+#tut.shake { animation: tut-shake .35s ease; }
+@keyframes tut-shake { 25% { translate: -6px 0; } 75% { translate: 6px 0; } }
+/* botão de ferramenta / placa do PC piscam quando é para trocar de ferramenta */
+.tut-pulse { animation: tut-pulse 1s ease-in-out infinite; }
+@keyframes tut-pulse { 50% { box-shadow: 0 4px 0 var(--c-brown), 0 0 0 9px rgba(244, 185, 47, .8); } }
+/* o painel ocupa o topo no celular em pé: o campo é enquadrado abaixo dele */
+@media (max-aspect-ratio: 1/1) { body.tut-on { --hud-h: calc(var(--hud-base) + 190px); --inset-top: calc(var(--safe-t) + var(--hud-h)); } }
+/* celular deitado / PC: o painel fica na lateral esquerda, sobra o campo no centro */
+@media (min-aspect-ratio: 1/1) {
+  #tut { left: calc(var(--pad) + var(--safe-l)); top: 50%; transform: translateY(-50%); width: min(280px, 30vw); height: auto; max-height: calc(100vh - var(--hud-h) - 16px); }
+  .tut-text { flex: none; }
+  .tut-dots { display: none; }
+  .tut-head { justify-content: space-between; }
+}
+@media (max-height: 420px) and (min-aspect-ratio: 1/1) { .tut-text { font-size: 12.5px; } .tut-title { font-size: 16px; } #tut { padding: 8px 10px; } }
+@media (prefers-reduced-motion: reduce) { .tut-pulse, #tut.shake { animation: none; } }
