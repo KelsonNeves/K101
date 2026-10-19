@@ -298,7 +298,7 @@ body.touch .nav-down { bottom: calc(98px + var(--safe-b)); }                 /* 
 #tut {
   position: fixed; z-index: 11; pointer-events: none;
   left: 50%; transform: translateX(-50%); top: calc(var(--safe-t) + var(--hud-base));
-  width: min(calc(100vw - 2 * var(--pad)), 440px); height: 176px; overflow: hidden;
+  width: min(calc(100vw - 2 * var(--pad)), 440px); height: auto; overflow: hidden;
   display: flex; flex-direction: column; gap: 4px; padding: 10px 14px 12px;
   border: 4px solid var(--c-edge); border-radius: var(--r-card); background: var(--c-paper);
   box-shadow: 0 6px 0 var(--c-brown), 0 12px 24px var(--c-shadow);
@@ -323,7 +323,18 @@ body.touch .nav-down { bottom: calc(98px + var(--safe-b)); }                 /* 
 .tut-pulse { animation: tut-pulse 1s ease-in-out infinite; }
 @keyframes tut-pulse { 50% { box-shadow: 0 4px 0 var(--c-brown), 0 0 0 9px rgba(244, 185, 47, .8); } }
 /* o painel ocupa o topo no celular em pé: o campo é enquadrado abaixo dele */
-@media (max-aspect-ratio: 1/1) { body.tut-on { --hud-h: calc(var(--hud-base) + 190px); --inset-top: calc(var(--safe-t) + var(--hud-h)); } }
+/* a altura real do painel (--tut-h) é medida pelo UI.js; no celular em pé ele fica compacto para deixar o campo à vista */
+@media (max-aspect-ratio: 1/1) {
+  body.tut-on { --hud-h: calc(var(--hud-base) + var(--tut-h, 110px) + 6px); --inset-top: calc(var(--safe-t) + var(--hud-h)); }
+  #tut { gap: 2px; padding: 6px 12px 8px; border-width: 3px; box-shadow: 0 4px 0 var(--c-brown), 0 8px 16px var(--c-shadow); }
+  .tut-dots { display: none; }
+  .tut-head { justify-content: space-between; }
+  .tut-title { font-size: 15px; }
+  .tut-text { flex: none; font-size: 12.5px; line-height: 1.25; }
+  .tut-prog { font-size: 12px; }
+  .tut-bar { height: 9px; }
+}
+@media (max-aspect-ratio: 1/1) and (max-height: 700px) { body.tut-on { --hud-base: 118px; } }
 /* celular deitado / PC: o painel fica na lateral esquerda, sobra o campo no centro */
 @media (min-aspect-ratio: 1/1) {
   #tut { left: calc(var(--pad) + var(--safe-l)); top: 50%; transform: translateY(-50%); width: min(280px, 30vw); height: auto; max-height: calc(100vh - var(--hud-h) - 16px); }

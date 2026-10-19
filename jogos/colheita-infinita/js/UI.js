@@ -104,8 +104,18 @@ export class UI {
     const dots = $('tut-dots');
     if (dots.children.length !== t.steps) { dots.textContent = ''; for (let i = 0; i < t.steps; i++) dots.appendChild(document.createElement('i')); }
     [...dots.children].forEach((d, i) => { d.className = i < t.step ? 'done' : i === t.step ? 'now' : ''; });
+    this.measureTutorial();
     $('tool-btn').classList.toggle('tut-pulse', t.pulse === 'btn');
     document.querySelector('.hud-tool')?.classList.toggle('tut-pulse', t.pulse === 'tool');
+  }
+
+  // Mede a altura real do painel e reserva só esse espaço no topo (o campo é reenquadrado abaixo dele).
+  measureTutorial() {
+    const h = Math.ceil($('tut').offsetHeight);
+    if (!h || Math.abs(h - (this.tutH || 0)) < 2) return;
+    this.tutH = h;
+    document.body.style.setProperty('--tut-h', `${h}px`);
+    this.game?.scene.resize();
   }
 
   // Escolheu a ferramenta errada no tutorial: o painel balança.
@@ -312,7 +322,15 @@ export class UI {
       $('sk-tip-text').textContent = 'Novas habilidades apareceram. Gaste seu dinheiro nelas e, quando quiser, toque em “Próximo dia”.';
       this.tipTimer = setTimeout(() => { this.tipDone = false; tip.hidden = true; }, 7000);
     } else tip.hidden = true;
+    const next = $('btn-next-day');
+    if (next) { next.disabled = learning; next.title = learning ? 'Desbloqueie a 1ª habilidade para continuar' : ''; }
     buy.classList.toggle('tut-pulse', learning && this.skills.selected === 'raiz' && !buy.disabled);
+  }
+
+  nudgeSkillTip() {
+    const tip = $('sk-tip');
+    tip.classList.remove('shake'); void tip.offsetWidth; tip.classList.add('shake');
+    Sound.play('tick');
   }
 
   skillTipDone() { this.tipDone = true; }

@@ -27,13 +27,13 @@ export const SKILLS = [
   ...chain({ id: 'semear-raio', parent: 'raiz', at: [0, -1], step: [0, -1], name: 'Semeadura ampla',
     icon: 'semear-raio.webp', costs: [20, 100, 1000, 2500], effects: [{ stat: 'plant.radius', add: 0.375 }] }),
   ...chain({ id: 'semear-ciclo', parent: 'semear-raio-1', at: [1, -1], step: [1, 0], name: 'Semeadura rápida',
-    icon: 'semear-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'plant.cooldown', mul: 1 }] }),
+    icon: 'semear-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'plant.cooldown', mul: 0.85 }] }),
 
   // LESTE — aguar
   ...chain({ id: 'agua-raio', parent: 'raiz', at: [1, 0], step: [1, 0], name: 'Regador amplo',
     icon: 'agua-raio.webp', costs: [20, 100, 1000, 2500], effects: [{ stat: 'water.radius', add: 0.375 }] }),
   ...chain({ id: 'agua-ciclo', parent: 'agua-raio-1', at: [1, 1], step: [1, 0], name: 'Regador rápido',
-    icon: 'agua-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'water.cooldown', mul: 1 }] }),
+    icon: 'agua-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'water.cooldown', mul: 0.85 }] }),
   ...chain({ id: 'crescer', parent: 'agua-ciclo-1', at: [1, 2], step: [0, 1], name: 'Terra fértil',
     desc: 'As plantas crescem 15% mais rápido.',
     icon: 'crescer.webp', costs: [40, 500, 2000], effects: [{ stat: 'growthSpeed', mul: 1.15 }] }),
@@ -42,7 +42,7 @@ export const SKILLS = [
   ...chain({ id: 'colher-raio', parent: 'raiz', at: [0, 1], step: [0, 1], name: 'Foice larga',
     icon: 'colher-raio.webp', costs: [20, 100, 1000, 2500], effects: [{ stat: 'harvest.radius', add: 0.375 }] }),
   ...chain({ id: 'colher-ciclo', parent: 'colher-raio-1', at: [-1, 1], step: [-1, 0], name: 'Foice rápida',
-    icon: 'colher-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'harvest.cooldown', mul: 1 }] }),
+    icon: 'colher-ciclo.webp', costs: [30, 250, 1500], effects: [{ stat: 'harvest.cooldown', mul: 0.85 }] }),
   // Duração do dia: «Dia mais longo» soma 40 s por nível (5 níveis) e «Amanhecer cedo» ramifica do nível II e multiplica (3 níveis).
   // Tudo comprado: (30 + 5×40) × 1,1³ ≈ 306 s (~5 min). Alcance: raio 1,0 + 4 × 0,375 = 2,5 (o mesmo do último nível antigo).
   ...chain({ id: 'dia-longo', parent: 'colher-ciclo-1', at: [-1, 2], step: [0, 1], name: 'Dia mais longo',

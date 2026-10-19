@@ -150,3 +150,4 @@ button.tab:focus-visible { outline: var(--focus); outline-offset: 2px; }
 .sk-tip .tut-text { flex: none; }
 @media (max-height: 520px) { .sk-tip { top: 6px; padding: 6px 12px 8px; } .sk-tip .tut-text { font-size: 12.5px; } .sk-tip .tut-title { font-size: 15px; } }
 @media (min-aspect-ratio: 1/1) { .sk-tip { left: calc(var(--pad) + var(--safe-l)); transform: none; width: min(300px, 34vw); } }
+.sk-tip.shake { animation: tut-shake .35s ease; }

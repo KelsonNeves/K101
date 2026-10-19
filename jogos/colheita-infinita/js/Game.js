@@ -193,7 +193,14 @@ export class Game {
     this.vfx.burst(point, tool.vfx, targets.length, radius);
     if (this.fireValue > 0) this.vfx.floatText(point, `+${fmtMoney(this.fireValue)}`);
     Sound.play(tool.sfx);
+    this.buzz(sel.tool);
     return true;
+  }
+
+  // Resposta tátil no celular: uma vibração curta cada vez que a ferramenta é usada (some em PC / sem suporte).
+  buzz(tool) {
+    if (this.input.type !== 'touch') return;
+    try { navigator.vibrate?.({ plant: 18, water: 14, harvest: 26 }[tool] ?? 16); } catch { /* sem vibração */ }
   }
 
   harvestCell(c) {
@@ -359,7 +366,11 @@ export class Game {
     if (n) this.goField(n.field.id);
   }
 
-  nextDay() { Sound.play('click'); this.startDay(); }
+  // Enquanto a 1ª habilidade (tutorial) não foi desbloqueada, o dia não avança.
+  nextDay() {
+    if (!this.owned.has('raiz')) { this.ui.nudgeSkillTip?.(); return; }
+    Sound.play('click'); this.startDay();
+  }
 
   /* --------------------------- título, pausa, novo jogo --------------------------- */
   showTitle() {
