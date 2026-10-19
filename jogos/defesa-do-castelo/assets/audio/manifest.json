@@ -1,3 +1,15 @@
 {
-  "files": []
+  "files": [
+    "barril_explosao.mp3",
+    "barril_explosao_2.mp3",
+    "canhao_explosao.mp3",
+    "canhao_explosao_2.mp3",
+    "construcao_destruida.mp3",
+    "demolir.mp3",
+    "golpe_construcao.mp3",
+    "golpe_construcao_pesado.mp3",
+    "mina_moedas.mp3",
+    "moeda_castelo.mp3",
+    "obra_martelada.mp3"
+  ]
 }
